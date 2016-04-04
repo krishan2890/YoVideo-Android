@@ -1,0 +1,110 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:src="@drawable/img_logo_splash"
+        android:textAllCaps="true"
+        android:textColor="@android:color/black"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/linearLayoutContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp">
+
+            <EditText
+                android:id="@+id/editTextUsername"
+                style="@style/EditText.Common"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/icon_username_selector"
+                android:hint="@string/login_username"
+                android:maxLength="15" />
+
+            <EditText
+                android:id="@+id/editTextPassword"
+                style="@style/EditText.Common"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:drawableLeft="@drawable/icon_password_selector"
+                android:hint="@string/login_password"
+                android:inputType="textPassword" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/buttonLogin"
+                    style="@style/Button.Common"
+                    android:layout_width="match_parent"
+                    android:text="@string/login"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"></Button>
+
+                <TextView
+                    android:id="@+id/textViewForgotPass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="@string/login_forgot_pass"
+                    android:textColor="@color/common_text_selector"
+                    android:textStyle="italic" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/buttonLoginFacebook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#50000000"
+            android:drawableRight="@drawable/icon_arrow_right"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:text="@string/login_by_facebook"
+            android:textColor="@color/common_text_selector" />
+
+        <TextView
+            android:id="@+id/buttonCreateAC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="#50000000"
+            android:drawableRight="@drawable/icon_arrow_right"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:text="@string/login_create_account"
+            android:textColor="@color/common_text_selector"></TextView>
+    </LinearLayout>
+</LinearLayout>
+

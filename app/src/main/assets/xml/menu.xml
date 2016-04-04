@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <element>
+        <icon>icon_menu_home_page.png</icon>
+        <id>1</id>
+        <name>Home</name>
+        <type>home_page</type>
+        <status>1</status>
+    </element>
+    <element>
+        <icon>icon_menu_categories.png</icon>
+        <id>2</id>
+        <name>Categories</name>
+        <type>categories</type>
+        <status>1</status>
+    </element>
+    <element>
+        <icon>icon_menu_wishlist.png</icon>
+        <id>3</id>
+        <name>My Wishlist</name>
+        <type>wishlist</type>
+        <status>1</status>
+    </element>
+    <element>
+        <icon>icon_menu_categories.png</icon>
+        <id>2</id>
+        <name>Recent Videos</name>
+        <type>recent_videos</type>
+        <status>1</status>
+    </element>
+    <element>
+        <icon>icon_menu_download.png</icon>
+        <id>4</id>
+        <name>My Download</name>
+        <type>download</type>
+        <status>0</status>
+    </element>
+    <element>
+        <icon>icon_menu_about_us.png</icon>
+        <id>5</id>
+        <name>About Us</name>
+        <type>about_us</type>
+        <status>1</status>
+    </element>
+    <element>
+        <icon>icon_menu_condition.png</icon>
+        <id>6</id>
+        <name>Terms and Conditions</name>
+        <type>term_condition</type>
+        <status>1</status>
+    </element>
+    <element>
+        <icon>icon_menu_share.png</icon>
+        <id>7</id>
+        <name>Share</name>
+        <type>share</type>
+        <status>1</status>
+    </element>
+    <element>
+        <icon>icon_menu_rate.png</icon>
+        <id>8</id>
+        <name>Rate</name>
+        <type>rate</type>
+        <status>1</status>
+    </element>
+</root>

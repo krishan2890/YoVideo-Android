@@ -1,0 +1,82 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp">
+
+    <LinearLayout
+        android:id="@+id/linearLayoutContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/edtKeyWord"
+            style="@style/EditText.Form"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/btnSearch"
+            style="@style/Button.Common"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0"
+            android:drawableRight="@drawable/ic_search_white_24dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/search" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/white">
+
+        <com.marshalchen.ultimaterecyclerview.UltimateRecyclerView
+            android:id="@+id/ultimate_recycler_view"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            app:recyclerviewScrollbars="vertical" />
+
+        <com.wang.avi.AVLoadingIndicatorView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/avloadingIndicatorView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            app:indicator="BallTrianglePath"
+            app:indicator_color="@color/loading_ball" />
+
+        <LinearLayout
+            android:id="@+id/linearLayoutTag"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"></LinearLayout>
+
+        <ScrollView
+            android:id="@+id/tags_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:visibility="visible">
+
+            <cuneyt.example.com.tagview.Tag.TagView
+                android:id="@+id/tag_group"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp" />
+
+        </ScrollView>
+    </RelativeLayout>
+</LinearLayout>
+
