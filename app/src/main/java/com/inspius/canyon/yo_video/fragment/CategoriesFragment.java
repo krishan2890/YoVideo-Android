@@ -118,7 +118,7 @@ public class CategoriesFragment extends BaseMainFragment implements AdapterActio
 
     void requestGetData() {
         startAnimLoading();
-        RPC.requestGetCategories(true, new APIResponseListener() {
+        RPC.requestGetCategories( new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();

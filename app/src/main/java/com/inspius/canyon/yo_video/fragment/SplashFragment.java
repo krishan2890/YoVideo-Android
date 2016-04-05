@@ -175,7 +175,7 @@ public class SplashFragment extends BaseFragment {
         if (getActivity() == null || isDestroy)
             return;
 
-        RPC.requestGetCategories(false, new APIResponseListener() {
+        RPC.requestGetCategories( new APIResponseListener() {
             @Override
             public void onError(String message) {
                 if (getActivity() == null || isDestroy)

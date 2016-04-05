@@ -1,9 +1,12 @@
 package com.inspius.canyon.yo_video.api;
 
+import android.util.Log;
+
 import com.android.volley.Cache;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -16,6 +19,9 @@ import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.DataHomeJSON;
 import com.inspius.canyon.yo_video.model.NotificationJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
@@ -80,10 +86,10 @@ public class RPC {
     /**
      * Get categories
      *
-     * @param isGetDataCache
+   //  * @param isGetDataCache
      * @param listener
      */
-    public static void requestGetCategories(boolean isGetDataCache, final APIResponseListener listener) {
+   /* public static void requestGetCategories(boolean isGetDataCache, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_CATEGORIES;
         final String url = getAbsoluteUrl(tag);
 
@@ -122,6 +128,34 @@ public class RPC {
             jsonObjReq.setShouldCache(true);
             VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
         }
+    }*/
+
+    public static void requestGetCategories(final APIResponseListener listener){
+        final String tag=AppConstant.RELATIVE_URL_CATEGORIES;
+        final String url=getAbsoluteUrl(tag);
+        JsonObjectRequest jsonObjReq=new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    boolean checkData = parseResponseData(response, listener);
+                    if(checkData){
+                        Logger.d(LOG_TAG, response.getString("content"));
+                        DataCategoryJSON data=new Gson().fromJson(response.getString("content"),DataCategoryJSON.class);
+                        listener.onSuccess(data);
+                    }
+                    Log.d("question", String.valueOf(response));
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+
+            }
+        },new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                parseError(error, listener);
+            }
+        });
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
     /**
@@ -428,8 +462,28 @@ public class RPC {
      * @param mUrl
      * @return
      */
+
     private static String getCacheKey(int mMethod, String mUrl) {
         return mMethod + ":" + mUrl;
+    }
+
+    private static boolean parseResponseData(JSONObject responseJSON, final APIResponseListener listener) throws JSONException {
+        if (responseJSON == null) {
+            listener.onError("Data Parse Null");
+            return false;
+        }
+
+        Logger.d(LOG_TAG, responseJSON.toString());
+
+        int code = responseJSON.getInt("code");
+        if (code != AppConstant.RESPONSE_CODE_SUCCESS) {
+            String msg = responseJSON.getString("message");
+            listener.onError(msg);
+
+            return false;
+        }
+
+        return true;
     }
 
     /* ======================================= COMMON END=======================================*/

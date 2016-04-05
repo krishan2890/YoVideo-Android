@@ -23,7 +23,8 @@ public class AppConfig {
     /**
      * replace to your server
      */
-    public static final String BASE_URL = "http://demo.inspius.com/mobile/life-video/xml/";
+    //public static final String BASE_URL = "http://demo.inspius.com/mobile/life-video/xml/";
+    public static final String BASE_URL = "http://test.inspius.com/yovideo/";
 
     /**
      * Please replace this with a valid API key which is enabled for the

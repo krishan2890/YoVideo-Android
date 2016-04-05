@@ -79,7 +79,7 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
 
         mAdapter.add(listVideo);
 
-        RPC.requestGetCategories(true, new APIResponseListener() {
+        RPC.requestGetCategories( new APIResponseListener() {
             @Override
             public void onError(String message) {
 

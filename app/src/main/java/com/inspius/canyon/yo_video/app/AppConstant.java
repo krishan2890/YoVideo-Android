@@ -5,6 +5,7 @@ package com.inspius.canyon.yo_video.app;
  */
 public class AppConstant {
     public static int RESPONSE_OK = 1;
+    public static int RESPONSE_CODE_SUCCESS = 1;
 
     /**
      * Static Page
@@ -18,7 +19,8 @@ public class AppConstant {
      */
     public static final String RELATIVE_URL_CUSTOMER = "customer.json";
     public static final String RELATIVE_URL_DATA_HOME = "home.json";
-    public static final String RELATIVE_URL_CATEGORIES = "categories.json";
+    //public static final String RELATIVE_URL_CATEGORIES = "categories.json";
+    public static final String RELATIVE_URL_CATEGORIES = "api/categories";
     public static final String RELATIVE_URL_LIST_VIDEOS = "list-video.json";
     public static final String RELATIVE_URL_LIST_VIDEOS_VIMEO = "list-video-vimeo.json";
     public static final String RELATIVE_URL_MORE_VIDEOS = "more-videos.json";
