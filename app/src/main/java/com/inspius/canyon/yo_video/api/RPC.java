@@ -39,8 +39,42 @@ public class RPC {
 
     /* ======================================= CUSTOMER =======================================*/
 
-    public static void requestAuthentic(String username, String password, final APIResponseListener listener) {
-        requestGetCustomer(listener);
+    public static void requestAuthentic(final String username,final String password, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_CUSTOMER;
+        final String url = getAbsoluteUrl(tag);
+        StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String strResponse) {
+                try {
+                    JSONObject response = new JSONObject(strResponse);
+
+                    boolean checkData = parseResponseData(response, listener);
+
+                    if (checkData) {
+                        CustomerModel accountInfo = new Gson().fromJson(response.getString("content"), CustomerModel.class);
+                        listener.onSuccess(accountInfo);
+                    }
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("username", username);
+                params.put("password", password);
+                return params;
+            }
+        };
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
     public static void requestGetCustomer(final APIResponseListener listener) {
