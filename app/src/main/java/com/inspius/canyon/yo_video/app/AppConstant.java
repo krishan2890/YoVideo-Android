@@ -17,7 +17,8 @@ public class AppConstant {
     /**
      * ID SERVICE
      */
-    public static final String RELATIVE_URL_CUSTOMER = "customer.json";
+    public static final String RELATIVE_URL_CUSTOMER = "api/login";
+    public static final String RELATIVE_URL_REGISTER = "api/register";
     public static final String RELATIVE_URL_DATA_HOME = "home.json";
     //public static final String RELATIVE_URL_CATEGORIES = "categories.json";
     public static final String RELATIVE_URL_CATEGORIES = "api/categories";

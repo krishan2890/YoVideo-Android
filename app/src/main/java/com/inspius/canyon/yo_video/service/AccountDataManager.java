@@ -215,8 +215,8 @@ public class AccountDataManager {
         SimpleFacebook.getInstance(activity).logout(onLogoutListener);
     }
 
-    public void callNewAccount(final String email, final String password, String passwordConfirmation, final AccountDataListener listener) {
-        RPC.requestRegister(email, email, password, passwordConfirmation, new APIResponseListener() {
+    public void callNewAccount(final String username,final String email, final String password, String passwordConfirmation, final AccountDataListener listener) {
+        RPC.requestRegister(username,email, password, passwordConfirmation, new APIResponseListener() {
             @Override
             public void onError(String message) {
                 listener.onError(message);

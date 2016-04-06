@@ -2,6 +2,7 @@ package com.inspius.canyon.yo_video.api;
 
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -26,7 +27,9 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by it.kupi on 5/30/2015.
@@ -67,8 +70,46 @@ public class RPC {
         requestGetCustomer(listener);
     }
 
-    public static void requestRegister(String username, String email, String password, String passwordVerify, final APIResponseListener listener) {
-        requestGetCustomer(listener);
+    public static void requestRegister(final String username, final String email,final String password,final String passwordVerify, final APIResponseListener listener) {
+        //requestGetCustomer(listener);
+        final String tag = AppConstant.RELATIVE_URL_REGISTER;
+        final String url = getAbsoluteUrlAuthen(tag);
+
+        StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String strResponse) {
+                try {
+                    JSONObject response = new JSONObject(strResponse);
+
+                    boolean checkData = parseResponseData(response, listener);
+
+                    if (checkData) {
+                        CustomerModel accountInfo = new Gson().fromJson(response.getString("content"), CustomerModel.class);
+                        listener.onSuccess(accountInfo);
+                    }
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("username",username);
+                params.put("email", email);
+                params.put("password", password);
+                params.put("confirmation", passwordVerify);
+                return params;
+            }
+        };
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
     public static void requestUpdateCustomerInfo(CustomerModel customerModel, final APIResponseListener listener) {
@@ -486,5 +527,8 @@ public class RPC {
         return true;
     }
 
+    private static String getAbsoluteUrlAuthen(String relativeUrl) {
+        return AppConfig.BASE_URL_AUTHEN + relativeUrl;
+    }
     /* ======================================= COMMON END=======================================*/
 }
