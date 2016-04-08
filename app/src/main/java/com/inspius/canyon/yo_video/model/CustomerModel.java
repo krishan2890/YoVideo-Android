@@ -30,4 +30,6 @@ public class CustomerModel {
 
     public boolean isLoginAsFacebook;
 
+    public String username;
+
 }

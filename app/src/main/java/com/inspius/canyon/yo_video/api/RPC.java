@@ -40,7 +40,7 @@ public class RPC {
     /* ======================================= CUSTOMER =======================================*/
 
     public static void requestAuthentic(final String username,final String password, final APIResponseListener listener) {
-        final String tag = AppConstant.RELATIVE_URL_CUSTOMER;
+        final String tag = AppConstant.RELATIVE_URL_LOGIN;
         final String url = getAbsoluteUrl(tag);
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -100,8 +100,42 @@ public class RPC {
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-    public static void requestForgotPassword(String email, final APIResponseListener listener) {
-        requestGetCustomer(listener);
+    public static void requestForgotPassword(final String email, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_FORGOT_PASSWORD;
+        final String url = getAbsoluteUrlAuthen(tag);
+
+        StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String strResponse) {
+                try {
+                    JSONObject response = new JSONObject(strResponse);
+
+                    boolean checkData = parseResponseData(response, listener);
+
+                    if (checkData) {
+
+                        listener.onSuccess(response.getString("message"));
+                   }
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                return params;
+            }
+        };
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
     public static void requestRegister(final String username, final String email,final String password,final String passwordVerify, final APIResponseListener listener) {
@@ -139,19 +173,98 @@ public class RPC {
                 params.put("username",username);
                 params.put("email", email);
                 params.put("password", password);
-                params.put("confirmation", passwordVerify);
+               // params.put("confirmation", passwordVerify);
                 return params;
             }
         };
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-    public static void requestUpdateCustomerInfo(CustomerModel customerModel, final APIResponseListener listener) {
-        requestGetCustomer(listener);
+    public static void requestUpdateCustomerInfo(final CustomerModel customerModel, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_CHANGEPROFILE;
+        final String url = getAbsoluteUrlAuthen(tag);
+
+        StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String strResponse) {
+                try {
+                    JSONObject response = new JSONObject(strResponse);
+
+                    boolean checkData = parseResponseData(response, listener);
+
+                    if (checkData) {
+                        CustomerModel accountInfo = new Gson().fromJson(response.getString("content"), CustomerModel.class);
+                        listener.onSuccess(accountInfo);
+                    }
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("id",String.valueOf(customerModel.id) );
+                params.put("username","dung" );
+                params.put("email",customerModel.email );
+                params.put("firstname",customerModel.firstName );
+                params.put("lastname",customerModel.lastName);
+                params.put("phonenumber",customerModel.phone );
+                params.put("address",customerModel.address );
+                params.put("city",customerModel.city );
+                params.put("country",customerModel.country );
+                params.put("zip",customerModel.zip );
+                return params;
+            }
+        };
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-    public static void requestChangePass(int accountID, String currentPass, String newPass, String confirmPass, final APIResponseListener listener) {
-        requestGetCustomer(listener);
+    public static void requestChangePass(final int accountID,final String currentPass,final String newPass,final String confirmPass, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_CHANGEPASS;
+        final String url = getAbsoluteUrlAuthen(tag);
+
+        StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String strResponse) {
+                try {
+                    JSONObject response = new JSONObject(strResponse);
+
+                    boolean checkData = parseResponseData(response, listener);
+
+                    if (checkData) {
+                        listener.onSuccess(response.getString("message"));
+                    }
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("acountID", String.valueOf(accountID));
+                params.put("currentpass", currentPass);
+                params.put("newpass", newPass);
+                params.put("confirmpass", confirmPass);
+                return params;
+            }
+        };
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
     /* ======================================= CUSTOMER END=======================================*/
