@@ -113,7 +113,6 @@ public class RPC {
                     boolean checkData = parseResponseData(response, listener);
 
                     if (checkData) {
-
                         listener.onSuccess(response.getString("message"));
                    }
                 } catch (JSONException e) {
@@ -227,10 +226,9 @@ public class RPC {
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-    public static void requestChangePass(final int accountID,final String currentPass,final String newPass,final String confirmPass, final APIResponseListener listener) {
+    public static void requestChangePass(final int accountID,final String currentPass,final String newPass, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_CHANGEPASS;
         final String url = getAbsoluteUrlAuthen(tag);
-
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String strResponse) {
@@ -257,10 +255,10 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("acountID", String.valueOf(accountID));
-                params.put("currentpass", currentPass);
-                params.put("newpass", newPass);
-                params.put("confirmpass", confirmPass);
+                params.put("user_id", String.valueOf(accountID));
+                params.put("old_password", currentPass);
+                params.put("new_password", newPass);
+                //  params.put("confirmpass", confirmPass);
                 return params;
             }
         };
