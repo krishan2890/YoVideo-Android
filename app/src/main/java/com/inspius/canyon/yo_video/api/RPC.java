@@ -210,7 +210,7 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("id",String.valueOf(customerModel.id) );
+                params.put("user_id",String.valueOf(customerModel.id) );
                 params.put("username","dung" );
                 params.put("email",customerModel.email );
                 params.put("firstname",customerModel.firstName );
