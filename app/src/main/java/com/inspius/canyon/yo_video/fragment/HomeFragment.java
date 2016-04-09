@@ -62,8 +62,8 @@ public class HomeFragment extends BaseMainFragment {
             public void onSuccess(Object results) {
                 stopAnimLoading();
 
-                DataHomeJSON dataHome = (DataHomeJSON) results;
-                initTabLayout(dataHome);
+//                DataHomeJSON dataHome = (DataHomeJSON) results;
+//                initTabLayout(dataHome);
             }
         });
     }

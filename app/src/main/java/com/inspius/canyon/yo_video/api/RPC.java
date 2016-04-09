@@ -354,7 +354,35 @@ public class RPC {
         final String tag = AppConstant.RELATIVE_URL_DATA_HOME;
         final String url = getAbsoluteUrl(tag);
 
-        if (isGetDataCache) {
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    boolean checkData = parseResponseData(response, listener);
+                    if (checkData) {
+                        Type type = new TypeToken<List<VideoJSON>>() {
+                        }.getType();
+                        List<VideoJSON> listData = new Gson().fromJson(response.getString("content"), type);
+
+                        listener.onSuccess(listData);
+                    }
+                    Log.d("question", String.valueOf(response));
+
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                });
+
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
+
+       /* if (isGetDataCache) {
             Cache cache = VolleySingleton.getInstance().getRequestQueue().getCache();
             Cache.Entry entry = cache.get(getCacheKey(Request.Method.GET, url));
             if (entry != null) {
@@ -386,7 +414,7 @@ public class RPC {
 
             jsonObjReq.setShouldCache(true);
             VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
-        }
+        }*/
     }
 
     /**

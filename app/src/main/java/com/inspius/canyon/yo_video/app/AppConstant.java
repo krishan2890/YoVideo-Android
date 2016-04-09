@@ -23,7 +23,7 @@ public class AppConstant {
     public static final String RELATIVE_URL_FORGOT_PASSWORD = "api/forgotPassword";
     public static final String RELATIVE_URL_CHANGEPASS = "api/changePassword";
     public static final String RELATIVE_URL_CHANGEPROFILE = "api/changeProfile";
-    public static final String RELATIVE_URL_DATA_HOME = "home.json";
+    public static final String RELATIVE_URL_DATA_HOME = "api/getListVideoForHomepage";
     //public static final String RELATIVE_URL_CATEGORIES = "categories.json";
     public static final String RELATIVE_URL_CATEGORIES = "api/categories";
     public static final String RELATIVE_URL_LIST_VIDEOS = "list-video.json";
