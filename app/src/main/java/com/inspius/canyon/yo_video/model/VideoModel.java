@@ -2,7 +2,6 @@ package com.inspius.canyon.yo_video.model;
 
 import android.text.TextUtils;
 
-import com.inspius.canyon.yo_video.app.AppEnum;
 import com.inspius.canyon.yo_video.helper.AppUtils;
 import com.inspius.canyon.yo_video.helper.YouTubeUrlParser;
 
@@ -23,8 +22,8 @@ public class VideoModel implements Serializable {
     private String description;
     private String socialLink;
     private String videoUrl;
-    private AppEnum.VIDEO_TYPE videoType = AppEnum.VIDEO_TYPE.UPLOAD;
-
+   // private AppEnum.VIDEO_TYPE videoType = AppEnum.VIDEO_TYPE.UPLOAD;
+    private String videoType;
     public VideoModel(VideoJSON videoJSON) {
         this.videoJSON = videoJSON;
         this.title = videoJSON.title;
@@ -41,9 +40,9 @@ public class VideoModel implements Serializable {
         this.socialLink = videoJSON.urlSocial;
 
         this.videoUrl = videoJSON.videoLinkJSON.url;
-
-        if (!TextUtils.isEmpty(videoJSON.videoLinkJSON.type))
-            videoType = AppEnum.VIDEO_TYPE.valueOf(videoJSON.videoLinkJSON.type);
+        this.videoType = videoJSON.type;
+//        if (!TextUtils.isEmpty(videoJSON.videoLinkJSON.type))
+//            videoType = AppEnum.VIDEO_TYPE.valueOf(videoJSON.videoLinkJSON.type);
 
     }
 
@@ -56,7 +55,8 @@ public class VideoModel implements Serializable {
     }
 
     public String getImage() {
-        if (TextUtils.isEmpty(image) && getVideoType() == AppEnum.VIDEO_TYPE.YOUTUBE)
+//        if (TextUtils.isEmpty(image) && getVideoType() == AppEnum.VIDEO_TYPE.YOUTUBE)
+            if (TextUtils.isEmpty(image) && getVideoType() == "YOUTUBE")
             image = String.format("http://img.youtube.com/vi/%s/hqdefault.jpg", YouTubeUrlParser.getVideoId(getVideoUrl()));
 
         return image;
@@ -106,7 +106,11 @@ public class VideoModel implements Serializable {
         return videoUrl;
     }
 
-    public AppEnum.VIDEO_TYPE getVideoType() {
+//    public AppEnum.VIDEO_TYPE getVideoType() {
+//        return videoType;
+//    }
+
+    public String getVideoType() {
         return videoType;
     }
 

@@ -125,7 +125,7 @@ public class SplashFragment extends BaseFragment {
 
         currentLoad = 0;
         startLoading();
-        RPC.requestGetVideosHome(false, new APIResponseListener() {
+        RPC.requestGetVideosHome( new APIResponseListener() {
             @Override
             public void onError(String message) {
                 if (getActivity() == null || isDestroy)

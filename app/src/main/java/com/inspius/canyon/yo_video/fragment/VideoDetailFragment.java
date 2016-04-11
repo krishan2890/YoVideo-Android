@@ -29,7 +29,6 @@ import com.inspius.canyon.yo_video.activity.PlayerUploadActivity;
 import com.inspius.canyon.yo_video.activity.PlayerYoutubeActivity;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.AppConstant;
-import com.inspius.canyon.yo_video.app.AppEnum;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.greendao.WishList;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
@@ -173,11 +172,11 @@ public class VideoDetailFragment extends BaseMainFragment {
         boolean isCanBack = true;
         if (videoFragment != null) {
             switch (videoModel.getVideoType()) {
-                case UPLOAD:
+                case "UPLOAD":
                     isCanBack = true;
                     break;
 
-                case YOUTUBE:
+                case "YOUTUBE":
                     PageVideoYoutubeFragment youtubeFragment = (PageVideoYoutubeFragment) videoFragment;
                     isCanBack = youtubeFragment.onBackPress();
                     break;
@@ -336,11 +335,11 @@ public class VideoDetailFragment extends BaseMainFragment {
             return;
 
         Intent intent = null;
-        if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.UPLOAD)
+        if (videoModel.getVideoType() == "UPLOAD")
             intent = new Intent(getActivity(), PlayerUploadActivity.class);
-        else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.YOUTUBE)
+        else if (videoModel.getVideoType() == "YOUTUBE")
             intent = new Intent(getActivity(), PlayerYoutubeActivity.class);
-        else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.VIMEO) {
+        else if (videoModel.getVideoType() == "VIMEO") {
             String urlVimeo = String.format("http://player.vimeo.com/video/%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlVimeo)));
             return;
@@ -386,7 +385,7 @@ public class VideoDetailFragment extends BaseMainFragment {
 
         imvDownload.setSelected(true);
         switch (videoModel.getVideoType()) {
-            case UPLOAD:
+            case "UPLOAD":
                 /**
                  * Download default Os
                  */
@@ -415,7 +414,7 @@ public class VideoDetailFragment extends BaseMainFragment {
 //                getActivity().startService(intent);
                 break;
 
-            case YOUTUBE:
+            case "YOUTUBE":
 
                 break;
         }

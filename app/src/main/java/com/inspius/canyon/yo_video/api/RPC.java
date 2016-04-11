@@ -3,7 +3,6 @@ package com.inspius.canyon.yo_video.api;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.Cache;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -17,14 +16,12 @@ import com.inspius.canyon.yo_video.app.GlobalApplication;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.model.CustomerModel;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
-import com.inspius.canyon.yo_video.model.DataHomeJSON;
 import com.inspius.canyon.yo_video.model.NotificationJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -350,7 +347,7 @@ public class RPC {
      * @param isGetDataCache
      * @param listener
      */
-    public static void requestGetVideosHome(boolean isGetDataCache, final APIResponseListener listener) {
+    public static void requestGetVideosHome( final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_DATA_HOME;
         final String url = getAbsoluteUrl(tag);
 
@@ -415,6 +412,38 @@ public class RPC {
             jsonObjReq.setShouldCache(true);
             VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
         }*/
+    }
+    public static void requestGetVideosByCategory(int categoryId, final APIResponseListener listener) {
+        final String tag = String.format(AppConstant.RELATIVE_URL_VIDEO_CATEGORY,categoryId);
+        final String url = getAbsoluteUrl(tag);
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    boolean checkData = parseResponseData(response, listener);
+                    if (checkData) {
+                        Type type = new TypeToken<List<VideoJSON>>() {
+                        }.getType();
+                        List<VideoJSON> listData = new Gson().fromJson(response.getString("content"), type);
+
+                        listener.onSuccess(listData);
+                    }
+                    Log.d("question", String.valueOf(response));
+
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                });
+
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
     public static void updateVideoStatic(final int videoID,final String field,final int userID,final APIResponseListener listener){
         final String tag = AppConstant.RELATIVE_URL_UPDATE_STATIC;
@@ -504,23 +533,23 @@ public class RPC {
      * @param pageNumber
      * @param listener
      */
-    public static void requestGetVideosByCategory(long categoryId, int pageNumber, final APIResponseListener listener) {
-        if (pageNumber > 1) {
-            // categoryId == 11 : vimeo
-            if (categoryId == 11)
-                requestGetVideosVimeo(listener);
-            else
-                requestGetMoreVideos(listener);
-
-            return;
-        }
-
-        // categoryId == 11 : vimeo
-        if (categoryId == 11)
-            requestGetVideosVimeo(listener);
-        else
-            requestGetVideos(listener);
-    }
+//    public static void requestGetVideosByCategory(long categoryId, int pageNumber, final APIResponseListener listener) {
+//        if (pageNumber > 1) {
+//            // categoryId == 11 : vimeo
+//            if (categoryId == 11)
+//                requestGetVideosVimeo(listener);
+//            else
+//                requestGetMoreVideos(listener);
+//
+//            return;
+//        }
+//
+//        // categoryId == 11 : vimeo
+//        if (categoryId == 11)
+//            requestGetVideosVimeo(listener);
+//        else
+//            requestGetVideos(listener);
+//    }
 
     /**
      * Videos WishList
