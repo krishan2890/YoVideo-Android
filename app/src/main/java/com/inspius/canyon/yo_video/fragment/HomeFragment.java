@@ -9,11 +9,14 @@ import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.model.DataHomeJSON;
+import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItem;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 import com.wang.avi.AVLoadingIndicatorView;
+
+import java.util.List;
 
 import butterknife.Bind;
 
@@ -62,8 +65,9 @@ public class HomeFragment extends BaseMainFragment {
             public void onSuccess(Object results) {
                 stopAnimLoading();
 
-//                DataHomeJSON dataHome = (DataHomeJSON) results;
-//                initTabLayout(dataHome);
+                DataHomeJSON dataHome =new DataHomeJSON();
+                dataHome.listVideoLatest= (List<VideoJSON>) results;
+                initTabLayout(dataHome);
             }
         });
     }

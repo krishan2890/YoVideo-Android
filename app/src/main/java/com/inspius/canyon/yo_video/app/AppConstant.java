@@ -22,6 +22,10 @@ public class AppConstant {
     public static final String RELATIVE_URL_REGISTER = "api/register";
     public static final String RELATIVE_URL_FORGOT_PASSWORD = "api/forgotPassword";
     public static final String RELATIVE_URL_CHANGEPASS = "api/changePassword";
+    public static final String RELATIVE_URL_UPDATE_STATIC = "api/updateStatistics";
+    public static final String RELATIVE_URL_ADD_WISHLISH = "api/addToWishlist";
+    public static final String RELATIVE_URL_WISHLISH = "api/getWishlist/";
+    public static final String RELATIVE_URL_SEARCH_BY_KEYWORD = "api/getListVideoByKeyword";
     public static final String RELATIVE_URL_CHANGEPROFILE = "api/changeProfile";
     public static final String RELATIVE_URL_DATA_HOME = "api/getListVideoForHomepage";
     //public static final String RELATIVE_URL_CATEGORIES = "categories.json";
