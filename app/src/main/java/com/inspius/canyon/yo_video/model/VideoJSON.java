@@ -3,6 +3,7 @@ package com.inspius.canyon.yo_video.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by Billy on 1/5/16.
@@ -39,4 +40,7 @@ public class VideoJSON implements Serializable {
 
     @SerializedName("vip_play")
     public int vipPlay;
+
+    @SerializedName("another_category_ids")
+    public List<Integer> anotherCategoryId;
 }
