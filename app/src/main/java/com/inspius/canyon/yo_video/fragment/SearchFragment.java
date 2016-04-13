@@ -14,6 +14,7 @@ import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
+import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.helper.AppUtils;
 import com.inspius.canyon.yo_video.helper.EndlessRecyclerOnScrollListener;
@@ -77,7 +78,8 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     DataCategoryJSON dataCategory;
     Random random;
     boolean isResponseData;
-
+    List<VideoModel> data;
+    String keyword;
     @Override
     public String getTagText() {
         return TAG;
@@ -265,7 +267,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
 
     @OnClick(R.id.btnSearch)
     void doSearch() {
-        String keyword = edtKeyWord.getText().toString();
+        keyword = edtKeyWord.getText().toString();
         if (TextUtils.isEmpty(keyword)) {
             mActivityInterface.showCroutonAlert(getString(R.string.msg_null_key_word));
             return;
@@ -277,7 +279,8 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         pageNumber = 1;
         startAnimLoading();
         isResponseData = false;
-        requestGetDataProduct();
+
+      requestGetDataProduct();
     }
 
     void requestGetDataProduct() {
@@ -285,7 +288,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             return;
 
         isResponseData = false;
-        RPC.requestSearchVideo(pageNumber, new APIResponseListener() {
+        RPC.requestSearchVideoByKeyWord(keyword, new APIResponseListener() {
             @Override
             public void onError(String message) {
                 isResponseData = true;

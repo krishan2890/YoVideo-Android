@@ -249,6 +249,7 @@ public class AccountDataManager {
         RPC.requestUpdateCustomerInfo(customerUpdate, new APIResponseListener() {
             @Override
             public void onError(String message) {
+
                 listener.onError(message);
             }
 

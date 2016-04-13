@@ -6,6 +6,7 @@ import android.widget.TextView;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.adapter.GridVideoAdapter;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.helper.AppUtils;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
@@ -56,7 +57,7 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
         mActivityInterface.updateHeaderTitle(getString(R.string.menu_recent_video));
         mActivityInterface.setVisibleHeaderMenu(true);
 
-        AppSession.getCategoryData(new APIResponseListener() {
+       /* AppSession.getCategoryData(new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -67,7 +68,8 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
                 dataCategory = (DataCategoryJSON) results;
                 requestGetDataProduct();
             }
-        });
+        });*/
+        requestGetDataProduct();
     }
 
     @Override
@@ -128,7 +130,7 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
     }
 
     void requestGetDataProduct() {
-        RecentListManager.getInstance().getRecentVideosDetail(new APIResponseListener() {
+        RPC.requestGetVideoRencent(mAccountDataManager.getAccountID(),new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();

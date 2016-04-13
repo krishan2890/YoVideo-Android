@@ -6,6 +6,7 @@ import android.widget.TextView;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.adapter.GridVideoAdapter;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.helper.AppUtils;
@@ -62,7 +63,7 @@ public class WishListFragment extends BaseMainFragment implements AdapterVideoAc
             tvnError.setText(getString(R.string.msg_request_login));
             return;
         } else {
-            AppSession.getCategoryData(new APIResponseListener() {
+            /*AppSession.getCategoryData(new APIResponseListener() {
                 @Override
                 public void onError(String message) {
                     stopAnimLoading();
@@ -73,7 +74,8 @@ public class WishListFragment extends BaseMainFragment implements AdapterVideoAc
                     dataCategory = (DataCategoryJSON) results;
                     requestGetDataProduct();
                 }
-            });
+            });*/
+            requestGetDataProduct();
         }
     }
 
@@ -113,6 +115,7 @@ public class WishListFragment extends BaseMainFragment implements AdapterVideoAc
         ultimateRecyclerView.setAdapter(mAdapter);
 
         startAnimLoading();
+
     }
 
     @Override
@@ -135,7 +138,7 @@ public class WishListFragment extends BaseMainFragment implements AdapterVideoAc
     }
 
     void requestGetDataProduct() {
-        WishListManager.getInstance().getWishListDetail(new APIResponseListener() {
+        RPC.requestGetVideoInWihsLish(mAccountDataManager.getAccountID(),new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();

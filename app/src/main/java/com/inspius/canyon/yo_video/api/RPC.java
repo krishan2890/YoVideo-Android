@@ -18,6 +18,7 @@ import com.inspius.canyon.yo_video.model.CustomerModel;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.NotificationJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
+import com.paypal.android.sdk.fi;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -208,7 +209,6 @@ public class RPC {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("user_id",String.valueOf(customerModel.id) );
-                params.put("username","dung" );
                 params.put("email",customerModel.email );
                 params.put("firstname",customerModel.firstName );
                 params.put("lastname",customerModel.lastName);
@@ -344,7 +344,6 @@ public class RPC {
     /**
      * Get Videos at Home
      *
-     * @param isGetDataCache
      * @param listener
      */
     public static void requestGetVideosHome( final APIResponseListener listener) {
@@ -445,6 +444,7 @@ public class RPC {
 
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
+
     public static void updateVideoStatic(final int videoID,final String field,final int userID,final APIResponseListener listener){
         final String tag = AppConstant.RELATIVE_URL_UPDATE_STATIC;
         final String url = getAbsoluteUrlAuthen(tag);
@@ -477,7 +477,6 @@ public class RPC {
                 params.put("video_id", String.valueOf(videoID));
                 params.put("field", field);
                 params.put("user_id", String.valueOf(userID));
-                //  params.put("confirmpass", confirmPass);
                 return params;
             }
         };
@@ -485,7 +484,7 @@ public class RPC {
     }
 //AddVideotoWishlish
 
-    public  static void requestGetVideoToWishLish(final int userID,final int videoID,final APIResponseListener listener){
+    public  static void requestAddVideoToWishLish(final int userID,final int videoID,final APIResponseListener listener){
         final String tag = AppConstant.RELATIVE_URL_ADD_WISHLISH;
         final String url = getAbsoluteUrlAuthen(tag);
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -516,8 +515,6 @@ public class RPC {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("user_id", String.valueOf(userID));
                 params.put("video_id", String.valueOf(videoID));
-
-                //  params.put("confirmpass", confirmPass);
                 return params;
             }
         };
@@ -610,8 +607,8 @@ public class RPC {
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-    public static void requestGetVideoInWihsLish(final int userID,final APIResponseListener listener){
-        final String tag = AppConstant.RELATIVE_URL_WISHLISH+userID;
+    public static void requestGetVideoInWihsLish(final int userID,final APIResponseListener listener){//Done
+        final String tag = String.format(AppConstant.RELATIVE_URL_WISHLISH,userID);
         final String url = getAbsoluteUrl(tag);
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
@@ -654,7 +651,7 @@ public class RPC {
         final String tag = AppConstant.RELATIVE_URL_SEARCH_BY_KEYWORD;
         final String url = getAbsoluteUrl(tag);
 
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -683,6 +680,46 @@ public class RPC {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("keyword", keyWord);
+                return params;
+            }
+        };
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
+    }
+
+
+    public static void requestGetVideoRencent(final int userID,final APIResponseListener listener){//Done
+        final String tag = String.format(AppConstant.RELATIVE_URL_GET_RENCENT_VIDEO , userID);
+        final String url = getAbsoluteUrl(tag);
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    boolean checkData = parseResponseData(response, listener);
+                    if (checkData) {
+                        Type type = new TypeToken<List<VideoJSON>>() {
+                        }.getType();
+                        List<VideoJSON> listData = new Gson().fromJson(response.getString("content"), type);
+
+                        listener.onSuccess(listData);
+                    }
+                    Log.d("question", String.valueOf(response));
+
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("user_id", String.valueOf(userID));
                 return params;
             }
         };
