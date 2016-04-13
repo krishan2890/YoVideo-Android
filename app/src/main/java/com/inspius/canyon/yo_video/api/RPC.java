@@ -16,6 +16,7 @@ import com.inspius.canyon.yo_video.app.GlobalApplication;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.model.CustomerModel;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
+import com.inspius.canyon.yo_video.model.DataHomeJSON;
 import com.inspius.canyon.yo_video.model.NotificationJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
 
@@ -201,7 +202,7 @@ public class RPC {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         parseError(error, listener);
-                    }
+                  }
                 }) {
 
             @Override
@@ -222,7 +223,44 @@ public class RPC {
         };
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
+    public static void requestChangeAvatar(final int accountID,final String avatar, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_CHANGEAVATAR;
+        final String url = getAbsoluteUrlAuthen(tag);
 
+        StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String strResponse) {
+                try {
+                    JSONObject response = new JSONObject(strResponse);
+
+                    boolean checkData = parseResponseData(response, listener);
+
+                    if (checkData) {
+                        CustomerModel accountInfo = new Gson().fromJson(response.getString("content"), CustomerModel.class);
+                        listener.onSuccess(accountInfo);
+                    }
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("user_id",String.valueOf(accountID) );
+                params.put("avatar",avatar );
+                return params;
+            }
+        };
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
+    }
     public static void requestChangePass(final int accountID,final String currentPass,final String newPass, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_CHANGEPASS;
         final String url = getAbsoluteUrlAuthen(tag);
@@ -344,7 +382,7 @@ public class RPC {
     /**
      * Get Videos at Home
      *
-     * @param isGetDataCache
+     *
      * @param listener
      */
     public static void requestGetVideosHome( final APIResponseListener listener) {
@@ -357,11 +395,10 @@ public class RPC {
                 try {
                     boolean checkData = parseResponseData(response, listener);
                     if (checkData) {
-                        Type type = new TypeToken<List<VideoJSON>>() {
-                        }.getType();
-                        List<VideoJSON> listData = new Gson().fromJson(response.getString("content"), type);
 
-                        listener.onSuccess(listData);
+                        DataHomeJSON data = new Gson().fromJson(response.getString("content"), DataHomeJSON.class);
+
+                        listener.onSuccess(data);
                     }
                     Log.d("question", String.valueOf(response));
 

@@ -12,12 +12,9 @@ import android.widget.TextView;
 import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.activity.MainActivity;
-import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseFragment;
-import com.inspius.canyon.yo_video.model.DataCategoryJSON;
-import com.inspius.canyon.yo_video.service.AppSession;
 
 import butterknife.Bind;
 
@@ -81,7 +78,8 @@ public class SplashFragment extends BaseFragment {
                         @Override
                         public void run() {
                             imvLogo.setVisibility(View.GONE);
-                            getDataHome();
+                       //     getDataHome();
+                            onLoadDataFinish();
                         }
                     });
                 } catch (InterruptedException e) {
@@ -119,107 +117,107 @@ public class SplashFragment extends BaseFragment {
         });
     }
 
-    void getDataHome() {
-        if (getActivity() == null || isDestroy)
-            return;
-
-        currentLoad = 0;
-        startLoading();
-        RPC.requestGetVideosHome( new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                if (getActivity() == null || isDestroy)
-                    return;
-
-                animatedCircleLoadingView.stopFailure();
-                onLoadDataFinish();
-            }
-
-            @Override
-            public void onSuccess(Object results) {
-                if (getActivity() == null || isDestroy)
-                    return;
-
-                currentLoad++;
-                final int totalPercent = 100 * currentLoad / sizeLoad;
-                if (currentPercent < totalPercent) {
-                    Runnable runnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                for (int i = currentPercent; i <= totalPercent; i++) {
-                                    Thread.sleep(duration);
-
-                                    if (getActivity() == null || isDestroy)
-                                        return;
-
-                                    changePercent(i);
-                                    if (i == totalPercent) {
-                                        currentPercent = totalPercent;
-                                        getCategories();
-                                    }
-                                }
-
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    };
-                    new Thread(runnable).start();
-                }
-            }
-        });
-    }
-
-    void getCategories() {
-        if (getActivity() == null || isDestroy)
-            return;
-
-        RPC.requestGetCategories( new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                if (getActivity() == null || isDestroy)
-                    return;
-
-                animatedCircleLoadingView.stopFailure();
-                onLoadDataFinish();
-            }
-
-            @Override
-            public void onSuccess(Object results) {
-                if (getActivity() == null || isDestroy)
-                    return;
-
-                AppSession.updateDataCategoryJSON((DataCategoryJSON) results);
-                currentLoad++;
-                final int totalPercent = 100 * currentLoad / sizeLoad;
-                if (currentPercent < totalPercent) {
-                    Runnable runnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                for (int i = currentPercent; i <= totalPercent; i++) {
-                                    Thread.sleep(duration);
-                                    if (getActivity() == null || isDestroy)
-                                        return;
-
-                                    changePercent(i);
-                                    if (i == totalPercent) {
-                                        currentPercent = totalPercent;
-                                        onLoadDataFinish();
-                                    }
-                                }
-
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    };
-                    new Thread(runnable).start();
-                }
-            }
-        });
-    }
+//    void getDataHome() {
+//        if (getActivity() == null || isDestroy)
+//            return;
+//
+//        currentLoad = 0;
+//        startLoading();
+//        RPC.requestGetVideosHome( new APIResponseListener() {
+//            @Override
+//            public void onError(String message) {
+//                if (getActivity() == null || isDestroy)
+//                    return;
+//
+//                animatedCircleLoadingView.stopFailure();
+//                onLoadDataFinish();
+//            }
+//
+//            @Override
+//            public void onSuccess(Object results) {
+//                if (getActivity() == null || isDestroy)
+//                    return;
+//
+//                currentLoad++;
+//                final int totalPercent = 100 * currentLoad / sizeLoad;
+//                if (currentPercent < totalPercent) {
+//                    Runnable runnable = new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            try {
+//                                for (int i = currentPercent; i <= totalPercent; i++) {
+//                                    Thread.sleep(duration);
+//
+//                                    if (getActivity() == null || isDestroy)
+//                                        return;
+//
+//                                    changePercent(i);
+//                                    if (i == totalPercent) {
+//                                        currentPercent = totalPercent;
+//                                        getCategories();
+//                                    }
+//                                }
+//
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    };
+//                    new Thread(runnable).start();
+//                }
+//            }
+//        });
+//    }
+//
+//    void getCategories() {
+//        if (getActivity() == null || isDestroy)
+//            return;
+//
+//        RPC.requestGetCategories( new APIResponseListener() {
+//            @Override
+//            public void onError(String message) {
+//                if (getActivity() == null || isDestroy)
+//                    return;
+//
+//                animatedCircleLoadingView.stopFailure();
+//                onLoadDataFinish();
+//            }
+//
+//            @Override
+//            public void onSuccess(Object results) {
+//                if (getActivity() == null || isDestroy)
+//                    return;
+//
+//                AppSession.updateDataCategoryJSON((DataCategoryJSON) results);
+//                currentLoad++;
+//                final int totalPercent = 100 * currentLoad / sizeLoad;
+//                if (currentPercent < totalPercent) {
+//                    Runnable runnable = new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            try {
+//                                for (int i = currentPercent; i <= totalPercent; i++) {
+//                                    Thread.sleep(duration);
+//                                    if (getActivity() == null || isDestroy)
+//                                        return;
+//
+//                                    changePercent(i);
+//                                    if (i == totalPercent) {
+//                                        currentPercent = totalPercent;
+//                                        onLoadDataFinish();
+//                                    }
+//                                }
+//
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    };
+//                    new Thread(runnable).start();
+//                }
+//            }
+//        });
+//    }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     void onLoadDataFinish() {

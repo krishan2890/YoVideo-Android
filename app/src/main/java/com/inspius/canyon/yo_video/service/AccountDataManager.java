@@ -259,7 +259,22 @@ public class AccountDataManager {
             }
         });
     }
+    public void callChangeAvatar(String avatar, final AccountDataListener listener) {
+       RPC.requestChangeAvatar(getAccountID(), avatar, new APIResponseListener() {
+           @Override
+           public void onError(String message) {
+               listener.onError(message);
+           }
 
+           @Override
+           public void onSuccess(Object results) {
+                CustomerModel customerModel = (CustomerModel) (results);
+               listener.onSuccess(customerModel);
+           }
+       });
+
+
+    }
     private void parseLoginSystemSuccess(String email, String password, Object results, AccountDataListener listener) {
         updateLoginSystem(email, password);
         customerModel = (CustomerModel) (results);
