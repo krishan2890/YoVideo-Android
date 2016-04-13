@@ -209,7 +209,6 @@ public class RPC {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("user_id",String.valueOf(customerModel.id) );
-                params.put("username","dung" );
                 params.put("email",customerModel.email );
                 params.put("firstname",customerModel.firstName );
                 params.put("lastname",customerModel.lastName);
@@ -648,7 +647,7 @@ public class RPC {
     }
 
     public static void requestGetVideoInWihsLish(final int userID,final APIResponseListener listener){
-        final String tag = AppConstant.RELATIVE_URL_WISHLISH+userID;
+        final String tag = String.format(AppConstant.RELATIVE_URL_WISHLISH,userID);
         final String url = getAbsoluteUrl(tag);
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
@@ -732,6 +731,45 @@ public class RPC {
      * @param listId
      * @param listener
      */
+
+    public static  void requestGetVideoRencent(final int userID,final APIResponseListener listener){
+        final String tag = String.format(AppConstant.RELATIVE_URL_RENCENT,userID);
+        final String url = getAbsoluteUrl(tag);
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    boolean checkData = parseResponseData(response, listener);
+                    if (checkData) {
+                        Type type = new TypeToken<List<VideoJSON>>() {
+                        }.getType();
+                        List<VideoJSON> listData = new Gson().fromJson(response.getString("content"), type);
+
+                        listener.onSuccess(listData);
+                    }
+                    Log.d("question", String.valueOf(response));
+
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("user_id", String.valueOf(userID));
+                return params;
+            }
+        };
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
+    }
     public static void requestGetRecentVideoInfo(final List<Long> listId, final APIResponseListener listener) {
         requestGetVideos(new APIResponseListener() {
             @Override
