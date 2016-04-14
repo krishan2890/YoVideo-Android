@@ -481,7 +481,7 @@ public class RPC {
 
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
-    public static void updateVideoStatic(final int videoID,final String field,final int userID,final APIResponseListener listener){
+    public static void updateVideoStatic(final int videoID, final String field, final int userID,final APIResponseListener listener){
         final String tag = AppConstant.RELATIVE_URL_UPDATE_STATIC;
         final String url = getAbsoluteUrlAuthen(tag);
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -690,7 +690,7 @@ public class RPC {
         final String tag = AppConstant.RELATIVE_URL_SEARCH_BY_KEYWORD;
         final String url = getAbsoluteUrl(tag);
 
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -718,7 +718,7 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("keyword", keyWord);
+                params.put("key_word", keyWord);
                 return params;
             }
         };
@@ -728,7 +728,6 @@ public class RPC {
     /**
      * Videos Recent
      *
-     * @param listId
      * @param listener
      */
 

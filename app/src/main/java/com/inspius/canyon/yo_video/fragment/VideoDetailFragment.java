@@ -27,6 +27,8 @@ import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.activity.MainActivity;
 import com.inspius.canyon.yo_video.activity.PlayerUploadActivity;
 import com.inspius.canyon.yo_video.activity.PlayerYoutubeActivity;
+import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
@@ -267,6 +269,17 @@ public class VideoDetailFragment extends BaseMainFragment {
 
         if (isAutoPlay)
             doPlayVideo();
+        RPC.updateVideoStatic(videoModel.getVideoId(), "view", mAccountDataManager.getAccountID(), new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                Logger.d("fail","fail");
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                Logger.d("success","success");
+            }
+        });
     }
 
     @Override

@@ -177,15 +177,15 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         });
 
         // Data Search
-        AppSession.getCategoryData(new APIResponseListener() {
+        RPC.requestGetCategories(new APIResponseListener() {
             @Override
             public void onError(String message) {
-                stopAnimLoading();
+
             }
 
             @Override
             public void onSuccess(Object results) {
-                dataCategory = (DataCategoryJSON) results;
+                dataCategory= (DataCategoryJSON) results;
             }
         });
     }
