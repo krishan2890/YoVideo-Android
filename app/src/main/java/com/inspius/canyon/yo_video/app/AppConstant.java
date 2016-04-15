@@ -5,7 +5,10 @@ package com.inspius.canyon.yo_video.app;
  */
 public class AppConstant {
     public static int RESPONSE_OK = 1;
+    public static int RESULT_OK = -1;
+    public static int PICK_IMAGE_REQUEST = 1;
     public static int RESPONSE_CODE_SUCCESS = 1;
+    public static int REQUEST_ALBUM_PIC = 1;
 
     /**
      * Static Page
@@ -29,7 +32,8 @@ public class AppConstant {
     public static final String RELATIVE_URL_SEARCH_BY_KEYWORD = "api/getListVideoByKeyword";
     public static final String RELATIVE_URL_CHANGEPROFILE = "api/change_profile";
     public static final String RELATIVE_URL_CHANGEAVATAR = "api/change_avatar";
-    public static final String RELATIVE_URL_DATA_HOME = "home.json";
+    public static final String RELATIVE_URL_DATA_HOME = "api/getListVideoForHomepage";
+  //  public static final String RELATIVE_URL_DATA_HOME = "home.json";
     //public static final String RELATIVE_URL_CATEGORIES = "categories.json";
     public static final String RELATIVE_URL_CATEGORIES = "api/categories";
     public static final String RELATIVE_URL_LIST_VIDEOS = "list-video.json";

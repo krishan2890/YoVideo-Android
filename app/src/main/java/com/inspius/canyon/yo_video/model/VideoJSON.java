@@ -19,7 +19,7 @@ public class VideoJSON implements Serializable {
 
     public String series;
     public String author;
-    public String type;
+
     @SerializedName("url_image")
     public String urlImage;
 

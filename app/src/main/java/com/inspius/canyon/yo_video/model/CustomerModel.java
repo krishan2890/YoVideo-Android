@@ -2,8 +2,6 @@ package com.inspius.canyon.yo_video.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Random;
-
 /**
  * Created by Billy on 11/23/15.
  */
@@ -29,7 +27,4 @@ public class CustomerModel {
     public int vip;
 
     public boolean isLoginAsFacebook;
-
-
-
 }

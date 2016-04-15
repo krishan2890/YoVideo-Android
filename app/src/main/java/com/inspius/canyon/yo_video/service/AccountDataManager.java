@@ -1,6 +1,11 @@
 package com.inspius.canyon.yo_video.service;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 
 import com.inspius.canyon.yo_video.api.APIResponseListener;
@@ -8,15 +13,18 @@ import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.app.AppEnum;
 import com.inspius.canyon.yo_video.helper.AppUtils;
+import com.inspius.canyon.yo_video.helper.ImageUtil;
 import com.inspius.canyon.yo_video.helper.SharedPrefUtils;
 import com.inspius.canyon.yo_video.listener.AccountDataListener;
 import com.inspius.canyon.yo_video.model.CustomerModel;
+import com.inspius.canyon.yo_video.model.ImageObj;
 import com.sromku.simple.fb.SimpleFacebook;
 import com.sromku.simple.fb.entities.Profile;
 import com.sromku.simple.fb.listeners.OnLogoutListener;
 import com.sromku.simple.fb.listeners.OnProfileListener;
 
 import java.util.Random;
+
 
 /**
  * Created by Billy on 11/9/15.
@@ -215,8 +223,8 @@ public class AccountDataManager {
         SimpleFacebook.getInstance(activity).logout(onLogoutListener);
     }
 
-    public void callNewAccount(final String username,final String email, final String password, String passwordConfirmation, final AccountDataListener listener) {
-        RPC.requestRegister(username,email, password, passwordConfirmation, new APIResponseListener() {
+    public void callNewAccount(final String username, final String email, final String password, String passwordConfirmation, final AccountDataListener listener) {
+        RPC.requestRegister(username, email, password, passwordConfirmation, new APIResponseListener() {
             @Override
             public void onError(String message) {
                 listener.onError(message);
@@ -260,22 +268,61 @@ public class AccountDataManager {
             }
         });
     }
-    public void callChangeAvatar(String avatar, final AccountDataListener listener) {
-       RPC.requestChangeAvatar(getAccountID(), avatar, new APIResponseListener() {
-           @Override
-           public void onError(String message) {
-               listener.onError(message);
-           }
 
-           @Override
-           public void onSuccess(Object results) {
-                CustomerModel customerModel = (CustomerModel) (results);
-               listener.onSuccess(customerModel);
-           }
-       });
+    //    public void callChangeAvatar(String avatar, final AccountDataListener listener) {
+//       RPC.requestChangeAvatar(getAccountID(), avatar, new APIResponseListener() {
+//           @Override
+//           public void onError(String message) {
+//               listener.onError(message);
+//           }
+//
+//           @Override
+//           public void onSuccess(Object results) {
+//                CustomerModel customerModel = (CustomerModel) (results);
+//               listener.onSuccess(customerModel);
+//           }
+//       });
+//}
+    public void callUpdateAvatar(final Context context, final Intent data, final APIResponseListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ImageObj imageObj = ImageUtil.getByteImageAvatar(context, data.getData());
+                    Message msgObj = handler.obtainMessage();
+                    Bundle b = new Bundle();
+                    b.putSerializable("imageObj", imageObj);
+                    msgObj.setData(b);
+                    handler.sendMessage(msgObj);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    listener.onError(e.getMessage());
+                }
+            }
 
+            private final Handler handler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    ImageObj imageObj = (ImageObj) msg.getData().getSerializable("imageObj");
 
+                    RPC.requestUpdateAvatar(getAccountID(), imageObj, new APIResponseListener() {
+                        @Override
+                        public void onError(String message) {
+                            listener.onError(message);
+                        }
+
+                        @Override
+                        public void onSuccess(Object results) {
+                            CustomerModel customerModel = (CustomerModel) (results);
+                            listener.onSuccess(customerModel);
+                        }
+
+                    });
+                }
+            };
+        }).start();
     }
+
     private void parseLoginSystemSuccess(String email, String password, Object results, AccountDataListener listener) {
         updateLoginSystem(email, password);
         customerModel = (CustomerModel) (results);

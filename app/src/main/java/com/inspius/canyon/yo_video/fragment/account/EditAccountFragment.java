@@ -142,17 +142,7 @@ public class EditAccountFragment extends BaseMainFragment {
             }
         });
 
-        mAccountDataManager.callChangeAvatar(customerUpdate.avatar, new AccountDataListener() {
-            @Override
-            public void onError(String message) {
 
-            }
-
-            @Override
-            public void onSuccess(CustomerModel results) {
-
-            }
-        });
     }
 
     boolean checkField(CustomerModel customerInfo) {

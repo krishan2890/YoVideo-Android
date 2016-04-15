@@ -1,5 +1,6 @@
 package com.inspius.canyon.yo_video.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -11,9 +12,11 @@ import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.adapter.ListSlideMenuAdapter;
+import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.fragment.account.AccountOptionFragment;
+import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.helper.XMLParser;
 import com.inspius.canyon.yo_video.listener.AccountDataListener;
@@ -297,8 +300,36 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
         mActivityInterface.clearBackStackFragment();
         mHostActivityInterface.addFragment(AccountOptionFragment.newInstance(), true);
     }
+    @OnClick(R.id.imvAvatar)
+    void doChangeAvatar(){
+        Intent intent = IntentUtils.pickImage();
+        startActivityForResult(intent, AppConstant.REQUEST_ALBUM_PIC);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        Logger.d(TAG, "onActivityResult = " + String.valueOf(resultCode));
 
+        if (requestCode == AppConstant.REQUEST_ALBUM_PIC) {
+            if (resultCode == Activity.RESULT_OK) {
+                mActivityInterface.showLoading("Updating avatar...");
+                mAccountDataManager.callUpdateAvatar(getContext(), data, new APIResponseListener() {
+                    @Override
+                    public void onError( String message) {
+                        mActivityInterface.hideLoading();
+                        DialogUtil.showMessageBox(getContext(), message);
+                    }
+
+                    @Override
+                    public void onSuccess( Object results) {
+                        mActivityInterface.hideLoading();
+                        ImageLoader.getInstance().displayImage(mAccountDataManager.getCustomerModel().avatar, imvAvatar, options, animateFirstListener);
+                    }
+                });
+            }
+        }
+    }
     @Override
     public void onNotificationNotReadChanged(int number) {
         tvnNumberNotification.setText(String.valueOf(number));

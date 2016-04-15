@@ -40,7 +40,7 @@ public class VideoModel implements Serializable {
         this.socialLink = videoJSON.urlSocial;
 
         this.videoUrl = videoJSON.videoLinkJSON.url;
-        this.videoType = videoJSON.type;
+        this.videoType = videoJSON.videoLinkJSON.type;
 //        if (!TextUtils.isEmpty(videoJSON.videoLinkJSON.type))
 //            videoType = AppEnum.VIDEO_TYPE.valueOf(videoJSON.videoLinkJSON.type);
 

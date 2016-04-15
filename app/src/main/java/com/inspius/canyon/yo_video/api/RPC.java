@@ -17,12 +17,14 @@ import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.model.CustomerModel;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.DataHomeJSON;
+import com.inspius.canyon.yo_video.model.ImageObj;
 import com.inspius.canyon.yo_video.model.NotificationJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +39,7 @@ public class RPC {
 
     /* ======================================= CUSTOMER =======================================*/
 
-    public static void requestAuthentic(final String username,final String password, final APIResponseListener listener) {
+    public static void requestAuthentic(final String username, final String password, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_LOGIN;
         final String url = getAbsoluteUrl(tag);
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -112,7 +114,7 @@ public class RPC {
 
                     if (checkData) {
                         listener.onSuccess(response.getString("message"));
-                   }
+                    }
                 } catch (JSONException e) {
                     listener.onError("Error data");
                 }
@@ -135,7 +137,7 @@ public class RPC {
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-    public static void requestRegister(final String username, final String email,final String password,final String passwordVerify, final APIResponseListener listener) {
+    public static void requestRegister(final String username, final String email, final String password, final String passwordVerify, final APIResponseListener listener) {
         //requestGetCustomer(listener);
         final String tag = AppConstant.RELATIVE_URL_REGISTER;
         final String url = getAbsoluteUrlAuthen(tag);
@@ -167,10 +169,10 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username",username);
+                params.put("username", username);
                 params.put("email", email);
                 params.put("password", password);
-               // params.put("confirmation", passwordVerify);
+                // params.put("confirmation", passwordVerify);
                 return params;
             }
         };
@@ -202,27 +204,72 @@ public class RPC {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         parseError(error, listener);
-                  }
+                    }
                 }) {
 
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id",String.valueOf(customerModel.id) );
-                params.put("email",customerModel.email );
-                params.put("firstname",customerModel.firstName );
-                params.put("lastname",customerModel.lastName);
-                params.put("phonenumber",customerModel.phone );
-                params.put("address",customerModel.address );
-                params.put("city",customerModel.city );
-                params.put("country",customerModel.country );
-                params.put("zip",customerModel.zip );
+                params.put("user_id", String.valueOf(customerModel.id));
+                params.put("email", customerModel.email);
+                params.put("firstname", customerModel.firstName);
+                params.put("lastname", customerModel.lastName);
+                params.put("phonenumber", customerModel.phone);
+                params.put("address", customerModel.address);
+                params.put("city", customerModel.city);
+                params.put("country", customerModel.country);
+                params.put("zip", customerModel.zip);
                 return params;
             }
         };
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
-    public static void requestChangeAvatar(final int accountID,final String avatar, final APIResponseListener listener) {
+
+//    public static void requestChangeAvatar(final int accountID, final String avatar, final APIResponseListener listener) {
+//        final String tag = AppConstant.RELATIVE_URL_CHANGEAVATAR;
+//        final String url = getAbsoluteUrlAuthen(tag);
+//
+//        StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String strResponse) {
+//                try {
+//                    JSONObject response = new JSONObject(strResponse);
+//
+//                    boolean checkData = parseResponseData(response, listener);
+//
+//                    if (checkData) {
+//                        CustomerModel accountInfo = new Gson().fromJson(response.getString("content"), CustomerModel.class);
+//                        listener.onSuccess(accountInfo);
+//                    }
+//                } catch (JSONException e) {
+//                    listener.onError("Error data");
+//                }
+//            }
+//        },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        parseError(error, listener);
+//                    }
+//                }) {
+//
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                Map<String, String> params = new HashMap<String, String>();
+//                params.put("user_id", String.valueOf(accountID));
+//                params.put("avatar", avatar);
+//                return params;
+//            }
+//        };
+//        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
+//    }
+
+    /**
+     * @param accountID
+     * @param imagePath
+     * @param listener
+     */
+    public static void requestUpdateAvatar(final int accountID, final ImageObj imagePath, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_CHANGEAVATAR;
         final String url = getAbsoluteUrlAuthen(tag);
 
@@ -248,19 +295,22 @@ public class RPC {
                     public void onErrorResponse(VolleyError error) {
                         parseError(error, listener);
                     }
-                }) {
-
+                }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
+
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id",String.valueOf(accountID) );
-                params.put("avatar",avatar );
+                params.put("user_id", String.valueOf(accountID));
+                params.put("avatar", String.valueOf(new ByteArrayInputStream(imagePath.getImgBytes())));
                 return params;
             }
         };
+
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
-    public static void requestChangePass(final int accountID,final String currentPass,final String newPass, final APIResponseListener listener) {
+
+
+    public static void requestChangePass(final int accountID, final String currentPass, final String newPass, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_CHANGEPASS;
         final String url = getAbsoluteUrlAuthen(tag);
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -268,9 +318,7 @@ public class RPC {
             public void onResponse(String strResponse) {
                 try {
                     JSONObject response = new JSONObject(strResponse);
-
                     boolean checkData = parseResponseData(response, listener);
-
                     if (checkData) {
                         listener.onSuccess(response.getString("message"));
                     }
@@ -305,8 +353,9 @@ public class RPC {
 
     /**
      * Get categories
+     * <p/>
+     * //  * @param isGetDataCache
      *
-   //  * @param isGetDataCache
      * @param listener
      */
    /* public static void requestGetCategories(boolean isGetDataCache, final APIResponseListener listener) {
@@ -349,18 +398,17 @@ public class RPC {
             VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
         }
     }*/
-
-    public static void requestGetCategories(final APIResponseListener listener){
-        final String tag=AppConstant.RELATIVE_URL_CATEGORIES;
-        final String url=getAbsoluteUrl(tag);
-        JsonObjectRequest jsonObjReq=new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+    public static void requestGetCategories(final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_CATEGORIES;
+        final String url = getAbsoluteUrl(tag);
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     boolean checkData = parseResponseData(response, listener);
-                    if(checkData){
+                    if (checkData) {
                         Logger.d(LOG_TAG, response.getString("content"));
-                        DataCategoryJSON data=new Gson().fromJson(response.getString("content"),DataCategoryJSON.class);
+                        DataCategoryJSON data = new Gson().fromJson(response.getString("content"), DataCategoryJSON.class);
                         listener.onSuccess(data);
                     }
                     Log.d("question", String.valueOf(response));
@@ -369,7 +417,7 @@ public class RPC {
                 }
 
             }
-        },new Response.ErrorListener() {
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 parseError(error, listener);
@@ -381,10 +429,9 @@ public class RPC {
     /**
      * Get Videos at Home
      *
-     *
      * @param listener
      */
-    public static void requestGetVideosHome( final APIResponseListener listener) {
+    public static void requestGetVideosHome(final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_DATA_HOME;
         final String url = getAbsoluteUrl(tag);
 
@@ -396,7 +443,6 @@ public class RPC {
                     if (checkData) {
 
                         DataHomeJSON data = new Gson().fromJson(response.getString("content"), DataHomeJSON.class);
-
                         listener.onSuccess(data);
                     }
                     Log.d("question", String.valueOf(response));
@@ -449,8 +495,9 @@ public class RPC {
             VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
         }*/
     }
+
     public static void requestGetVideosByCategory(int categoryId, final APIResponseListener listener) {
-        final String tag = String.format(AppConstant.RELATIVE_URL_VIDEO_CATEGORY,categoryId);
+        final String tag = String.format(AppConstant.RELATIVE_URL_VIDEO_CATEGORY, categoryId);
         final String url = getAbsoluteUrl(tag);
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
@@ -481,7 +528,8 @@ public class RPC {
 
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
-    public static void updateVideoStatic(final int videoID,final String field,final int userID,final APIResponseListener listener){
+
+    public static void updateVideoStatic(final int videoID, final String field, final int userID, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_UPDATE_STATIC;
         final String url = getAbsoluteUrlAuthen(tag);
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -521,7 +569,7 @@ public class RPC {
     }
 //AddVideotoWishlish
 
-    public  static void requestGetVideoToWishLish(final int userID,final int videoID,final APIResponseListener listener){
+    public static void requestGetVideoToWishLish(final int userID, final int videoID, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_ADD_WISHLISH;
         final String url = getAbsoluteUrlAuthen(tag);
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -646,8 +694,8 @@ public class RPC {
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-    public static void requestGetVideoInWihsLish(final int userID,final APIResponseListener listener){
-        final String tag = String.format(AppConstant.RELATIVE_URL_WISHLISH,userID);
+    public static void requestGetVideoInWihsLish(final int userID, final APIResponseListener listener) {
+        final String tag = String.format(AppConstant.RELATIVE_URL_WISHLISH, userID);
         final String url = getAbsoluteUrl(tag);
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
@@ -674,7 +722,7 @@ public class RPC {
                     public void onErrorResponse(VolleyError error) {
                         parseError(error, listener);
                     }
-                }){
+                }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -686,7 +734,7 @@ public class RPC {
     }
 
     //SearchByKeyWord
-    public static void requestSearchVideoByKeyWord(final String keyWord,final APIResponseListener listener){
+    public static void requestSearchVideoByKeyWord(final String keyWord, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_SEARCH_BY_KEYWORD;
         final String url = getAbsoluteUrl(tag);
 
@@ -714,7 +762,7 @@ public class RPC {
                     public void onErrorResponse(VolleyError error) {
                         parseError(error, listener);
                     }
-                }){
+                }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -728,12 +776,12 @@ public class RPC {
     /**
      * Videos Recent
      *
-     * @param listId
+     *
      * @param listener
      */
 
-    public static  void requestGetVideoRencent(final int userID,final APIResponseListener listener){
-        final String tag = String.format(AppConstant.RELATIVE_URL_RENCENT,userID);
+    public static void requestGetVideoRencent(final int userID, final APIResponseListener listener) {
+        final String tag = String.format(AppConstant.RELATIVE_URL_RENCENT, userID);
         final String url = getAbsoluteUrl(tag);
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
@@ -760,7 +808,7 @@ public class RPC {
                     public void onErrorResponse(VolleyError error) {
                         parseError(error, listener);
                     }
-                }){
+                }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -770,6 +818,7 @@ public class RPC {
         };
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
+
     public static void requestGetRecentVideoInfo(final List<Long> listId, final APIResponseListener listener) {
         requestGetVideos(new APIResponseListener() {
             @Override

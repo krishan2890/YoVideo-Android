@@ -91,7 +91,7 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
         }
         ultimateRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getContext()).sizeResId(R.dimen.divider_height_list_product).color(Color.TRANSPARENT).build());
 
-        ultimateRecyclerView.enableLoadmore();
+       // ultimateRecyclerView.enableLoadmore();
       //  ultimateRecyclerView.setOnLoadMoreListener(this);
 
         mAdapter = new ListVideoAdapter();
