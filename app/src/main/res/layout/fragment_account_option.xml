@@ -153,6 +153,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/menu_deposit"
                 android:textAllCaps="true"
+                android:id="@+id/tvDeposite"
                 android:textColor="@color/common_text_black_selector" />
 
         </LinearLayout>
