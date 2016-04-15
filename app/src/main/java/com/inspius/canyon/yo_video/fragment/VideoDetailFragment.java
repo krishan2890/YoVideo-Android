@@ -27,6 +27,8 @@ import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.activity.MainActivity;
 import com.inspius.canyon.yo_video.activity.PlayerUploadActivity;
 import com.inspius.canyon.yo_video.activity.PlayerYoutubeActivity;
+import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
@@ -267,6 +269,17 @@ public class VideoDetailFragment extends BaseMainFragment {
 
         if (isAutoPlay)
             doPlayVideo();
+        RPC.updateVideoStatic(videoModel.getVideoId(), "view", mAccountDataManager.getAccountID(), new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                Logger.d("fail","fail");
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                Logger.d("success","success");
+            }
+        });
     }
 
     @Override
@@ -308,6 +321,17 @@ public class VideoDetailFragment extends BaseMainFragment {
     void doShare() {
         Intent intent = IntentUtils.shareText(getString(R.string.app_name), videoModel.getSocialLink());
         startActivity(intent);
+        RPC.updateVideoStatic(mAccountDataManager.getAccountID(), "share", videoModel.getVideoId(), new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                Logger.d("fail","fail");
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                Logger.d("success","success");
+            }
+        });
     }
 
     @OnClick(R.id.imvAddToWishList)
@@ -317,13 +341,24 @@ public class VideoDetailFragment extends BaseMainFragment {
             return;
         }
 
-        boolean isExitWishList = imvAddToWishList.isSelected();
+        /*boolean isExitWishList = imvAddToWishList.isSelected();
         if (isExitWishList)
             WishListManager.getInstance().deleteVideo(wishList);
         else
             wishList = WishListManager.getInstance().addVideo(videoModel);
 
-        imvAddToWishList.setSelected(!isExitWishList);
+        imvAddToWishList.setSelected(!isExitWishList);*/
+        RPC.requestGetVideoToWishLish(mAccountDataManager.getAccountID(), videoModel.getVideoId(), new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                Logger.d("fail","fail");
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                Logger.d("success","success");
+            }
+        });
     }
 
     @OnClick(R.id.relativePlay)

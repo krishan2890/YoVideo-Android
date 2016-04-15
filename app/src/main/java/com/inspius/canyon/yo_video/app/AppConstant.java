@@ -33,7 +33,10 @@ public class AppConstant {
     public static final String RELATIVE_URL_CHANGEPROFILE = "api/change_profile";
     public static final String RELATIVE_URL_CHANGEAVATAR = "api/change_avatar";
     public static final String RELATIVE_URL_DATA_HOME = "api/getListVideoForHomepage";
+<<<<<<< HEAD
   //  public static final String RELATIVE_URL_DATA_HOME = "home.json";
+=======
+>>>>>>> 1cf2e2565b039b522149ed873d3c2e59e0442e10
     //public static final String RELATIVE_URL_CATEGORIES = "categories.json";
     public static final String RELATIVE_URL_CATEGORIES = "api/categories";
     public static final String RELATIVE_URL_LIST_VIDEOS = "list-video.json";

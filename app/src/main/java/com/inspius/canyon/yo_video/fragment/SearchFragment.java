@@ -177,15 +177,15 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         });
 
         // Data Search
-        AppSession.getCategoryData(new APIResponseListener() {
+        RPC.requestGetCategories(new APIResponseListener() {
             @Override
             public void onError(String message) {
-                stopAnimLoading();
+
             }
 
             @Override
             public void onSuccess(Object results) {
-                dataCategory = (DataCategoryJSON) results;
+                dataCategory= (DataCategoryJSON) results;
             }
         });
     }
@@ -278,26 +278,20 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         mAdapter.clear();
         pageNumber = 1;
         startAnimLoading();
-        isResponseData = false;
+        //isResponseData = false;
 
-      requestGetDataProduct();
-    }
-
-    void requestGetDataProduct() {
-        if (isResponseData)
-            return;
-
-        isResponseData = false;
-        RPC.requestSearchVideoByKeyWord(keyword, new APIResponseListener() {
+        RPC.requestSearchVideoByKeyWord(edtKeyWord.getText().toString(), new APIResponseListener() {
             @Override
             public void onError(String message) {
-                isResponseData = true;
+
+
+                //isResponseData = true;
                 stopAnimLoading();
             }
 
             @Override
             public void onSuccess(Object results) {
-                isResponseData = true;
+                // isResponseData = true;
 
                 stopAnimLoading();
 
@@ -309,6 +303,14 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
                 updateDataProduct(data);
             }
         });
+    }
+
+    void requestGetDataProduct() {
+//        if (isResponseData)
+//            return;
+
+     //   isResponseData = false;
+
     }
 
     void updateDataProduct(List<VideoJSON> data) {

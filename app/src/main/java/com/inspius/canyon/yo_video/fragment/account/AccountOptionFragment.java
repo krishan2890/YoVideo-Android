@@ -1,12 +1,15 @@
 package com.inspius.canyon.yo_video.fragment.account;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.fragment.SlideMenuFragment;
+import com.inspius.canyon.yo_video.helper.Logger;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -76,4 +79,5 @@ public class AccountOptionFragment extends BaseMainFragment {
             }
         });
     }
+
 }

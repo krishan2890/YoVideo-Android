@@ -114,7 +114,7 @@ public class VideoModel implements Serializable {
         return videoType;
     }
 
-    public long getVideoId() {
+    public int getVideoId() {
         return videoJSON.id;
     }
 }

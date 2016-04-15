@@ -169,4 +169,5 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.2.0'
 
     compile 'com.android.support:multidex:'
+    testCompile 'junit:junit:4.12'
 }

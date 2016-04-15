@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Billy on 1/5/16.
  */
 public class VideoJSON implements Serializable {
-    public long id;
+    public int id;
 
     @SerializedName("url_social")
     public String urlSocial;
@@ -42,5 +42,5 @@ public class VideoJSON implements Serializable {
     public int vipPlay;
 
     @SerializedName("another_category_ids")
-    public List<Integer> anotherCategoryId;
+    public int[] anotherCategoryId;
 }
