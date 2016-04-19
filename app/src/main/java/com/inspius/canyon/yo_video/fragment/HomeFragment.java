@@ -38,7 +38,7 @@ public class HomeFragment extends BaseMainFragment {
     AVLoadingIndicatorView avloadingIndicatorView;
 
     private FragmentPagerItemAdapter mAdapter;
-
+    int pageNumber;
     @Override
     public String getTagText() {
         return TAG;
@@ -52,6 +52,7 @@ public class HomeFragment extends BaseMainFragment {
     @Override
     public void onInitView() {
         startAnimLoading();
+
         RPC.requestGetVideosHome(new APIResponseListener() {
             @Override
             public void onError(String message) {

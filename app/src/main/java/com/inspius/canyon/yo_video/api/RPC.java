@@ -8,6 +8,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.inspius.canyon.yo_video.app.AppConfig;
@@ -20,16 +22,22 @@ import com.inspius.canyon.yo_video.model.DataHomeJSON;
 import com.inspius.canyon.yo_video.model.ImageObj;
 import com.inspius.canyon.yo_video.model.NotificationJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by it.kupi on 5/30/2015.
@@ -69,8 +77,8 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username", username);
-                params.put("password", password);
+                params.put(AppConstant.KEY_USERNAME, username);
+                params.put(AppConstant.KEY_PASSWORD, password);
                 return params;
             }
         };
@@ -130,7 +138,7 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("email", email);
+                params.put(AppConstant.KEY_EMAIL, email);
                 return params;
             }
         };
@@ -169,9 +177,9 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username", username);
-                params.put("email", email);
-                params.put("password", password);
+                params.put(AppConstant.KEY_USERNAME, username);
+                params.put(AppConstant.KEY_EMAIL, email);
+                params.put(AppConstant.KEY_PASSWORD, password);
                 // params.put("confirmation", passwordVerify);
                 return params;
             }
@@ -210,22 +218,63 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", String.valueOf(customerModel.id));
-                params.put("email", customerModel.email);
-                params.put("firstname", customerModel.firstName);
-                params.put("lastname", customerModel.lastName);
-                params.put("phonenumber", customerModel.phone);
-                params.put("address", customerModel.address);
-                params.put("city", customerModel.city);
-                params.put("country", customerModel.country);
-                params.put("zip", customerModel.zip);
+                params.put(AppConstant.KEY_USER_ID, String.valueOf(customerModel.id));
+                params.put(AppConstant.KEY_EMAIL, customerModel.email);
+                params.put(AppConstant.KEY_FIRSTNAME, customerModel.firstName);
+                params.put(AppConstant.KEY_LASTNAME, customerModel.lastName);
+                params.put(AppConstant.KEY_PHONE_NUMBER, customerModel.phone);
+                params.put(AppConstant.KEY_ADDRESS, customerModel.address);
+                params.put(AppConstant.KEY_CITY, customerModel.city);
+                params.put(AppConstant.KEY_COUNTRY, customerModel.country);
+                params.put(AppConstant.KEY_ZIP, customerModel.zip);
                 return params;
             }
         };
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-//    public static void requestChangeAvatar(final int accountID, final String avatar, final APIResponseListener listener) {
+    /**
+     * @param accountID
+     * @param imagePath
+     * @param listener
+     */
+    public static void requestUpdateAvatar(int accountID, ImageObj imagePath, final APIResponseListener listener) {
+        RequestParams params = new RequestParams();
+        params.put(AppConstant.KEY_USER_ID, accountID);
+        params.put(AppConstant.KEY_AVATAR, new ByteArrayInputStream(imagePath.getImgBytes()),imagePath.getName());
+        AppRestClient.post(AppConstant.RELATIVE_URL_CHANGEAVATAR, params, new BaseJsonHttpResponseHandler<String>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
+                try {
+                    if (parseResponseData1(strResponse, listener)) {
+                        JSONObject response = new JSONObject(strResponse);
+                        CustomerModel customerModel = new ObjectMapper().readValues(new JsonFactory().createParser(response.getString("content")), CustomerModel.class).next();
+                        listener.onSuccess(customerModel);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    listener.onError("Error Parse Data");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, String errorResponse) {
+                parseError1(statusCode, headers, throwable, rawJsonData, errorResponse, listener);
+            }
+
+            @Override
+            protected String parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return rawJsonData;
+            }
+        });
+    }
+
+//    /**
+//     * @param accountID
+//     * @param imagePath
+//     * @param listener
+//     */
+//    public static void requestUpdateAvatar(final int accountID, final ImageObj imagePath, final APIResponseListener listener) {
 //        final String tag = AppConstant.RELATIVE_URL_CHANGEAVATAR;
 //        final String url = getAbsoluteUrlAuthen(tag);
 //
@@ -252,62 +301,18 @@ public class RPC {
 //                        parseError(error, listener);
 //                    }
 //                }) {
-//
 //            @Override
 //            protected Map<String, String> getParams() throws AuthFailureError {
+//
 //                Map<String, String> params = new HashMap<String, String>();
 //                params.put("user_id", String.valueOf(accountID));
-//                params.put("avatar", avatar);
+//                params.put("avatar", imagePath.getImgStr());
 //                return params;
 //            }
 //        };
+//
 //        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
 //    }
-
-    /**
-     * @param accountID
-     * @param imagePath
-     * @param listener
-     */
-    public static void requestUpdateAvatar(final int accountID, final ImageObj imagePath, final APIResponseListener listener) {
-        final String tag = AppConstant.RELATIVE_URL_CHANGEAVATAR;
-        final String url = getAbsoluteUrlAuthen(tag);
-
-        StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String strResponse) {
-                try {
-                    JSONObject response = new JSONObject(strResponse);
-
-                    boolean checkData = parseResponseData(response, listener);
-
-                    if (checkData) {
-                        CustomerModel accountInfo = new Gson().fromJson(response.getString("content"), CustomerModel.class);
-                        listener.onSuccess(accountInfo);
-                    }
-                } catch (JSONException e) {
-                    listener.onError("Error data");
-                }
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        parseError(error, listener);
-                    }
-                }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", String.valueOf(accountID));
-                params.put("avatar", String.valueOf(new ByteArrayInputStream(imagePath.getImgBytes())));
-                return params;
-            }
-        };
-
-        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
-    }
 
 
     public static void requestChangePass(final int accountID, final String currentPass, final String newPass, final APIResponseListener listener) {
@@ -337,9 +342,9 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", String.valueOf(accountID));
-                params.put("old_password", currentPass);
-                params.put("new_password", newPass);
+                params.put(AppConstant.KEY_USER_ID, String.valueOf(accountID));
+                params.put(AppConstant.KEY_OLD_PASS, currentPass);
+                params.put(AppConstant.KEY_NEW_PASS, newPass);
                 //  params.put("confirmpass", confirmPass);
                 return params;
             }
@@ -432,7 +437,7 @@ public class RPC {
      * @param listener
      */
     public static void requestGetVideosHome(final APIResponseListener listener) {
-        final String tag = AppConstant.RELATIVE_URL_DATA_HOME;
+        final String tag = String.format(AppConstant.RELATIVE_URL_DATA_HOME);
         final String url = getAbsoluteUrl(tag);
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
@@ -558,9 +563,9 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("video_id", String.valueOf(videoID));
-                params.put("field", field);
-                params.put("user_id", String.valueOf(userID));
+                params.put(AppConstant.KEY_VIDEO_ID, String.valueOf(videoID));
+                params.put(AppConstant.KEY_FIELD, field);
+                params.put(AppConstant.KEY_USER_ID, String.valueOf(userID));
                 //  params.put("confirmpass", confirmPass);
                 return params;
             }
@@ -598,8 +603,8 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", String.valueOf(userID));
-                params.put("video_id", String.valueOf(videoID));
+                params.put(AppConstant.KEY_USER_ID, String.valueOf(userID));
+                params.put(AppConstant.KEY_VIDEO_ID, String.valueOf(videoID));
 
                 //  params.put("confirmpass", confirmPass);
                 return params;
@@ -726,7 +731,7 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", String.valueOf(userID));
+                params.put(AppConstant.KEY_USER_ID, String.valueOf(userID));
                 return params;
             }
         };
@@ -738,10 +743,11 @@ public class RPC {
         final String tag = AppConstant.RELATIVE_URL_SEARCH_BY_KEYWORD;
         final String url = getAbsoluteUrl(tag);
 
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+        StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(String strResponse) {
                 try {
+                    JSONObject response = new JSONObject(strResponse);
                     boolean checkData = parseResponseData(response, listener);
                     if (checkData) {
                         Type type = new TypeToken<List<VideoJSON>>() {
@@ -766,7 +772,7 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("keyword", keyWord);
+                params.put(AppConstant.KEY_KEYWORD, keyWord);
                 return params;
             }
         };
@@ -775,7 +781,6 @@ public class RPC {
 
     /**
      * Videos Recent
-     *
      *
      * @param listener
      */
@@ -812,7 +817,7 @@ public class RPC {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", String.valueOf(userID));
+                params.put(AppConstant.KEY_USER_ID, String.valueOf(userID));
                 return params;
             }
         };
@@ -1011,6 +1016,53 @@ public class RPC {
         listener.onError(msg);
     }
 
+    private static void parseError1(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, String errorResponse, final APIResponseListener listener) {
+        listener.onError(throwable.getMessage());
+
+        debugThrowable(LOG_TAG, throwable);
+        if (errorResponse != null)
+            debugResponse(LOG_TAG, rawJsonData);
+
+
+    }
+
+    protected static final void debugThrowable(String TAG, Throwable t) {
+        if (!GlobalApplication.getInstance().isProductionEnvironment())
+            return;
+
+        if (t != null) {
+            Logger.d(TAG, "AsyncHttpClient returned error");
+            Logger.d(TAG, throwableToString(t));
+        }
+    }
+
+    /**
+     * @param t
+     * @return
+     */
+    protected static String throwableToString(Throwable t) {
+        if (t == null)
+            return null;
+
+        StringWriter sw = new StringWriter();
+        t.printStackTrace(new PrintWriter(sw));
+        return sw.toString();
+    }
+
+    /**
+     * @param TAG
+     * @param response
+     */
+    protected static final void debugResponse(String TAG, String response) {
+        if (!GlobalApplication.getInstance().isProductionEnvironment())
+            return;
+
+        if (response != null) {
+            Logger.d(TAG, "Response data:");
+            Logger.d(TAG, response);
+        }
+    }
+
     /**
      * support get cache data
      *
@@ -1021,6 +1073,16 @@ public class RPC {
 
     private static String getCacheKey(int mMethod, String mUrl) {
         return mMethod + ":" + mUrl;
+    }
+
+    private static boolean parseResponseData1(String response, final APIResponseListener listener) throws JSONException {
+        if (response == null) {
+            listener.onError("Data Parse Null");
+            return false;
+        }
+
+        Logger.d(LOG_TAG, response.toString());
+        return true;
     }
 
     private static boolean parseResponseData(JSONObject responseJSON, final APIResponseListener listener) throws JSONException {

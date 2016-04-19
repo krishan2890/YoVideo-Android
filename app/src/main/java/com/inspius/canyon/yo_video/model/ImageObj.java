@@ -8,12 +8,15 @@ import java.io.Serializable;
 /**
  * Created by Admin on 15/4/2016.
  */
+
 public class ImageObj implements Serializable {
     private String mimeType;
+    private String name;
     private Bitmap bitmap;
 
-    public ImageObj( String mimeType, Bitmap bitmap) {
+    public ImageObj(String name, String mimeType, Bitmap bitmap) {
         this.mimeType = mimeType;
+        this.name = name;
         this.bitmap = bitmap;
     }
 
@@ -76,6 +79,11 @@ public class ImageObj implements Serializable {
         this.mimeType = mimeType;
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 }
-

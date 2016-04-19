@@ -306,7 +306,7 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
         startActivityForResult(intent, AppConstant.REQUEST_ALBUM_PIC);
     }
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void  onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         Logger.d(TAG, "onActivityResult = " + String.valueOf(resultCode));
@@ -314,6 +314,16 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
         if (requestCode == AppConstant.REQUEST_ALBUM_PIC) {
             if (resultCode == Activity.RESULT_OK) {
                 mActivityInterface.showLoading("Updating avatar...");
+//                Uri filePath = data.getData();
+//                Bitmap bitmap = null;
+//                try {
+//                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), filePath);
+//                    imvAvatar.setImageBitmap(bitmap);
+//                    Logger.d("aaaa",String.valueOf(bitmap));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+
                 mAccountDataManager.callUpdateAvatar(getContext(), data, new APIResponseListener() {
                     @Override
                     public void onError( String message) {
