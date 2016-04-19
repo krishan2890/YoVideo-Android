@@ -29,7 +29,7 @@ public class AppConstant {
     public static final String RELATIVE_URL_UPDATE_STATIC = "api/updateStatistics";
     public static final String RELATIVE_URL_ADD_WISHLISH = "api/addToWishlist";
     public static final String RELATIVE_URL_WISHLISH = "api/getWishlist/%s";
-    public static final String RELATIVE_URL_RENCENT = "api/getListRecentVideo/%s";
+    public static final String RELATIVE_URL_RENCENT = "api/getListRecentVideo/%s/20";
     public static final String RELATIVE_URL_SEARCH_BY_KEYWORD = "api/getListVideoByKeyword";
     public static final String RELATIVE_URL_CHANGEPROFILE = "api/change_profile";
     public static final String RELATIVE_URL_CHANGEAVATAR = "api/change_avatar";
