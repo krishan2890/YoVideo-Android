@@ -268,6 +268,8 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     @OnClick(R.id.btnSearch)
     void doSearch() {
         keyword = edtKeyWord.getText().toString();
+
+
         if (TextUtils.isEmpty(keyword)) {
             mActivityInterface.showCroutonAlert(getString(R.string.msg_null_key_word));
             return;
