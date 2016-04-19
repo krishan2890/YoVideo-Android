@@ -18,7 +18,7 @@ public class AppConfig {
      * true : show ads
      * false : hide ads
      */
-    public static final boolean SHOW_ADS = true;
+    public static final boolean SHOW_ADS = false;
 
     /**
      * replace to your server

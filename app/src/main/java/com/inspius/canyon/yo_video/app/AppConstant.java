@@ -9,6 +9,7 @@ public class AppConstant {
     public static int PICK_IMAGE_REQUEST = 1;
     public static int RESPONSE_CODE_SUCCESS = 1;
     public static int REQUEST_ALBUM_PIC = 1;
+    public static int LIMIT_PAGE_HOMES = 10;
 
     /**
      * Static Page
@@ -78,4 +79,21 @@ public class AppConstant {
     public static final String KEY_TYPE = "type";
     public static final String KEY_ICON = "icon";
     public static final String KEY_STATUS = "status";
+    public static final String KEY_USERNAME= "username";
+    public static final String KEY_PASSWORD= "password";
+    public static final String KEY_EMAIL= "email";
+    public static final String KEY_USER_ID= "user_id";
+    public static final String KEY_FIRSTNAME= "firstname";
+    public static final String KEY_LASTNAME= "lastname";
+    public static final String KEY_PHONE_NUMBER= "phonenumber";
+    public static final String KEY_ADDRESS= "address";
+    public static final String KEY_CITY= "city";
+    public static final String KEY_COUNTRY= "country";
+    public static final String KEY_ZIP= "zip";
+    public static final String KEY_AVATAR= "avatar";
+    public static final String KEY_OLD_PASS= "old_password";
+    public static final String KEY_NEW_PASS= "new_password";
+    public static final String KEY_VIDEO_ID= "video_id";
+    public static final String KEY_FIELD= "field";
+    public static final String KEY_KEYWORD= "keyword";
 }

@@ -19,7 +19,7 @@ import java.io.IOException;
 /**
  * Created by Admin on 15/4/2016.
  */
-public class ImageUtil {
+ public class ImageUtil {
     public static ImageObj getByteImageAvatar(Context context, Uri selectedImage) {
 
         String mimeType = "image/jpeg";
@@ -38,7 +38,7 @@ public class ImageUtil {
         mimeType = getContentTypeFromFileString(file);
         String name = file.getName();
 
-        return new ImageObj(mimeType, bitmap);
+        return new ImageObj(name, mimeType, bitmap);
     }
 
     private static String getContentTypeFromFileString(File file) {
