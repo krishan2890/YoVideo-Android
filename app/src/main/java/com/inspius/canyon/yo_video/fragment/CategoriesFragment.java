@@ -109,10 +109,12 @@ public class CategoriesFragment extends BaseMainFragment implements AdapterActio
     }
 
     void startAnimLoading() {
+        if (avloadingIndicatorView != null)
         avloadingIndicatorView.setVisibility(View.VISIBLE);
     }
 
     void stopAnimLoading() {
+        if (avloadingIndicatorView != null)
         avloadingIndicatorView.setVisibility(View.GONE);
     }
 

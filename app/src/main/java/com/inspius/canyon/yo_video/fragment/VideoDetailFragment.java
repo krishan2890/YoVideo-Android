@@ -348,6 +348,7 @@ public class VideoDetailFragment extends BaseMainFragment {
             wishList = WishListManager.getInstance().addVideo(videoModel);
 
         imvAddToWishList.setSelected(!isExitWishList);*/
+        imvAddToWishList.isSelected();
         RPC.requestGetVideoToWishLish(mAccountDataManager.getAccountID(), videoModel.getVideoId(), new APIResponseListener() {
             @Override
             public void onError(String message) {

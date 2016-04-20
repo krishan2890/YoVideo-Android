@@ -84,7 +84,7 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_list_video;
+        return R.layout.fragment_recent_list_video;
     }
 
     @Override
@@ -122,10 +122,12 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
 
     void startAnimLoading() {
         tvnError.setVisibility(View.GONE);
+        if (avloadingIndicatorView != null)
         avloadingIndicatorView.setVisibility(View.VISIBLE);
     }
 
     void stopAnimLoading() {
+        if (avloadingIndicatorView != null)
         avloadingIndicatorView.setVisibility(View.GONE);
     }
 

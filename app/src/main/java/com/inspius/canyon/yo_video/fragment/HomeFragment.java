@@ -39,6 +39,7 @@ public class HomeFragment extends BaseMainFragment {
 
     private FragmentPagerItemAdapter mAdapter;
     int pageNumber;
+
     @Override
     public String getTagText() {
         return TAG;
@@ -63,18 +64,20 @@ public class HomeFragment extends BaseMainFragment {
             public void onSuccess(Object results) {
                 stopAnimLoading();
 
-                DataHomeJSON dataHome= (DataHomeJSON) results;
+                DataHomeJSON dataHome = (DataHomeJSON) results;
                 initTabLayout(dataHome);
             }
         });
     }
 
     void startAnimLoading() {
-        avloadingIndicatorView.setVisibility(View.VISIBLE);
+        if (avloadingIndicatorView != null)
+            avloadingIndicatorView.setVisibility(View.VISIBLE);
     }
 
     void stopAnimLoading() {
-        avloadingIndicatorView.setVisibility(View.GONE);
+        if (avloadingIndicatorView != null)
+            avloadingIndicatorView.setVisibility(View.GONE);
     }
 
     @Override

@@ -130,15 +130,17 @@ public class WishListFragment extends BaseMainFragment implements AdapterVideoAc
 
     void startAnimLoading() {
         tvnError.setVisibility(View.GONE);
+        if (avloadingIndicatorView != null)
         avloadingIndicatorView.setVisibility(View.VISIBLE);
     }
 
     void stopAnimLoading() {
+        if (avloadingIndicatorView != null)
         avloadingIndicatorView.setVisibility(View.GONE);
     }
 
     void requestGetDataProduct() {
-        RPC.requestGetVideoInWihsLish(mAccountDataManager.getAccountID(),new APIResponseListener() {
+        RPC.requestGetVideoInWihsLish(mAccountDataManager.getAccountID(), new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -149,7 +151,6 @@ public class WishListFragment extends BaseMainFragment implements AdapterVideoAc
             @Override
             public void onSuccess(Object results) {
                 stopAnimLoading();
-
                 List<VideoJSON> data = (List<VideoJSON>) results;
                 if (data == null)
                     return;
