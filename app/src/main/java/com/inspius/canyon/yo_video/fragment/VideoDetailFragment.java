@@ -429,7 +429,7 @@ public class VideoDetailFragment extends BaseMainFragment {
                  */
                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(videoModel.getVideoUrl()));
                 request.setTitle(videoModel.getTitle());
-                request.setDescription("File is being downloading...");
+                request.setDescription("File is being downloaded...");
                 request.allowScanningByMediaScanner();
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 

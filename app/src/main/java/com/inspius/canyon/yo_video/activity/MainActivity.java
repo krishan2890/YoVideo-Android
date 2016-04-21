@@ -28,7 +28,9 @@ import com.inspius.canyon.yo_video.fragment.SearchFragment;
 import com.inspius.canyon.yo_video.fragment.SlideMenuFragment;
 import com.inspius.canyon.yo_video.listener.AccountDataListener;
 import com.inspius.canyon.yo_video.service.AccountDataManager;
+import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.service.DownloadIntentService;
+import com.inspius.canyon.yo_video.service.IDatabaseManager;
 import com.inspius.coreapp.CoreAppActivity;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalService;
@@ -70,6 +72,7 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
     private SlideMenuFragment fragmentSlideMenu;
     private AccountDataManager accountDataManager;
     private InterstitialAd mInterstitialAd;
+    private IDatabaseManager databaseManager;
 
     @Override
     protected int getLayoutResourceId() {
@@ -101,13 +104,32 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
                 }
             });
         }
+        databaseManager = new DatabaseManager(this);
     }
+    @Override
+    protected void onRestart() {
+        if (databaseManager == null)
+            databaseManager = new DatabaseManager(this);
+
+        super.onRestart();
+    }
+
 
     @Override
     protected void onResume() {
+        mSimpleFacebook = SimpleFacebook.getInstance(this);
+        databaseManager = DatabaseManager.getInstance(this);
         super.onResume();
 
-        mSimpleFacebook = SimpleFacebook.getInstance(this);
+
+    }
+
+    @Override
+    protected void onStop() {
+        if (databaseManager != null)
+            databaseManager.closeDbConnections();
+
+        super.onStop();
     }
 
     @Override
