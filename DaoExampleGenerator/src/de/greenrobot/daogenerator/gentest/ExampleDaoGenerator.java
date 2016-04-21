@@ -17,9 +17,7 @@ package de.greenrobot.daogenerator.gentest;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
-import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
-import de.greenrobot.daogenerator.ToMany;
 
 /**
  * Generates entities and DAOs for the example project DaoExample.
@@ -35,7 +33,7 @@ public class ExampleDaoGenerator {
 
         addWishList(schema);
         addRecentList(schema);
-
+        addRecentSearch(schema);
         new DaoGenerator().generateAll(schema, "./app/src/main/java");
     }
 
@@ -51,5 +49,10 @@ public class ExampleDaoGenerator {
         note.addIdProperty();
         note.addLongProperty("videoId").notNull();
         note.addStringProperty("name");
+    }
+    private static void addRecentSearch(Schema schema) {
+        Entity note = schema.addEntity("DBKeywordSearch");
+        note.addIdProperty();
+        note.addStringProperty("keyword").notNull();
     }
 }
