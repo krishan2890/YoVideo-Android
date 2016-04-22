@@ -165,49 +165,60 @@ public class AccountDataManager {
     }
 
     public void requestLoginWithFacebook(Activity activity, final String accessToken, final AccountDataListener listener) {
-        OnProfileListener onProfileListener = new OnProfileListener() {
-
+        RPC.requestLoginFacebook(accessToken, new APIResponseListener() {
             @Override
-            public void onThinking() {
+            public void onError(String message) {
+
             }
 
             @Override
-            public void onException(Throwable throwable) {
-                if (listener != null)
-                    listener.onError(throwable.getMessage());
+            public void onSuccess(final Object results) {
+                OnProfileListener onProfileListener = new OnProfileListener() {
+
+                    @Override
+                    public void onThinking() {
+                    }
+
+                    @Override
+                    public void onException(Throwable throwable) {
+                        if (listener != null)
+                            listener.onError(throwable.getMessage());
+                    }
+
+                    @Override
+                    public void onFail(String reason) {
+                        if (listener != null)
+                            listener.onError(reason);
+                    }
+
+                    @Override
+                    public void onComplete(Profile response) {
+                        CustomerModel accountModel = (CustomerModel) results;
+                        accountModel.avatar = AppUtils.getFacebookProfilePicture(response.getId());
+                        accountModel.firstName = response.getFirstName();
+                        accountModel.lastName = response.getLastName();
+                        accountModel.isLoginAsFacebook = true;
+                        String email = response.getEmail();
+                        if (email == null || email.isEmpty())
+                            email = "";
+
+                        accountModel.email = email;
+
+                        parseLoginFacebookSuccess(accessToken, accountModel, listener);
+                    }
+                };
+
+                Profile.Properties properties = new Profile.Properties.Builder()
+                        .add(Profile.Properties.ID)
+                        .add(Profile.Properties.FIRST_NAME)
+                        .add(Profile.Properties.LAST_NAME)
+                        .add(Profile.Properties.EMAIL)
+                        .build();
+
+                SimpleFacebook.getInstance().getProfile(properties, onProfileListener);
             }
+        });
 
-            @Override
-            public void onFail(String reason) {
-                if (listener != null)
-                    listener.onError(reason);
-            }
-
-            @Override
-            public void onComplete(Profile response) {
-                CustomerModel accountModel = new CustomerModel();
-                accountModel.avatar = AppUtils.getFacebookProfilePicture(response.getId());
-                accountModel.firstName = response.getFirstName();
-                accountModel.lastName = response.getLastName();
-                accountModel.isLoginAsFacebook = true;
-                String email = response.getEmail();
-                if (email == null || email.isEmpty())
-                    email = "";
-
-                accountModel.email = email;
-
-                parseLoginFacebookSuccess(accessToken, accountModel, listener);
-            }
-        };
-
-        Profile.Properties properties = new Profile.Properties.Builder()
-                .add(Profile.Properties.ID)
-                .add(Profile.Properties.FIRST_NAME)
-                .add(Profile.Properties.LAST_NAME)
-                .add(Profile.Properties.EMAIL)
-                .build();
-
-        SimpleFacebook.getInstance(activity).getProfile(properties, onProfileListener);
     }
 
     void logoutFacebook(Activity activity, final APIResponseListener listener) {

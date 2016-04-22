@@ -83,7 +83,42 @@ public class RPC {
         };
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
+    public static void requestLoginFacebook(final String accessToken, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_LOGIN_FACE_BOOK;
+        final String url = getAbsoluteUrl(tag);
+        StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String strResponse) {
+                try {
+                    JSONObject response = new JSONObject(strResponse);
 
+                    boolean checkData = parseResponseData(response, listener);
+
+                    if (checkData) {
+                        CustomerModel accountInfo = new Gson().fromJson(response.getString("content"), CustomerModel.class);
+                        listener.onSuccess(accountInfo);
+                    }
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(AppConstant.KEY_ACCESST_TOKEN, accessToken);
+                return params;
+            }
+        };
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
+    }
     public static void requestGetCustomer(final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_CUSTOMER;
         final String url = getAbsoluteUrl(tag);

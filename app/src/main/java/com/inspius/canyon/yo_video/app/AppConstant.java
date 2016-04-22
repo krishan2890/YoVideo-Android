@@ -23,6 +23,7 @@ public class AppConstant {
      */
     public static final String RELATIVE_URL_CUSTOMER = "api/login";
     public static final String RELATIVE_URL_LOGIN = "api/login";
+    public static final String RELATIVE_URL_LOGIN_FACE_BOOK = "api/loginFacebook";
     public static final String RELATIVE_URL_REGISTER = "api/register";
     public static final String RELATIVE_URL_FORGOT_PASSWORD = "api/forgot_password";
     public static final String RELATIVE_URL_CHANGEPASS = "api/change_password";
@@ -80,6 +81,7 @@ public class AppConstant {
     public static final String KEY_ICON = "icon";
     public static final String KEY_STATUS = "status";
     public static final String KEY_USERNAME= "username";
+    public static final String KEY_ACCESST_TOKEN= "access-token";
     public static final String KEY_PASSWORD= "password";
     public static final String KEY_EMAIL= "email";
     public static final String KEY_USER_ID= "user_id";
