@@ -28,7 +28,6 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Type;
@@ -241,7 +240,7 @@ public class RPC {
     public static void requestUpdateAvatar(int accountID, ImageObj imagePath, final APIResponseListener listener) {
         RequestParams params = new RequestParams();
         params.put(AppConstant.KEY_USER_ID, accountID);
-        params.put(AppConstant.KEY_AVATAR, new ByteArrayInputStream(imagePath.getImgBytes()),imagePath.getName());
+//        params.put(AppConstant.KEY_AVATAR, new ByteArrayInputStream(imagePath.getImgBytes()),imagePath.getName());
         AppRestClient.post(AppConstant.RELATIVE_URL_CHANGEAVATAR, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {

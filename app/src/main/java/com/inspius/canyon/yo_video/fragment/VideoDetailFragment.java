@@ -319,8 +319,14 @@ public class VideoDetailFragment extends BaseMainFragment {
 
     @OnClick(R.id.imvShare)
     void doShare() {
-        Intent intent = IntentUtils.shareText(getString(R.string.app_name), videoModel.getSocialLink());
-        startActivity(intent);
+        if(videoModel==null){
+            Intent intent = IntentUtils.shareText(getString(R.string.app_name), videoModel.getSocialLink());
+            startActivity(intent);
+        }else{
+            Intent intent = IntentUtils.shareText(getString(R.string.app_name), videoModel.getVideoUrl());
+            startActivity(intent);
+        }
+
         RPC.updateVideoStatic(mAccountDataManager.getAccountID(), "share", videoModel.getVideoId(), new APIResponseListener() {
             @Override
             public void onError(String message) {

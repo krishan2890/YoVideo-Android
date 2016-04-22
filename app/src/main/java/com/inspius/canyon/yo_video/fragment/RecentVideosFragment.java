@@ -13,7 +13,6 @@ import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
-import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.service.RecentListManager;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
@@ -136,8 +135,10 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
             @Override
             public void onError(String message) {
                 stopAnimLoading();
-                tvnError.setVisibility(View.VISIBLE);
-                tvnError.setText(message);
+                if(tvnError!=null) {
+                    tvnError.setVisibility(View.VISIBLE);
+                    tvnError.setText(message);
+                }
             }
 
             @Override
