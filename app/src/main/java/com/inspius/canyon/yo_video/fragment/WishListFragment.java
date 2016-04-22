@@ -8,13 +8,12 @@ import com.inspius.canyon.yo_video.adapter.GridVideoAdapter;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
-import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.helper.AppUtils;
-import com.inspius.canyon.yo_video.service.WishListManager;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
+import com.inspius.canyon.yo_video.service.WishListManager;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.uiUtils.BasicGridLayoutManager;
@@ -144,8 +143,10 @@ public class WishListFragment extends BaseMainFragment implements AdapterVideoAc
             @Override
             public void onError(String message) {
                 stopAnimLoading();
-                tvnError.setVisibility(View.VISIBLE);
-                tvnError.setText(message);
+                if(tvnError!=null) {
+                    tvnError.setVisibility(View.VISIBLE);
+                    tvnError.setText(message);
+                }
             }
 
             @Override
