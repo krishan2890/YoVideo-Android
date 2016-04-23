@@ -101,7 +101,6 @@ public class AccountDataManager {
     public boolean isVip() {
         if (!isLogin())
             return false;
-
         return (customerModel.vip == 1) ? true : false;
 
     }
@@ -194,6 +193,7 @@ public class AccountDataManager {
                     @Override
                     public void onComplete(Profile response) {
                         CustomerModel accountModel = (CustomerModel) results;
+//                        CustomerModel accountModel = new CustomerModel();
                         accountModel.avatar = AppUtils.getFacebookProfilePicture(response.getId());
                         accountModel.firstName = response.getFirstName();
                         accountModel.lastName = response.getLastName();
@@ -338,8 +338,8 @@ public class AccountDataManager {
         updateLoginSystem(email, password);
         customerModel = (CustomerModel) (results);
         // random account vip
-        boolean isVip = (rd.nextInt(100) % 2 == 0) ? true : false;
-        setIsVipAccount(isVip);
+//        boolean isVip = (rd.nextInt(100) % 2 == 0) ? true : false;
+//        setIsVipAccount(isVip);
 
         if (listener != null)
             listener.onSuccess(customerModel);
@@ -350,8 +350,8 @@ public class AccountDataManager {
         customerModel = (CustomerModel) (results);
 
         // random account vip
-        boolean isVip = (rd.nextInt(100) % 2 == 0) ? true : false;
-        setIsVipAccount(isVip);
+//        boolean isVip = (rd.nextInt(100) % 2 == 0) ? true : false;
+//        setIsVipAccount(isVip);
 
         if (listener != null)
             listener.onSuccess(customerModel);

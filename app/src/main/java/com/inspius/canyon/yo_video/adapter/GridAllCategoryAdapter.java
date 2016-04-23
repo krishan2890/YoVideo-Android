@@ -100,6 +100,9 @@ public class GridAllCategoryAdapter extends UltimateViewAdapter<GridAllCategoryA
         mItems.addAll(listData);
         notifyDataSetChanged();
     }
+    public void insert(CategoryJSON model) {
+        insert(mItems, model, getAdapterItemCount());
+    }
 
 
     public void clear() {
