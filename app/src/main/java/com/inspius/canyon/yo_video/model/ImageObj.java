@@ -1,8 +1,12 @@
 package com.inspius.canyon.yo_video.model;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 
 /**
@@ -13,11 +17,13 @@ public class ImageObj implements Serializable {
     private String mimeType;
     private String name;
     private Bitmap bitmap;
+    private File file;
 
-    public ImageObj(String name, String mimeType, Bitmap bitmap) {
+    public ImageObj(String name, String mimeType, Bitmap bitmap, File file) {
         this.mimeType = mimeType;
         this.name = name;
         this.bitmap = bitmap;
+        this.file = file;
     }
 
     public byte[] getImgBytes() {
@@ -55,7 +61,7 @@ public class ImageObj implements Serializable {
 
     private byte[] getByteBitmap(Bitmap bmp) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        if (mimeType.equalsIgnoreCase(Bitmap.CompressFormat.JPEG.toString())) {
+        if (mimeType.equalsIgnoreCase("image/jpeg")) {
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         } else {
             bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -85,5 +91,9 @@ public class ImageObj implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public File getFile() {
+        return file;
     }
 }

@@ -1,5 +1,7 @@
 package com.inspius.canyon.yo_video.api;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -12,6 +14,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.app.GlobalApplication;
@@ -28,6 +31,11 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Type;
@@ -83,6 +91,7 @@ public class RPC {
         };
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
+
     public static void requestLoginFacebook(final String accessToken, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_LOGIN_FACE_BOOK;
         final String url = getAbsoluteUrl(tag);
@@ -119,6 +128,7 @@ public class RPC {
         };
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
+
     public static void requestGetCustomer(final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_CUSTOMER;
         final String url = getAbsoluteUrl(tag);
@@ -275,6 +285,52 @@ public class RPC {
     public static void requestUpdateAvatar(int accountID, ImageObj imagePath, final APIResponseListener listener) {
         RequestParams params = new RequestParams();
         params.put(AppConstant.KEY_USER_ID, accountID);
+        byte[] b = imagePath.getImgBytes();
+        String name = imagePath.getName();
+        String type = imagePath.getMimeType();
+        params.put(AppConstant.KEY_AVATAR, new ByteArrayInputStream(b), name, type);
+
+        AppRestClient.post(AppConstant.RELATIVE_URL_CHANGEAVATAR, params, new BaseJsonHttpResponseHandler<String>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
+
+                try {
+                    JSONObject response = new JSONObject(strResponse);
+                    boolean checkData = parseResponseData(response, listener);
+
+                    if (checkData) {
+                        CustomerModel accountInfo = new Gson().fromJson(response.getString("content"), CustomerModel.class);
+                        listener.onSuccess(accountInfo);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    listener.onError("Error Parse Data");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, String errorResponse) {
+                parseError1(statusCode, headers, throwable, rawJsonData, errorResponse, listener);
+            }
+
+            @Override
+            protected String parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return rawJsonData;
+            }
+        });
+    }
+
+    public static void requestUpdateAvatar(int accountID, String path, final APIResponseListener listener) {
+        RequestParams params = new RequestParams();
+        params.put(AppConstant.KEY_USER_ID, accountID);
+
+        File myFile = new File(path);
+        try {
+            params.put(AppConstant.KEY_AVATAR, myFile);
+        } catch (FileNotFoundException e) {
+        }
+
 //        params.put(AppConstant.KEY_AVATAR, new ByteArrayInputStream(imagePath.getImgBytes()),imagePath.getName());
         AppRestClient.post(AppConstant.RELATIVE_URL_CHANGEAVATAR, params, new BaseJsonHttpResponseHandler<String>() {
             @Override

@@ -319,10 +319,10 @@ public class VideoDetailFragment extends BaseMainFragment {
 
     @OnClick(R.id.imvShare)
     void doShare() {
-        if(videoModel==null){
+        if (videoModel == null) {
             Intent intent = IntentUtils.shareText(getString(R.string.app_name), videoModel.getSocialLink());
             startActivity(intent);
-        }else{
+        } else {
             Intent intent = IntentUtils.shareText(getString(R.string.app_name), videoModel.getVideoUrl());
             startActivity(intent);
         }
@@ -377,7 +377,7 @@ public class VideoDetailFragment extends BaseMainFragment {
             return;
 
         Intent intent = null;
-        if (videoModel.getVideoType()== AppEnum.VIDEO_TYPE.UPLOAD) {
+        if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.UPLOAD) {
             //intent = new Intent(getActivity(), PlayerUploadActivity.class);
             startActivity(IntentUtils.openVideo(Uri.parse(videoModel.getVideoUrl())));
             return;

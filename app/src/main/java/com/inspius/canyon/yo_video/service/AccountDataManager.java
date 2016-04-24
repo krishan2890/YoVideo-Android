@@ -103,7 +103,6 @@ public class AccountDataManager {
             return false;
 
         return (customerModel.vip == 1) ? true : false;
-
     }
 
     public void setIsVipAccount(boolean isVipAccount) {
@@ -280,20 +279,6 @@ public class AccountDataManager {
         });
     }
 
-    //    public void callChangeAvatar(String avatar, final AccountDataListener listener) {
-//       RPC.requestChangeAvatar(getAccountID(), avatar, new APIResponseListener() {
-//           @Override
-//           public void onError(String message) {
-//               listener.onError(message);
-//           }
-//
-//           @Override
-//           public void onSuccess(Object results) {
-//                CustomerModel customerModel = (CustomerModel) (results);
-//               listener.onSuccess(customerModel);
-//           }
-//       });
-//}
     public void callUpdateAvatar(final Context context, final Intent data, final APIResponseListener listener) {
         new Thread(new Runnable() {
             @Override
@@ -324,10 +309,11 @@ public class AccountDataManager {
 
                         @Override
                         public void onSuccess(Object results) {
-                            CustomerModel customerModel = (CustomerModel) (results);
+                            if (results != null)
+                                customerModel = (CustomerModel) (results);
+
                             listener.onSuccess(customerModel);
                         }
-
                     });
                 }
             };
@@ -337,9 +323,6 @@ public class AccountDataManager {
     private void parseLoginSystemSuccess(String email, String password, Object results, AccountDataListener listener) {
         updateLoginSystem(email, password);
         customerModel = (CustomerModel) (results);
-        // random account vip
-        boolean isVip = (rd.nextInt(100) % 2 == 0) ? true : false;
-        setIsVipAccount(isVip);
 
         if (listener != null)
             listener.onSuccess(customerModel);
@@ -348,10 +331,6 @@ public class AccountDataManager {
     private void parseLoginFacebookSuccess(String accessToken, Object results, AccountDataListener listener) {
         updateLoginFacebook(accessToken);
         customerModel = (CustomerModel) (results);
-
-        // random account vip
-        boolean isVip = (rd.nextInt(100) % 2 == 0) ? true : false;
-        setIsVipAccount(isVip);
 
         if (listener != null)
             listener.onSuccess(customerModel);
