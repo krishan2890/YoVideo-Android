@@ -485,7 +485,6 @@ public class VideoDetailFragment extends BaseMainFragment {
                 Arrays.asList(PayPalOAuthScopes.PAYPAL_SCOPE_EMAIL, PayPalOAuthScopes.PAYPAL_SCOPE_ADDRESS));
         return new PayPalOAuthScopes(scopes);
     }
-
     private void sendAuthorizationToServer(PayPalAuthorization authorization) {
 
         /**

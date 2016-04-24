@@ -101,7 +101,6 @@ public class AccountDataManager {
     public boolean isVip() {
         if (!isLogin())
             return false;
-
         return (customerModel.vip == 1) ? true : false;
     }
 
