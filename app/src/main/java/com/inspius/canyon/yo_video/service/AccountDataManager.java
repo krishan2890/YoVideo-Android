@@ -12,16 +12,13 @@ import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.app.AppEnum;
-import com.inspius.canyon.yo_video.helper.AppUtils;
 import com.inspius.canyon.yo_video.helper.ImageUtil;
 import com.inspius.canyon.yo_video.helper.SharedPrefUtils;
 import com.inspius.canyon.yo_video.listener.AccountDataListener;
 import com.inspius.canyon.yo_video.model.CustomerModel;
 import com.inspius.canyon.yo_video.model.ImageObj;
 import com.sromku.simple.fb.SimpleFacebook;
-import com.sromku.simple.fb.entities.Profile;
 import com.sromku.simple.fb.listeners.OnLogoutListener;
-import com.sromku.simple.fb.listeners.OnProfileListener;
 
 import java.util.Random;
 
@@ -139,7 +136,6 @@ public class AccountDataManager {
 
             case FACEBOOK:
                 String accessToken = getFacebookAccessToken();
-
                 requestLoginWithFacebook(activity, accessToken, listener);
                 break;
         }
@@ -171,49 +167,7 @@ public class AccountDataManager {
 
             @Override
             public void onSuccess(final Object results) {
-                OnProfileListener onProfileListener = new OnProfileListener() {
-
-                    @Override
-                    public void onThinking() {
-                    }
-
-                    @Override
-                    public void onException(Throwable throwable) {
-                        if (listener != null)
-                            listener.onError(throwable.getMessage());
-                    }
-
-                    @Override
-                    public void onFail(String reason) {
-                        if (listener != null)
-                            listener.onError(reason);
-                    }
-
-                    @Override
-                    public void onComplete(Profile response) {
-                        CustomerModel accountModel = (CustomerModel) results;
-                        accountModel.avatar = AppUtils.getFacebookProfilePicture(response.getId());
-                        accountModel.firstName = response.getFirstName();
-                        accountModel.lastName = response.getLastName();
-                        accountModel.isLoginAsFacebook = true;
-                        String email = response.getEmail();
-                        if (email == null || email.isEmpty())
-                            email = "";
-
-                        accountModel.email = email;
-
-                        parseLoginFacebookSuccess(accessToken, accountModel, listener);
-                    }
-                };
-
-                Profile.Properties properties = new Profile.Properties.Builder()
-                        .add(Profile.Properties.ID)
-                        .add(Profile.Properties.FIRST_NAME)
-                        .add(Profile.Properties.LAST_NAME)
-                        .add(Profile.Properties.EMAIL)
-                        .build();
-
-                SimpleFacebook.getInstance().getProfile(properties, onProfileListener);
+                parseLoginFacebookSuccess(accessToken, results, listener);
             }
         });
 
