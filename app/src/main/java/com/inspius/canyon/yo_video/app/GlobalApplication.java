@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
+import com.facebook.login.DefaultAudience;
 import com.inspius.canyon.yo_video.helper.ParseUtils;
 import com.inspius.coreapp.config.CoreAppEnums;
 import com.norbsoft.typefacehelper.TypefaceCollection;
@@ -17,6 +18,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.sromku.simple.fb.Permission;
+import com.sromku.simple.fb.SimpleFacebook;
 import com.sromku.simple.fb.SimpleFacebookConfiguration;
 
 import io.fabric.sdk.android.Fabric;
@@ -65,6 +67,22 @@ public class GlobalApplication extends Application {
         ParseUtils.registerParse(this);
 
         MultiDex.install(getBaseContext());
+
+        Permission[] permissions = new Permission[]{
+                Permission.EMAIL,
+                Permission.PUBLISH_ACTION
+        };
+
+        SimpleFacebookConfiguration configuration = new SimpleFacebookConfiguration.Builder()
+                .setAppId(AppConfig.FACEBOOK_APP_ID)
+                .setNamespace(AppConfig.FACEBOOK_APP_NAMESPACE)
+                .setPermissions(permissions)
+                .setDefaultAudience(DefaultAudience.FRIENDS)
+                .setAskForAllPermissionsAtOnce(false)
+                // .setGraphVersion("v2.3")
+                .build();
+
+        SimpleFacebook.setConfiguration(configuration);
     }
 
     public static synchronized GlobalApplication getInstance() {

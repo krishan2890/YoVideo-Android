@@ -3,8 +3,8 @@
     <string name="app_name">YoVideo</string>
 
     <!-- Change Facebook Dev Id -->
-    <!--<string name="facebook_app_id">694268657341835</string>-->
-    <string name="facebook_app_id">1705400019740975</string>
+    <string name="facebook_app_id">694268657341835</string>
+    <!--<string name="facebook_app_id">1705400019740975</string>-->
 
     <!-- Change AdMob Banner Id -->
     <string name="banner_ad_unit_id">ca-app-pub-4515379129023944/1260293910</string>
