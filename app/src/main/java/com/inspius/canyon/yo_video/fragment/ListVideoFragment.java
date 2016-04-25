@@ -18,6 +18,7 @@ import com.inspius.canyon.yo_video.model.CategoryJSON;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
+import com.inspius.canyon.yo_video.service.AppSession;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.divideritemdecoration.HorizontalDividerItemDecoration;
 import com.ogaclejapan.smarttablayout.utils.v4.Bundler;
@@ -96,7 +97,7 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
 
         mAdapter = new ListVideoAdapter();
         mAdapter.setAdapterActionListener(this);
-
+       mAdapter.updateCategoryName(categoryModel);
         linearLayoutManager = new LinearLayoutManager(getContext());
         ultimateRecyclerView.setLayoutManager(linearLayoutManager);
         ultimateRecyclerView.setAdapter(mAdapter);
@@ -111,21 +112,22 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
 
         startAnimLoading();
 
-//        AppSession.getCategoryData(new APIResponseListener() {
-//            @Override
-//            public void onError(String message) {
-//                stopAnimLoading();
-//            }
-//
-//            @Override
-//            public void onSuccess(Object results) {
-//                dataCategory = (DataCategoryJSON) results;
-//                pageNumber = 1;
-//                requestGetDataProduct();
-//            }
-//        });
+        AppSession.getCategoryData(new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                stopAnimLoading();
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                dataCategory = (DataCategoryJSON) results;
+                pageNumber = 1;
+                requestGetDataProduct();
+            }
+        });
         Logger.d("qqqqq",String.valueOf(categoryModel.id));
         requestGetDataProduct();
+
     }
 
     @Override

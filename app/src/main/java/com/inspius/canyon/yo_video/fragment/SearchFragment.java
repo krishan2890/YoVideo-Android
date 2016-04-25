@@ -20,22 +20,17 @@ import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearch;
-import com.inspius.canyon.yo_video.helper.Logger;
-import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.helper.AppUtils;
-import com.inspius.canyon.yo_video.helper.EndlessRecyclerOnScrollListener;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
+import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.uiUtils.BasicGridLayoutManager;
 import com.wang.avi.AVLoadingIndicatorView;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +39,6 @@ import java.util.Random;
 import butterknife.Bind;
 import butterknife.OnClick;
 import cuneyt.example.com.tagview.Models.TagClass;
-import cuneyt.example.com.tagview.Tag.Constants;
 import cuneyt.example.com.tagview.Tag.OnTagClickListener;
 import cuneyt.example.com.tagview.Tag.OnTagDeleteListener;
 import cuneyt.example.com.tagview.Tag.Tag;
@@ -108,6 +102,18 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         mActivityInterface.updateHeaderTitle(getString(R.string.search));
         mActivityInterface.setVisibleHeaderMenu(false);
         mActivityInterface.setVisibleHeaderSearch(false);
+        AppSession.getCategoryData(new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                stopAnimLoading();
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                dataCategory = (DataCategoryJSON) results;
+                callSearchData();
+            }
+        });
     }
 
     @Override
@@ -154,6 +160,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
 
         ultimateRecyclerView.setAdapter(mAdapter);
 
+
 //        ultimateRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mGridLayoutManager) {
 //            @Override
 //            public void onLoadMore(int current_page) {
@@ -191,7 +198,21 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             public void onTagClick(Tag tag, int position) {
                 edtKeyWord.setText(tag.text);
                 edtKeyWord.setSelection(tag.text.length());//to set cursor position
+                RPC.requestGetCategories( new APIResponseListener() {
+                    @Override
+                    public void onError(String message) {
 
+                    }
+
+                    @Override
+                    public void onSuccess(Object results) {
+                        DataCategoryJSON data = (DataCategoryJSON) results;
+                        if (data == null || data.listCategory == null)
+                            return;
+
+                        mAdapter.updateCategoryName(data.listCategory);
+                    }
+                });
                 callSearchData();
             }
         });
@@ -379,13 +400,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
        callSearchData();
     }
 
-    void requestGetDataProduct() {
-//        if (isResponseData)
-//            return;
 
-     //   isResponseData = false;
-
-    }
 
     void updateDataProduct(List<VideoJSON> data) {
         List<VideoModel> listVideo = new ArrayList<>();

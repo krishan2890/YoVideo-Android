@@ -95,16 +95,31 @@ public class ListVideoAdapter extends UltimateViewAdapter<ListVideoAdapter.Holde
         notifyDataSetChanged();
     }
 
-    public void updateCategoryName(List<CategoryJSON> listCategory) {
+//    public void updateCategoryName(List<CategoryJSON> listCategory) {
+//        for (VideoModel video : mItems) {
+//            String categoryName = "";
+//            for (CategoryJSON category : listCategory) {
+//                if (video.getCategoryID() == category.id) {
+//                    categoryName = category.name;
+//                    break;
+//                }
+//            }
+//
+//            if (TextUtils.isEmpty(categoryName))
+//                categoryName = "Other";
+//
+//            video.setCategoryName(categoryName);
+//        }
+//
+//        notifyDataSetChanged();
+//    }
+    public void updateCategoryName(CategoryJSON category) {
+        String categoryName = "";
         for (VideoModel video : mItems) {
-            String categoryName = "";
-            for (CategoryJSON category : listCategory) {
                 if (video.getCategoryID() == category.id) {
                     categoryName = category.name;
                     break;
                 }
-            }
-
             if (TextUtils.isEmpty(categoryName))
                 categoryName = "Other";
 
@@ -113,7 +128,6 @@ public class ListVideoAdapter extends UltimateViewAdapter<ListVideoAdapter.Holde
 
         notifyDataSetChanged();
     }
-
     public void clear() {
         mItems.clear();
         notifyDataSetChanged();

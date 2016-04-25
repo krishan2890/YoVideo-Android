@@ -13,6 +13,7 @@ import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
+import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.service.RecentListManager;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
@@ -56,7 +57,7 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
         mActivityInterface.updateHeaderTitle(getString(R.string.menu_recent_video));
         mActivityInterface.setVisibleHeaderMenu(true);
 
-       /* AppSession.getCategoryData(new APIResponseListener() {
+        AppSession.getCategoryData(new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -67,8 +68,8 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
                 dataCategory = (DataCategoryJSON) results;
                 requestGetDataProduct();
             }
-        });*/
-        requestGetDataProduct();
+        });
+
     }
 
     @Override
@@ -104,19 +105,29 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
         ultimateRecyclerView.setSaveEnabled(true);
         ultimateRecyclerView.setClipToPadding(false);
 
-        ultimateRecyclerView.setAdapter(mAdapter);
+        requestGetDataProduct();
+        RPC.requestGetCategories( new APIResponseListener() {
+            @Override
+            public void onError(String message) {
 
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                DataCategoryJSON data = (DataCategoryJSON) results;
+                if (data == null || data.listCategory == null)
+                    return;
+
+                mAdapter.updateCategoryName(data.listCategory);
+            }
+        });
+        ultimateRecyclerView.setAdapter(mAdapter);
         startAnimLoading();
     }
 
     @Override
     public void onPlayVideoListener(int position, VideoModel model) {
         mHostActivityInterface.addFragment(VideoDetailFragment.newInstance(model, true), true);
-    }
-
-    @Override
-    public void onItemClickListener(int position, Object model) {
-        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
     }
 
     void startAnimLoading() {
@@ -165,7 +176,10 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
 
         mAdapter.add(listVideo);
     }
-
+    @Override
+    public void onItemClickListener(int position, Object model) {
+        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();

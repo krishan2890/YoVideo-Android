@@ -82,7 +82,7 @@ public class SplashFragment extends BaseFragment {
                         public void run() {
                             imvLogo.setVisibility(View.GONE);
                             getDataHome();
-                         //   onLoadDataFinish();
+
                         }
                     });
                 } catch (InterruptedException e) {
