@@ -18,12 +18,14 @@ public class AppConfig {
      * true : show ads
      * false : hide ads
      */
-    public static final boolean SHOW_ADS = true;
+    public static final boolean SHOW_ADS = false;
 
     /**
      * replace to your server
      */
-    public static final String BASE_URL = "http://demo.inspius.com/mobile/life-video/xml/";
+    //public static final String BASE_URL = "http://demo.inspius.com/mobile/life-video/xml/";
+    public static final String BASE_URL = "http://test.inspius.com/yovideo/";
+    public static final String BASE_URL_AUTHEN = "http://test.inspius.com/yovideo/";
 
     /**
      * Please replace this with a valid API key which is enabled for the

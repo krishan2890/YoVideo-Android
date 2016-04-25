@@ -117,6 +117,7 @@ public class EditAccountFragment extends BaseMainFragment {
         customerUpdate.zip = edtZip.getText().toString();
         customerUpdate.address = edtAddress.getText().toString();
 
+
         if (!checkField(customerUpdate))
             return;
 
@@ -140,6 +141,8 @@ public class EditAccountFragment extends BaseMainFragment {
                 });
             }
         });
+
+
     }
 
     boolean checkField(CustomerModel customerInfo) {

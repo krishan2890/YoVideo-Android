@@ -10,8 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
+import com.inspius.canyon.yo_video.greendao.NewWishList;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.listener.AnimateFirstDisplayListener;
+import com.inspius.canyon.yo_video.listener.WishLishAdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.CategoryJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
@@ -27,14 +29,14 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ListVideoAdapter extends UltimateViewAdapter<ListVideoAdapter.HolderListCell> {
-    private List<VideoModel> mItems;
-    AdapterVideoActionListener listener;
+public class WishLishAdapter extends UltimateViewAdapter<WishLishAdapter.HolderGirdCell> {
+    private List<NewWishList> mItems;
+    WishLishAdapterVideoActionListener listener;
 
     private DisplayImageOptions options;
     private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
-    public ListVideoAdapter() {
+    public WishLishAdapter() {
         this.mItems = new ArrayList<>();
 
         options = new DisplayImageOptions.Builder()
@@ -48,25 +50,25 @@ public class ListVideoAdapter extends UltimateViewAdapter<ListVideoAdapter.Holde
                 .build();
     }
 
-    public void setAdapterActionListener(AdapterVideoActionListener listener) {
+    public void setAdapterActionListener(WishLishAdapterVideoActionListener listener) {
         this.listener = listener;
     }
 
     @Override
-    public HolderListCell onCreateViewHolder(ViewGroup parent) {
+    public HolderGirdCell onCreateViewHolder(ViewGroup parent) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_list_video, parent, false);
-        HolderListCell vh = new HolderListCell(v, true);
+                .inflate(R.layout.item_grid_video, parent, false);
+        HolderGirdCell vh = new HolderGirdCell(v, true);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(final HolderListCell holder, final int position) {
-        final VideoModel model = getItem(position);
+    public void onBindViewHolder(final HolderGirdCell holder, final int position) {
+        final NewWishList model = getItem(position);
         if (model != null) {
-            holder.tvnName.setText(model.getTitle());
-            holder.tvnView.setText(model.getViewNumber());
-            holder.tvnTime.setText(model.getTimeRemain());
+            holder.tvnName.setText(model.getName());
+            holder.tvnView.setText(model.getView());
+            holder.tvnCategory.setText(model.getCategoryname());
             holder.tvnSeries.setText(model.getSeries());
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -86,40 +88,26 @@ public class ListVideoAdapter extends UltimateViewAdapter<ListVideoAdapter.Holde
             });
 
             ImageLoader.getInstance().displayImage(model.getImage(), holder.imvThumbnail, options, animateFirstListener);
+
         }
     }
 
 
-    public void add(List<VideoModel> listData) {
+    public void add(List<NewWishList> listData) {
         mItems.addAll(listData);
         notifyDataSetChanged();
     }
 
-//    public void updateCategoryName(List<CategoryJSON> listCategory) {
-//        for (VideoModel video : mItems) {
-//            String categoryName = "";
-//            for (CategoryJSON category : listCategory) {
-//                if (video.getCategoryID() == category.id) {
-//                    categoryName = category.name;
-//                    break;
-//                }
-//            }
-//
-//            if (TextUtils.isEmpty(categoryName))
-//                categoryName = "Other";
-//
-//            video.setCategoryName(categoryName);
-//        }
-//
-//        notifyDataSetChanged();
-//    }
-    public void updateCategoryName(CategoryJSON category) {
-        String categoryName = "";
+    /*public void updateCategoryName(List<CategoryJSON> listCategory) {
         for (VideoModel video : mItems) {
+            String categoryName = "";
+            for (CategoryJSON category : listCategory) {
                 if (video.getCategoryID() == category.id) {
                     categoryName = category.name;
                     break;
                 }
+            }
+
             if (TextUtils.isEmpty(categoryName))
                 categoryName = "Other";
 
@@ -127,8 +115,10 @@ public class ListVideoAdapter extends UltimateViewAdapter<ListVideoAdapter.Holde
         }
 
         notifyDataSetChanged();
-    }
+    }*/
+
     public void clear() {
+//        clear(mItems);
         mItems.clear();
         notifyDataSetChanged();
     }
@@ -139,8 +129,8 @@ public class ListVideoAdapter extends UltimateViewAdapter<ListVideoAdapter.Holde
     }
 
     @Override
-    public HolderListCell getViewHolder(View view) {
-        return new HolderListCell(view, false);
+    public HolderGirdCell getViewHolder(View view) {
+        return new HolderGirdCell(view, false);
     }
 
     @Override
@@ -158,7 +148,7 @@ public class ListVideoAdapter extends UltimateViewAdapter<ListVideoAdapter.Holde
 
     }
 
-    public class HolderListCell extends UltimateRecyclerviewViewHolder {
+    public class HolderGirdCell extends UltimateRecyclerviewViewHolder {
         @Bind(R.id.imvThumbnail)
         ImageView imvThumbnail;
 
@@ -174,10 +164,10 @@ public class ListVideoAdapter extends UltimateViewAdapter<ListVideoAdapter.Holde
         @Bind(R.id.tvnView)
         TextView tvnView;
 
-        @Bind(R.id.tvnTime)
-        TextView tvnTime;
+        @Bind(R.id.tvnCategory)
+        TextView tvnCategory;
 
-        public HolderListCell(View itemView, boolean isItem) {
+        public HolderGirdCell(View itemView, boolean isItem) {
             super(itemView);
 
             if (isItem) {
@@ -186,7 +176,7 @@ public class ListVideoAdapter extends UltimateViewAdapter<ListVideoAdapter.Holde
         }
     }
 
-    public VideoModel getItem(int position) {
+    public NewWishList getItem(int position) {
         if (customHeaderView != null)
             position--;
         if (position < mItems.size())

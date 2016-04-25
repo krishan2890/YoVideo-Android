@@ -6,6 +6,7 @@ import android.widget.TextView;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.adapter.GridVideoAdapter;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.helper.AppUtils;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
@@ -68,6 +69,7 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
                 requestGetDataProduct();
             }
         });
+
     }
 
     @Override
@@ -82,7 +84,7 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_list_video;
+        return R.layout.fragment_recent_list_video;
     }
 
     @Override
@@ -103,8 +105,23 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
         ultimateRecyclerView.setSaveEnabled(true);
         ultimateRecyclerView.setClipToPadding(false);
 
-        ultimateRecyclerView.setAdapter(mAdapter);
+        requestGetDataProduct();
+        RPC.requestGetCategories( new APIResponseListener() {
+            @Override
+            public void onError(String message) {
 
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                DataCategoryJSON data = (DataCategoryJSON) results;
+                if (data == null || data.listCategory == null)
+                    return;
+
+                mAdapter.updateCategoryName(data.listCategory);
+            }
+        });
+        ultimateRecyclerView.setAdapter(mAdapter);
         startAnimLoading();
     }
 
@@ -113,27 +130,26 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
         mHostActivityInterface.addFragment(VideoDetailFragment.newInstance(model, true), true);
     }
 
-    @Override
-    public void onItemClickListener(int position, Object model) {
-        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
-    }
-
     void startAnimLoading() {
         tvnError.setVisibility(View.GONE);
+        if (avloadingIndicatorView != null)
         avloadingIndicatorView.setVisibility(View.VISIBLE);
     }
 
     void stopAnimLoading() {
+        if (avloadingIndicatorView != null)
         avloadingIndicatorView.setVisibility(View.GONE);
     }
 
     void requestGetDataProduct() {
-        RecentListManager.getInstance().getRecentVideosDetail(new APIResponseListener() {
+        RPC.requestGetVideoRencent(mAccountDataManager.getAccountID(),new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
-                tvnError.setVisibility(View.VISIBLE);
-                tvnError.setText(message);
+                if(tvnError!=null) {
+                    tvnError.setVisibility(View.VISIBLE);
+                    tvnError.setText(message);
+                }
             }
 
             @Override
@@ -160,7 +176,10 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
 
         mAdapter.add(listVideo);
     }
-
+    @Override
+    public void onItemClickListener(int position, Object model) {
+        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();

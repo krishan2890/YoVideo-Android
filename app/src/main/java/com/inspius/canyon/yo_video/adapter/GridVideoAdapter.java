@@ -86,6 +86,7 @@ public class GridVideoAdapter extends UltimateViewAdapter<GridVideoAdapter.Holde
             });
 
             ImageLoader.getInstance().displayImage(model.getImage(), holder.imvThumbnail, options, animateFirstListener);
+
         }
     }
 

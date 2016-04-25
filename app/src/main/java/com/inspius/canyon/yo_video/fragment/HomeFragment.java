@@ -1,5 +1,6 @@
 package com.inspius.canyon.yo_video.fragment;
 
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
@@ -38,6 +39,7 @@ public class HomeFragment extends BaseMainFragment {
     AVLoadingIndicatorView avloadingIndicatorView;
 
     private FragmentPagerItemAdapter mAdapter;
+    int pageNumber;
 
     @Override
     public String getTagText() {
@@ -50,9 +52,15 @@ public class HomeFragment extends BaseMainFragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onInitView() {
         startAnimLoading();
-        RPC.requestGetVideosHome(true, new APIResponseListener() {
+
+        RPC.requestGetVideosHome(new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -61,7 +69,6 @@ public class HomeFragment extends BaseMainFragment {
             @Override
             public void onSuccess(Object results) {
                 stopAnimLoading();
-
                 DataHomeJSON dataHome = (DataHomeJSON) results;
                 initTabLayout(dataHome);
             }
@@ -69,11 +76,13 @@ public class HomeFragment extends BaseMainFragment {
     }
 
     void startAnimLoading() {
-        avloadingIndicatorView.setVisibility(View.VISIBLE);
+        if (avloadingIndicatorView != null)
+            avloadingIndicatorView.setVisibility(View.VISIBLE);
     }
 
     void stopAnimLoading() {
-        avloadingIndicatorView.setVisibility(View.GONE);
+        if (avloadingIndicatorView != null)
+            avloadingIndicatorView.setVisibility(View.GONE);
     }
 
     @Override
@@ -85,14 +94,15 @@ public class HomeFragment extends BaseMainFragment {
 
     public void initTabLayout(DataHomeJSON dataHome) {
         FragmentPagerItems pages = new FragmentPagerItems(getContext());
-        pages.add(FragmentPagerItem.of(getString(R.string.menu_latest), PageVideoHomeFragment.class, PageVideoHomeFragment.arguments(dataHome.listVideoLatest)));
-        pages.add(FragmentPagerItem.of(getString(R.string.menu_most_view), PageVideoHomeFragment.class, PageVideoHomeFragment.arguments(dataHome.listVideoMostView)));
+        if (getActivity() != null && isAdded()) {
+            pages.add(FragmentPagerItem.of(getString(R.string.menu_latest), PageVideoHomeFragment.class, PageVideoHomeFragment.arguments(dataHome.listVideoLatest)));
+            pages.add(FragmentPagerItem.of(getString(R.string.menu_most_view), PageVideoHomeFragment.class, PageVideoHomeFragment.arguments(dataHome.listVideoMostView)));
 
-        mAdapter = new FragmentPagerItemAdapter(
-                getChildFragmentManager(), pages);
-
-        viewPager.setAdapter(mAdapter);
-        viewPagerTab.setViewPager(viewPager);
+            mAdapter = new FragmentPagerItemAdapter(
+                    getChildFragmentManager(), pages);
+            viewPager.setAdapter(mAdapter);
+            viewPagerTab.setViewPager(viewPager);
+        }
     }
 
     @Override

@@ -7,7 +7,7 @@ package com.inspius.canyon.yo_video.greendao;
 public class WishList {
 
     private Long id;
-    private long videoId;
+    private int videoId;
     private String name;
 
     public WishList() {
@@ -17,7 +17,7 @@ public class WishList {
         this.id = id;
     }
 
-    public WishList(Long id, long videoId, String name) {
+    public WishList(Long id, int videoId, String name) {
         this.id = id;
         this.videoId = videoId;
         this.name = name;
@@ -35,7 +35,7 @@ public class WishList {
         return videoId;
     }
 
-    public void setVideoId(long videoId) {
+    public void setVideoId(int videoId) {
         this.videoId = videoId;
     }
 

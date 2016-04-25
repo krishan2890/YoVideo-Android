@@ -3,12 +3,13 @@ package com.inspius.canyon.yo_video.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by Billy on 1/5/16.
  */
 public class VideoJSON implements Serializable {
-    public long id;
+    public int id;
 
     @SerializedName("url_social")
     public String urlSocial;
@@ -39,4 +40,7 @@ public class VideoJSON implements Serializable {
 
     @SerializedName("vip_play")
     public int vipPlay;
+
+    @SerializedName("another_category_ids")
+    public int[] anotherCategoryId;
 }

@@ -1,22 +1,27 @@
 package com.inspius.canyon.yo_video.service;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 
 import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.app.AppEnum;
-import com.inspius.canyon.yo_video.helper.AppUtils;
+import com.inspius.canyon.yo_video.helper.ImageUtil;
 import com.inspius.canyon.yo_video.helper.SharedPrefUtils;
 import com.inspius.canyon.yo_video.listener.AccountDataListener;
 import com.inspius.canyon.yo_video.model.CustomerModel;
+import com.inspius.canyon.yo_video.model.ImageObj;
 import com.sromku.simple.fb.SimpleFacebook;
-import com.sromku.simple.fb.entities.Profile;
 import com.sromku.simple.fb.listeners.OnLogoutListener;
-import com.sromku.simple.fb.listeners.OnProfileListener;
 
 import java.util.Random;
+
 
 /**
  * Created by Billy on 11/9/15.
@@ -68,7 +73,6 @@ public class AccountDataManager {
                 logoutFacebook(activity, listener);
                 break;
         }
-
     }
 
     public String getUsername() {
@@ -93,9 +97,7 @@ public class AccountDataManager {
     public boolean isVip() {
         if (!isLogin())
             return false;
-
         return (customerModel.vip == 1) ? true : false;
-
     }
 
     public void setIsVipAccount(boolean isVipAccount) {
@@ -133,7 +135,6 @@ public class AccountDataManager {
 
             case FACEBOOK:
                 String accessToken = getFacebookAccessToken();
-
                 requestLoginWithFacebook(activity, accessToken, listener);
                 break;
         }
@@ -157,49 +158,18 @@ public class AccountDataManager {
     }
 
     public void requestLoginWithFacebook(Activity activity, final String accessToken, final AccountDataListener listener) {
-        OnProfileListener onProfileListener = new OnProfileListener() {
-
+        RPC.requestLoginFacebook(accessToken, new APIResponseListener() {
             @Override
-            public void onThinking() {
+            public void onError(String message) {
+
             }
 
             @Override
-            public void onException(Throwable throwable) {
-                if (listener != null)
-                    listener.onError(throwable.getMessage());
+            public void onSuccess(final Object results) {
+                parseLoginFacebookSuccess(accessToken, results, listener);
             }
+        });
 
-            @Override
-            public void onFail(String reason) {
-                if (listener != null)
-                    listener.onError(reason);
-            }
-
-            @Override
-            public void onComplete(Profile response) {
-                CustomerModel accountModel = new CustomerModel();
-                accountModel.avatar = AppUtils.getFacebookProfilePicture(response.getId());
-                accountModel.firstName = response.getFirstName();
-                accountModel.lastName = response.getLastName();
-                accountModel.isLoginAsFacebook = true;
-                String email = response.getEmail();
-                if (email == null || email.isEmpty())
-                    email = "";
-
-                accountModel.email = email;
-
-                parseLoginFacebookSuccess(accessToken, accountModel, listener);
-            }
-        };
-
-        Profile.Properties properties = new Profile.Properties.Builder()
-                .add(Profile.Properties.ID)
-                .add(Profile.Properties.FIRST_NAME)
-                .add(Profile.Properties.LAST_NAME)
-                .add(Profile.Properties.EMAIL)
-                .build();
-
-        SimpleFacebook.getInstance(activity).getProfile(properties, onProfileListener);
     }
 
     void logoutFacebook(Activity activity, final APIResponseListener listener) {
@@ -215,8 +185,8 @@ public class AccountDataManager {
         SimpleFacebook.getInstance(activity).logout(onLogoutListener);
     }
 
-    public void callNewAccount(final String email, final String password, String passwordConfirmation, final AccountDataListener listener) {
-        RPC.requestRegister(email, email, password, passwordConfirmation, new APIResponseListener() {
+    public void callNewAccount(final String username, final String email, final String password, String passwordConfirmation, final AccountDataListener listener) {
+        RPC.requestRegister(username, email, password, passwordConfirmation, new APIResponseListener() {
             @Override
             public void onError(String message) {
                 listener.onError(message);
@@ -229,26 +199,13 @@ public class AccountDataManager {
         });
     }
 
-    public void callChangePass(String currentPass, final String newPass, String confirmPass, final AccountDataListener listener) {
-        RPC.requestChangePass(getAccountID(), currentPass, newPass, confirmPass, new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                listener.onError(message);
-            }
-
-            @Override
-            public void onSuccess(Object results) {
-                parseLoginSystemSuccess(getUsername(), newPass, results, listener);
-            }
-        });
-    }
-
     public void callUpdateCustomer(CustomerModel customerUpdate, final AccountDataListener listener) {
         customerUpdate.id = getAccountID();
 
         RPC.requestUpdateCustomerInfo(customerUpdate, new APIResponseListener() {
             @Override
             public void onError(String message) {
+
                 listener.onError(message);
             }
 
@@ -260,12 +217,50 @@ public class AccountDataManager {
         });
     }
 
+    public void callUpdateAvatar(final Context context, final Intent data, final APIResponseListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ImageObj imageObj = ImageUtil.getByteImageAvatar(context, data.getData());
+                    Message msgObj = handler.obtainMessage();
+                    Bundle b = new Bundle();
+                    b.putSerializable("imageObj", imageObj);
+                    msgObj.setData(b);
+                    handler.sendMessage(msgObj);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    listener.onError(e.getMessage());
+                }
+            }
+
+            private final Handler handler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    ImageObj imageObj = (ImageObj) msg.getData().getSerializable("imageObj");
+
+                    RPC.requestUpdateAvatar(getAccountID(), imageObj, new APIResponseListener() {
+                        @Override
+                        public void onError(String message) {
+                            listener.onError(message);
+                        }
+
+                        @Override
+                        public void onSuccess(Object results) {
+                            if (results != null)
+                                customerModel = (CustomerModel) (results);
+
+                            listener.onSuccess(customerModel);
+                        }
+                    });
+                }
+            };
+        }).start();
+    }
+
     private void parseLoginSystemSuccess(String email, String password, Object results, AccountDataListener listener) {
         updateLoginSystem(email, password);
         customerModel = (CustomerModel) (results);
-        // random account vip
-        boolean isVip = (rd.nextInt(100) % 2 == 0) ? true : false;
-        setIsVipAccount(isVip);
 
         if (listener != null)
             listener.onSuccess(customerModel);
@@ -274,10 +269,6 @@ public class AccountDataManager {
     private void parseLoginFacebookSuccess(String accessToken, Object results, AccountDataListener listener) {
         updateLoginFacebook(accessToken);
         customerModel = (CustomerModel) (results);
-
-        // random account vip
-        boolean isVip = (rd.nextInt(100) % 2 == 0) ? true : false;
-        setIsVipAccount(isVip);
 
         if (listener != null)
             listener.onSuccess(customerModel);
@@ -296,4 +287,5 @@ public class AccountDataManager {
 
         return customerModel.id;
     }
+
 }

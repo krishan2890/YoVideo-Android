@@ -29,6 +29,7 @@ public class AccountOptionFragment extends BaseMainFragment {
 
     @Override
     public void onInitView() {
+
         if (mAccountDataManager.isVip())
             tvnVip.setVisibility(View.VISIBLE);
         else
@@ -76,4 +77,5 @@ public class AccountOptionFragment extends BaseMainFragment {
             }
         });
     }
+
 }

@@ -8,11 +8,13 @@ import android.widget.EditText;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.base.BaseLoginFragment;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
+import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.listener.AccountDataListener;
 import com.inspius.canyon.yo_video.model.CustomerModel;
 import com.sromku.simple.fb.Permission;
 import com.sromku.simple.fb.SimpleFacebook;
 import com.sromku.simple.fb.listeners.OnLoginListener;
+import com.sromku.simple.fb.listeners.OnNewPermissionsListener;
 
 import java.util.List;
 
@@ -44,8 +46,7 @@ public class LoginFragment extends BaseLoginFragment {
 
     @Override
     public void onInitView() {
-        editTextUserName.setText(mAccountDataManager.getUsername());
-        editTextPassword.setText(mAccountDataManager.getPassword());
+
     }
 
     @Override
@@ -128,11 +129,13 @@ public class LoginFragment extends BaseLoginFragment {
 
     @OnClick(R.id.buttonLoginFacebook)
     void doFacebook() {
-        mActivityInterface.hideKeyBoard();
         final OnLoginListener onLoginListener = new OnLoginListener() {
             @Override
             public void onLogin(String accessToken, List<Permission> acceptedPermissions, List<Permission> declinedPermissions) {
-                requestLoginFacebook(accessToken);
+                if (!acceptedPermissions.contains(Permission.EMAIL)) {
+                    requestPermissionEmail();
+                } else
+                    requestLoginFacebook(accessToken);
             }
 
             @Override
@@ -154,7 +157,39 @@ public class LoginFragment extends BaseLoginFragment {
         SimpleFacebook.getInstance(getActivity()).login(onLoginListener);
     }
 
+    void requestPermissionEmail() {
+        Permission[] permissions = new Permission[]{
+                Permission.EMAIL,
+        };
+
+        OnNewPermissionsListener onNewPermissionsListener = new OnNewPermissionsListener() {
+            @Override
+            public void onSuccess(String accessToken, List<Permission> acceptedPermissions, List<Permission> declinedPermissions) {
+                requestLoginFacebook(accessToken);
+            }
+
+            @Override
+            public void onCancel() {
+                // user canceled the dialog
+            }
+
+            @Override
+            public void onFail(String reason) {
+                // failed
+            }
+
+            @Override
+            public void onException(Throwable throwable) {
+                // exception from facebook
+            }
+
+        };
+
+        SimpleFacebook.getInstance(getActivity()).requestNewPermissions(permissions, onNewPermissionsListener);
+    }
+
     void requestLoginFacebook(String accessToken) {
+        Logger.d("accessToken",accessToken);
         mActivityInterface.showLoading(getString(R.string.msg_authentic_loading));
         mAccountDataManager.requestLoginWithFacebook(getActivity(), accessToken, new AccountDataListener() {
             @Override

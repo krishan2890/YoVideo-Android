@@ -5,6 +5,11 @@ package com.inspius.canyon.yo_video.app;
  */
 public class AppConstant {
     public static int RESPONSE_OK = 1;
+    public static int RESULT_OK = -1;
+    public static int PICK_IMAGE_REQUEST = 1;
+    public static int RESPONSE_CODE_SUCCESS = 1;
+    public static int REQUEST_ALBUM_PIC = 1;
+    public static int LIMIT_PAGE_HOMES = 10;
 
     /**
      * Static Page
@@ -16,13 +21,29 @@ public class AppConstant {
     /**
      * ID SERVICE
      */
-    public static final String RELATIVE_URL_CUSTOMER = "customer.json";
-    public static final String RELATIVE_URL_DATA_HOME = "home.json";
-    public static final String RELATIVE_URL_CATEGORIES = "categories.json";
+    public static final String RELATIVE_URL_CUSTOMER = "api/login";
+    public static final String RELATIVE_URL_LOGIN = "api/login";
+    public static final String RELATIVE_URL_LOGIN_FACE_BOOK = "api/loginFacebook";
+    public static final String RELATIVE_URL_REGISTER = "api/register";
+    public static final String RELATIVE_URL_FORGOT_PASSWORD = "api/forgot_password";
+    public static final String RELATIVE_URL_CHANGEPASS = "api/change_password";
+    public static final String RELATIVE_URL_UPDATE_STATIC = "api/updateStatistics";
+    public static final String RELATIVE_URL_ADD_WISHLISH = "api/addToWishlist";
+    public static final String RELATIVE_URL_WISHLISH = "api/getWishlist/%s";
+    public static final String RELATIVE_URL_RENCENT = "api/getListRecentVideo/%s/20";
+    public static final String RELATIVE_URL_SEARCH_BY_KEYWORD = "api/getListVideoByKeyword";
+    public static final String RELATIVE_URL_CHANGEPROFILE = "api/change_profile";
+    public static final String RELATIVE_URL_CHANGEAVATAR = "api/change_avatar";
+    public static final String RELATIVE_URL_DATA_HOME = "api/getListVideoForHomepage";
+
+    //public static final String RELATIVE_URL_CATEGORIES = "categories.json";
+    public static final String RELATIVE_URL_CATEGORIES = "api/categories";
     public static final String RELATIVE_URL_LIST_VIDEOS = "list-video.json";
     public static final String RELATIVE_URL_LIST_VIDEOS_VIMEO = "list-video-vimeo.json";
     public static final String RELATIVE_URL_MORE_VIDEOS = "more-videos.json";
     public static final String RELATIVE_URL_LIST_NOTIFICATIONS = "list-notifications.json";
+    public static final String RELATIVE_URL_VIDEO_CATEGORY = "api/getListVideoByCategory/%s";
+    public static final String RELATIVE_URL_VIDEO_BY_ID = "api/getVideoById/%s";
 
     /**
      * Key Bundle
@@ -60,4 +81,22 @@ public class AppConstant {
     public static final String KEY_TYPE = "type";
     public static final String KEY_ICON = "icon";
     public static final String KEY_STATUS = "status";
+    public static final String KEY_USERNAME= "username";
+    public static final String KEY_ACCESST_TOKEN= "access-token";
+    public static final String KEY_PASSWORD= "password";
+    public static final String KEY_EMAIL= "email";
+    public static final String KEY_USER_ID= "user_id";
+    public static final String KEY_FIRSTNAME= "firstname";
+    public static final String KEY_LASTNAME= "lastname";
+    public static final String KEY_PHONE_NUMBER= "phonenumber";
+    public static final String KEY_ADDRESS= "address";
+    public static final String KEY_CITY= "city";
+    public static final String KEY_COUNTRY= "country";
+    public static final String KEY_ZIP= "zip";
+    public static final String KEY_AVATAR= "avatar";
+    public static final String KEY_OLD_PASS= "old_password";
+    public static final String KEY_NEW_PASS= "new_password";
+    public static final String KEY_VIDEO_ID= "video_id";
+    public static final String KEY_FIELD= "field";
+    public static final String KEY_KEYWORD= "keyword";
 }

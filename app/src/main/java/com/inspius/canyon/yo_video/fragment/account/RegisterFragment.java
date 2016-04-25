@@ -81,7 +81,7 @@ public class RegisterFragment extends BaseLoginFragment {
 
         if (checkField(username, email, password, passConfirm)) {
             mActivityInterface.showLoading(getString(R.string.msg_register_loading));
-            mAccountDataManager.callNewAccount(email, password, passConfirm, new AccountDataListener() {
+            mAccountDataManager.callNewAccount(username,email, password, passConfirm, new AccountDataListener() {
                 @Override
                 public void onError(String message) {
                     mActivityInterface.hideLoading();

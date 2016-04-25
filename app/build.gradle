@@ -15,22 +15,10 @@ android {
         multiDexEnabled true
     }
 
-    signingConfigs {
-        release {
-            Properties properties = new Properties()
-            properties.load(project.rootProject.file('local.properties').newDataInputStream())
-            storeFile file(properties.getProperty('storeFile'))
-            keyAlias properties.getProperty('keyAlias')
-            storePassword properties.getProperty('storePassword')
-            keyPassword properties.getProperty('keyPassword')
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
 
         debug {
@@ -181,4 +169,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.2.0'
 
     compile 'com.android.support:multidex:'
+    testCompile 'junit:junit:4.12'
+
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
 }

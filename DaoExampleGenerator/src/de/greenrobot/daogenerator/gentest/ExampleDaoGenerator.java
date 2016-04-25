@@ -17,9 +17,7 @@ package de.greenrobot.daogenerator.gentest;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
-import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
-import de.greenrobot.daogenerator.ToMany;
 
 /**
  * Generates entities and DAOs for the example project DaoExample.
@@ -35,15 +33,27 @@ public class ExampleDaoGenerator {
 
         addWishList(schema);
         addRecentList(schema);
-
+        addRecentSearch(schema);
         new DaoGenerator().generateAll(schema, "./app/src/main/java");
     }
 
-    private static void addWishList(Schema schema) {
-        Entity note = schema.addEntity("WishList");
+//    private static void addWishList(Schema schema) {
+//        Entity note = schema.addEntity("WishList");
+//        note.addIdProperty();
+//        note.addIntProperty("videoId").notNull();
+//        note.addStringProperty("name");
+//    }
+
+    private static void addWishList(Schema schema){
+        Entity note = schema.addEntity("NewWishList");
         note.addIdProperty();
-        note.addLongProperty("videoId").notNull();
-        note.addStringProperty("name");
+        note.addIntProperty("videoId").notNull();
+        note.addStringProperty("categoryname").notNull();
+        note.addStringProperty("series").notNull();
+        note.addStringProperty("view").notNull();
+        note.addStringProperty("image").notNull();
+        note.addStringProperty("link").notNull();
+        note.addStringProperty("name").notNull();
     }
 
     private static void addRecentList(Schema schema) {
@@ -51,5 +61,10 @@ public class ExampleDaoGenerator {
         note.addIdProperty();
         note.addLongProperty("videoId").notNull();
         note.addStringProperty("name");
+    }
+    private static void addRecentSearch(Schema schema) {
+        Entity note = schema.addEntity("DBKeywordSearch");
+        note.addIdProperty();
+        note.addStringProperty("keyword").notNull();
     }
 }

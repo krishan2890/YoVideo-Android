@@ -109,16 +109,18 @@ public class CategoriesFragment extends BaseMainFragment implements AdapterActio
     }
 
     void startAnimLoading() {
+        if (avloadingIndicatorView != null)
         avloadingIndicatorView.setVisibility(View.VISIBLE);
     }
 
     void stopAnimLoading() {
+        if (avloadingIndicatorView != null)
         avloadingIndicatorView.setVisibility(View.GONE);
     }
 
     void requestGetData() {
         startAnimLoading();
-        RPC.requestGetCategories(true, new APIResponseListener() {
+        RPC.requestGetCategories( new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -130,13 +132,15 @@ public class CategoriesFragment extends BaseMainFragment implements AdapterActio
                 DataCategoryJSON data = (DataCategoryJSON) results;
                 if (data == null || data.listCategory == null)
                     return;
-
-                mAdapterAllCategory.add(data.listCategory);
-
+                for (CategoryJSON model : data.listCategory) {
+                    if (model.enable == 1)
+                        mAdapterAllCategory.insert(model);
+                }
                 if (data.listIdTopCategory != null) {
                     for (long id : data.listIdTopCategory)
                         for (CategoryJSON model : data.listCategory)
                             if (model.id == id) {
+                                if(model.enable==1)
                                 mAdapterTopCategory.insert(model);
                                 break;
                             }

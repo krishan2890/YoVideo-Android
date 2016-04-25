@@ -25,18 +25,19 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.activity.MainActivity;
-import com.inspius.canyon.yo_video.activity.PlayerUploadActivity;
 import com.inspius.canyon.yo_video.activity.PlayerYoutubeActivity;
+import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.app.AppEnum;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
-import com.inspius.canyon.yo_video.greendao.WishList;
+import com.inspius.canyon.yo_video.greendao.NewWishList;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.model.VideoModel;
+import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.service.RecentListManager;
-import com.inspius.canyon.yo_video.service.WishListManager;
 import com.inspius.coreapp.helper.IntentUtils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -104,7 +105,7 @@ public class VideoDetailFragment extends BaseMainFragment {
     VideoModel videoModel;
     boolean isAutoPlay;
 
-    WishList wishList;
+    NewWishList wishList;
     Fragment videoFragment;
     private DisplayImageOptions options;
 
@@ -113,11 +114,9 @@ public class VideoDetailFragment extends BaseMainFragment {
         super.onCreate(savedInstanceState);
 
         videoModel = (VideoModel) getArguments().getSerializable(AppConstant.KEY_BUNDLE_VIDEO);
-
         isAutoPlay = getArguments().getBoolean(AppConstant.KEY_BUNDLE_AUTO_PLAY);
-
         options = new DisplayImageOptions.Builder()
-//                .showImageOnLoading(R.drawable.img_video_default)
+                .showImageOnLoading(R.drawable.img_video_default)
                 .showImageForEmptyUri(R.drawable.img_video_default)
                 .showImageOnFail(R.drawable.img_video_default)
                 .cacheOnDisk(true)
@@ -207,7 +206,6 @@ public class VideoDetailFragment extends BaseMainFragment {
         tvnViewNumber.setText(videoModel.getViewNumber());
 
         if (mAccountDataManager.isLogin()) {
-            wishList = WishListManager.getInstance().exitWishList(videoModel.getVideoId());
             if (wishList != null)
                 imvAddToWishList.setSelected(true);
         }
@@ -216,6 +214,8 @@ public class VideoDetailFragment extends BaseMainFragment {
         if (recentListManager.exitWishList(videoModel.getVideoId()) == null) {
             recentListManager.addVideo(videoModel);
         }
+        boolean isWishList = DatabaseManager.getInstance(mContext).existVideoAtWithList((long) videoModel.getVideoId());
+        updateStateViewWishList(isWishList);
 
         ImageLoader.getInstance().displayImage(videoModel.getImage(), imvThumbnail, options);
         tvnTime.setText(videoModel.getTimeRemain());
@@ -268,6 +268,17 @@ public class VideoDetailFragment extends BaseMainFragment {
 
         if (isAutoPlay)
             doPlayVideo();
+        RPC.updateVideoStatic(videoModel.getVideoId(), "view", mAccountDataManager.getAccountID(), new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                Logger.d("fail", "fail");
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                Logger.d("success", "success");
+            }
+        });
     }
 
     @Override
@@ -307,24 +318,59 @@ public class VideoDetailFragment extends BaseMainFragment {
 
     @OnClick(R.id.imvShare)
     void doShare() {
-        Intent intent = IntentUtils.shareText(getString(R.string.app_name), videoModel.getSocialLink());
-        startActivity(intent);
+        if (videoModel == null) {
+            Intent intent = IntentUtils.shareText(getString(R.string.app_name), videoModel.getSocialLink());
+            startActivity(intent);
+        } else {
+            Intent intent = IntentUtils.shareText(getString(R.string.app_name), videoModel.getVideoUrl());
+            startActivity(intent);
+        }
+
+        RPC.updateVideoStatic(mAccountDataManager.getAccountID(), "share", videoModel.getVideoId(), new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                Logger.d("fail", "fail");
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                Logger.d("success", "success");
+            }
+        });
     }
 
     @OnClick(R.id.imvAddToWishList)
     void doAddWishList() {
         if (!mAccountDataManager.isLogin()) {
-            mActivityInterface.showCroutonAlert(getString(R.string.msg_request_login));
+            DialogUtil.showMessageBox(mContext, getString(R.string.msg_request_login));
+
             return;
         }
 
-        boolean isExitWishList = imvAddToWishList.isSelected();
-        if (isExitWishList)
-            WishListManager.getInstance().deleteVideo(wishList);
-        else
-            wishList = WishListManager.getInstance().addVideo(videoModel);
+        boolean isWishList = imvAddToWishList.isSelected();
+        if (isWishList) {
+            DatabaseManager.getInstance(mContext).deleteVideoAtWishListByVideoId((long) videoModel.getVideoId());
+        } else {
+            NewWishList dbCourseWishList = new NewWishList();
+            dbCourseWishList.setVideoId(videoModel.getVideoId());
+            dbCourseWishList.setCategoryname(videoModel.getCategoryName());
+            dbCourseWishList.setName(videoModel.getTitle());
+            dbCourseWishList.setImage(videoModel.getImage());
+            dbCourseWishList.setLink(videoModel.getVideoUrl());
+            dbCourseWishList.setSeries(videoModel.getSeries());
+            dbCourseWishList.setView(videoModel.getViewNumber());
 
-        imvAddToWishList.setSelected(!isExitWishList);
+            DatabaseManager.getInstance(mContext).insertVideoToWishList(dbCourseWishList);
+        }
+
+        updateStateViewWishList(!isWishList);
+    }
+
+    void updateStateViewWishList(boolean isWishList) {
+        if (!mAccountDataManager.isLogin()) {
+            imvAddToWishList.setSelected(false);
+        } else
+            imvAddToWishList.setSelected(isWishList);
     }
 
     @OnClick(R.id.relativePlay)
@@ -336,9 +382,11 @@ public class VideoDetailFragment extends BaseMainFragment {
             return;
 
         Intent intent = null;
-        if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.UPLOAD)
-            intent = new Intent(getActivity(), PlayerUploadActivity.class);
-        else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.YOUTUBE)
+        if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.UPLOAD) {
+            //intent = new Intent(getActivity(), PlayerUploadActivity.class);
+            startActivity(IntentUtils.openVideo(Uri.parse(videoModel.getVideoUrl())));
+            return;
+        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.YOUTUBE)
             intent = new Intent(getActivity(), PlayerYoutubeActivity.class);
         else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.VIMEO) {
             String urlVimeo = String.format("http://player.vimeo.com/video/%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
@@ -392,7 +440,7 @@ public class VideoDetailFragment extends BaseMainFragment {
                  */
                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(videoModel.getVideoUrl()));
                 request.setTitle(videoModel.getTitle());
-                request.setDescription("File is being downloading...");
+                request.setDescription("File is being downloaded...");
                 request.allowScanningByMediaScanner();
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 

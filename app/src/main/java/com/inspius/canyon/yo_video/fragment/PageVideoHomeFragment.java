@@ -8,6 +8,7 @@ import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
+import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
@@ -79,7 +80,7 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
 
         mAdapter.add(listVideo);
 
-        RPC.requestGetCategories(true, new APIResponseListener() {
+        RPC.requestGetCategories( new APIResponseListener() {
             @Override
             public void onError(String message) {
 
@@ -118,5 +119,6 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
     @Override
     public void onItemClickListener(int position, Object model) {
         mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
+        Logger.d("aaaa",String.valueOf(((VideoModel) model).getVideoId()));
     }
 }

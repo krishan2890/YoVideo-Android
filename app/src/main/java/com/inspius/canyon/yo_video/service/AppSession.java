@@ -23,7 +23,7 @@ public class AppSession {
         if (categoryData != null)
             listener.onSuccess(categoryData);
         else
-            RPC.requestGetCategories(false, new APIResponseListener() {
+            RPC.requestGetCategories(new APIResponseListener() {
                 @Override
                 public void onError(String message) {
                     listener.onError(message);

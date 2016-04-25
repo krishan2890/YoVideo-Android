@@ -5,9 +5,10 @@ import android.text.TextUtils;
 import android.widget.EditText;
 
 import com.inspius.canyon.yo_video.R;
+import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
-import com.inspius.canyon.yo_video.listener.AccountDataListener;
 import com.inspius.canyon.yo_video.model.CustomerModel;
 
 import butterknife.Bind;
@@ -30,6 +31,7 @@ public class ChangePassFragment extends BaseMainFragment {
     @Bind(R.id.edtConfirmPass)
     EditText edtConfirmPass;
 
+    private CustomerModel customerModel;
     @Override
     public int getLayout() {
         return R.layout.fragment_change_pass;
@@ -72,7 +74,8 @@ public class ChangePassFragment extends BaseMainFragment {
         String confirmPass = edtConfirmPass.getText().toString();
         if (checkField(currentPass, newPass, confirmPass)) {
             mActivityInterface.showLoading(getString(R.string.msg_change_pass_loading));
-            mAccountDataManager.callChangePass(currentPass, newPass, confirmPass, new AccountDataListener() {
+
+            RPC.requestChangePass(mAccountDataManager.getCustomerModel().id, currentPass, newPass, new APIResponseListener() {
                 @Override
                 public void onError(String message) {
                     mActivityInterface.hideLoading();
@@ -80,9 +83,8 @@ public class ChangePassFragment extends BaseMainFragment {
                 }
 
                 @Override
-                public void onSuccess(CustomerModel results) {
+                public void onSuccess(Object results) {
                     mActivityInterface.hideLoading();
-
                     DialogUtil.showMessageBox(getContext(), getString(R.string.msg_change_pass_success), false, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -92,7 +94,7 @@ public class ChangePassFragment extends BaseMainFragment {
                 }
             });
         }
-    }
+}
 
     boolean checkField(String currentPass, String newPass, String confirmPass) {
         if (TextUtils.isEmpty(currentPass)) {

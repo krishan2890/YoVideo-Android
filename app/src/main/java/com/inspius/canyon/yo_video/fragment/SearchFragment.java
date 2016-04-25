@@ -1,12 +1,17 @@
 package com.inspius.canyon.yo_video.fragment;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.adapter.GridVideoAdapter;
@@ -14,20 +19,18 @@ import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
-import com.inspius.canyon.yo_video.service.AppSession;
+import com.inspius.canyon.yo_video.greendao.DBKeywordSearch;
 import com.inspius.canyon.yo_video.helper.AppUtils;
-import com.inspius.canyon.yo_video.helper.EndlessRecyclerOnScrollListener;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
+import com.inspius.canyon.yo_video.service.AppSession;
+import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.uiUtils.BasicGridLayoutManager;
 import com.wang.avi.AVLoadingIndicatorView;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +39,6 @@ import java.util.Random;
 import butterknife.Bind;
 import butterknife.OnClick;
 import cuneyt.example.com.tagview.Models.TagClass;
-import cuneyt.example.com.tagview.Tag.Constants;
 import cuneyt.example.com.tagview.Tag.OnTagClickListener;
 import cuneyt.example.com.tagview.Tag.OnTagDeleteListener;
 import cuneyt.example.com.tagview.Tag.Tag;
@@ -77,7 +79,8 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     DataCategoryJSON dataCategory;
     Random random;
     boolean isResponseData;
-
+    List<VideoModel> data;
+    String keyword;
     @Override
     public String getTagText() {
         return TAG;
@@ -99,11 +102,41 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         mActivityInterface.updateHeaderTitle(getString(R.string.search));
         mActivityInterface.setVisibleHeaderMenu(false);
         mActivityInterface.setVisibleHeaderSearch(false);
+        AppSession.getCategoryData(new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                stopAnimLoading();
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                dataCategory = (DataCategoryJSON) results;
+                callSearchData();
+            }
+        });
     }
 
     @Override
     public void onInitView() {
         stopAnimLoading();
+        edtKeyWord.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        edtKeyWord.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+                        || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    callSearchData();
+
+                    String keyword = edtKeyWord.getText().toString();
+                    if (!TextUtils.isEmpty(keyword)) {
+                        DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance(mContext).insertKeyword(keyword);
+                        if (dbKeywordSearch != null)
+                            prepareTags();
+                    }
+                }
+                return false;
+            }
+        });
+
         random = new Random();
         boolean includeEdge = true;
         int spacing = getResources().getDimensionPixelSize(R.dimen.divider_grid_video);
@@ -127,12 +160,13 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
 
         ultimateRecyclerView.setAdapter(mAdapter);
 
-        ultimateRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mGridLayoutManager) {
-            @Override
-            public void onLoadMore(int current_page) {
-                requestGetDataProduct();
-            }
-        });
+
+//        ultimateRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mGridLayoutManager) {
+//            @Override
+//            public void onLoadMore(int current_page) {
+//                requestGetDataProduct();
+//            }
+//        });
 
         // tag view
 
@@ -164,6 +198,22 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             public void onTagClick(Tag tag, int position) {
                 edtKeyWord.setText(tag.text);
                 edtKeyWord.setSelection(tag.text.length());//to set cursor position
+                RPC.requestGetCategories( new APIResponseListener() {
+                    @Override
+                    public void onError(String message) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(Object results) {
+                        DataCategoryJSON data = (DataCategoryJSON) results;
+                        if (data == null || data.listCategory == null)
+                            return;
+
+                        mAdapter.updateCategoryName(data.listCategory);
+                    }
+                });
+                callSearchData();
             }
         });
         tagGroup.setOnTagDeleteListener(new OnTagDeleteListener() {
@@ -171,130 +221,56 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             @Override
             public void onTagDeleted(final TagView view, final Tag tag, final int position) {
                 view.remove(position);
+                DatabaseManager.getInstance(mContext).deleteKeywordByName(tag.text);
+                prepareTags();
             }
         });
 
         // Data Search
-        AppSession.getCategoryData(new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                stopAnimLoading();
-            }
-
-            @Override
-            public void onSuccess(Object results) {
-                dataCategory = (DataCategoryJSON) results;
-            }
-        });
+//        RPC.requestGetCategories(new APIResponseListener() {
+//            @Override
+//            public void onError(String message) {
+//
+//            }
+//
+//            @Override
+//            public void onSuccess(Object results) {
+//                dataCategory= (DataCategoryJSON) results;
+//            }
+//        });
     }
 
-    private void prepareTags() {
-        tagList = new ArrayList<>();
-        JSONArray jsonArray = null;
-        JSONObject temp;
-        try {
-            jsonArray = new JSONArray(Constants.COUNTRIES);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                temp = jsonArray.getJSONObject(i);
-                tagList.add(new TagClass(temp.getString("code"), temp.getString("name")));
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void callSearchData() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
 
-    }
-
-    private void setTags(CharSequence cs) {
-        String text = cs.toString();
-        ArrayList<Tag> tags = new ArrayList<>();
-        Tag tag;
-        /**
-         * counter for prevent frozen effect
-         * if the tags number is greather than 20 some device will a bit frozen
-         */
-        int counter = 0;
-
-        /**
-         * for empty edittext
-         */
-        if (TextUtils.isEmpty(text)) {
-            counter = 20;
-            if (counter > tagList.size())
-                counter = tagList.size();
-
-            for (int k = 0; k < counter; k++) {
-                int i = random.nextInt(tagList.size());
-                tag = new Tag(tagList.get(i).getName());
-                tag.radius = 10f;
-                tag.layoutColor = (Color.parseColor(tagList.get(i).getColor()));
-                if (i % 2 == 0) // you can set deletable or not
-                    tag.isDeletable = true;
-                tags.add(tag);
-            }
-        } else {
-            for (int i = 0; i < tagList.size(); i++) {
-                if (tagList.get(i).getName().toLowerCase().startsWith(text.toLowerCase())) {
-                    tag = new Tag(tagList.get(i).getName());
-                    tag.radius = 10f;
-                    tag.layoutColor = (Color.parseColor(tagList.get(i).getColor()));
-                    if (i % 2 == 0) // you can set deletable or not
-                        tag.isDeletable = true;
-                    tags.add(tag);
-                    counter++;
-                    /**
-                     * if you don't want show all tags. You can set a limit.
-                     if (counter == 10)
-                     break;
-                     */
-
-                }
-            }
-        }
-
-        tagGroup.addTags(tags);
-    }
-
-    void startAnimLoading() {
-        avloadingIndicatorView.setVisibility(View.VISIBLE);
-    }
-
-    void stopAnimLoading() {
-        avloadingIndicatorView.setVisibility(View.GONE);
-    }
-
-    @OnClick(R.id.btnSearch)
-    void doSearch() {
         String keyword = edtKeyWord.getText().toString();
-        if (TextUtils.isEmpty(keyword)) {
-            mActivityInterface.showCroutonAlert(getString(R.string.msg_null_key_word));
+
+        if (TextUtils.isEmpty(keyword))
             return;
-        }
-        tagslayout.setVisibility(View.GONE);
+
         currentKeySearch = keyword;
-        mActivityInterface.hideKeyBoard();
+
         mAdapter.clear();
-        pageNumber = 1;
+        tagslayout.setVisibility(View.GONE);
+        ultimateRecyclerView.setVisibility(View.VISIBLE);
+
         startAnimLoading();
-        isResponseData = false;
-        requestGetDataProduct();
-    }
-
-    void requestGetDataProduct() {
-        if (isResponseData)
-            return;
-
-        isResponseData = false;
-        RPC.requestSearchVideo(pageNumber, new APIResponseListener() {
+        RPC.requestSearchVideoByKeyWord(edtKeyWord.getText().toString(), new APIResponseListener() {
             @Override
             public void onError(String message) {
-                isResponseData = true;
+
+
+                //isResponseData = true;
                 stopAnimLoading();
             }
 
             @Override
             public void onSuccess(Object results) {
-                isResponseData = true;
+                // isResponseData = true;
 
                 stopAnimLoading();
 
@@ -307,6 +283,124 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             }
         });
     }
+
+    private void prepareTags() {
+        List<DBKeywordSearch> keywords = DatabaseManager.getInstance(mContext).listKeyword();
+        tagList = new ArrayList<>();
+        if (keywords != null) {
+            for (DBKeywordSearch keyword : keywords) {
+                tagList.add(new TagClass(String.valueOf(keyword.getId()), keyword.getKeyword()));
+            }
+        }
+
+    }
+
+    private void setTags(CharSequence cs) {
+//        String text = cs.toString();
+//        ArrayList<Tag> tags = new ArrayList<>();
+//        Tag tag;
+//        /**
+//         * counter for prevent frozen effect
+//         * if the tags number is greather than 20 some device will a bit frozen
+//         */
+//        int counter = 0;
+//
+//        /**
+//         * for empty edittext
+//         */
+//        if (TextUtils.isEmpty(text)) {
+//            counter = 20;
+//            if (counter > tagList.size())
+//                counter = tagList.size();
+//
+//            for (int k = 0; k < counter; k++) {
+//                int i = random.nextInt(tagList.size());
+//                tag = new Tag(tagList.get(i).getName());
+//                tag.radius = 10f;
+//                tag.layoutColor = (Color.parseColor(tagList.get(i).getColor()));
+//                if (i % 2 == 0) // you can set deletable or not
+//                    tag.isDeletable = true;
+//                tags.add(tag);
+//            }
+//        } else {
+//            for (int i = 0; i < tagList.size(); i++) {
+//                if (tagList.get(i).getName().toLowerCase().startsWith(text.toLowerCase())) {
+//                    tag = new Tag(tagList.get(i).getName());
+//                    tag.radius = 10f;
+//                    tag.layoutColor = (Color.parseColor(tagList.get(i).getColor()));
+//                    if (i % 2 == 0) // you can set deletable or not
+//                        tag.isDeletable = true;
+//                    tags.add(tag);
+//                    counter++;
+//                    /**
+//                     * if you don't want show all tags. You can set a limit.
+//                     if (counter == 10)
+//                     break;
+//                     */
+//
+//                }
+//            }
+//        }
+//
+//        tagGroup.addTags(tags);
+
+        String text = cs.toString();
+        ArrayList<Tag> tags = new ArrayList<>();
+        Tag tag;
+        /**
+         * counter for prevent frozen effect
+         * if the tags number is greather than 20 some device will a bit frozen
+         */
+
+        for (int i = 0; i < tagList.size(); i++) {
+            if (TextUtils.isEmpty(text) || tagList.get(i).getName().toLowerCase().startsWith(text.toLowerCase())) {
+                tag = new Tag(tagList.get(i).getName());
+                tag.radius = 10f;
+                tag.layoutColor = (Color.parseColor(tagList.get(i).getColor()));
+//                if (i % 2 == 0) // you can set deletable or not
+                tag.isDeletable = true;
+                tags.add(tag);
+            }
+        }
+        tagGroup.addTags(tags);
+
+    }
+
+    void startAnimLoading() {
+        avloadingIndicatorView.setVisibility(View.VISIBLE);
+    }
+
+    void stopAnimLoading() {
+        if(avloadingIndicatorView != null)
+        avloadingIndicatorView.setVisibility(View.GONE);
+    }
+
+    @OnClick(R.id.btnSearch)
+    void doSearch() {
+        keyword = edtKeyWord.getText().toString();
+
+
+        if (!TextUtils.isEmpty(keyword)) {
+            DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance(mContext).insertKeyword(keyword);
+            if (dbKeywordSearch != null)
+                prepareTags();
+        }
+        else  {
+            mActivityInterface.showCroutonAlert(getString(R.string.msg_null_key_word));
+            return;
+        }
+        tagslayout.setVisibility(View.GONE);
+        currentKeySearch = keyword;
+        mActivityInterface.hideKeyBoard();
+        mAdapter.clear();
+        pageNumber = 1;
+        startAnimLoading();
+        //isResponseData = false;
+
+       callSearchData();
+    }
+
+
 
     void updateDataProduct(List<VideoJSON> data) {
         List<VideoModel> listVideo = new ArrayList<>();
