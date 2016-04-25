@@ -33,13 +33,11 @@ import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.app.AppEnum;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.greendao.NewWishList;
-import com.inspius.canyon.yo_video.greendao.WishList;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.service.RecentListManager;
-import com.inspius.canyon.yo_video.service.WishListManager;
 import com.inspius.coreapp.helper.IntentUtils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -346,6 +344,7 @@ public class VideoDetailFragment extends BaseMainFragment {
 
     @OnClick(R.id.imvAddToWishList)
     void doAddWishList() {
+        isWishList= imvAddToWishList.isSelected();
         if (isWishList) {
             DatabaseManager.getInstance(mContext).deleteVideoAtWishListByVideoId((long) videoModel.getVideoId());
         } else {
@@ -361,7 +360,8 @@ public class VideoDetailFragment extends BaseMainFragment {
 
             DatabaseManager.getInstance(mContext).insertVideoToWishList(dbCourseWishList);
         }
-        isWishList = !isWishList;
+//        isWishList = !isWishList;
+      imvAddToWishList.setSelected(!isWishList);
         //updateViewStateWishList();
     }
 
