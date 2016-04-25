@@ -128,5 +128,5 @@
     <string name="msg_request_login_vip">Some contents are only for premium members. Please log in to view</string>
     <string name="msg_need_vip">Some contents are only for premium members. Please update your account</string>
     <string name="msg_no_result">No result found</string>
-
+    <string name="msg_loading_common">Please wait while the content loads</string>
 </resources>

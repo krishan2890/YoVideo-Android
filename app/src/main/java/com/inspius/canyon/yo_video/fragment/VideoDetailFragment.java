@@ -108,18 +108,15 @@ public class VideoDetailFragment extends BaseMainFragment {
     NewWishList wishList;
     Fragment videoFragment;
     private DisplayImageOptions options;
-    private boolean isWishList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         videoModel = (VideoModel) getArguments().getSerializable(AppConstant.KEY_BUNDLE_VIDEO);
-
         isAutoPlay = getArguments().getBoolean(AppConstant.KEY_BUNDLE_AUTO_PLAY);
-
         options = new DisplayImageOptions.Builder()
-//                .showImageOnLoading(R.drawable.img_video_default)
+                .showImageOnLoading(R.drawable.img_video_default)
                 .showImageForEmptyUri(R.drawable.img_video_default)
                 .showImageOnFail(R.drawable.img_video_default)
                 .cacheOnDisk(true)
@@ -209,7 +206,6 @@ public class VideoDetailFragment extends BaseMainFragment {
         tvnViewNumber.setText(videoModel.getViewNumber());
 
         if (mAccountDataManager.isLogin()) {
-            //wishList = WishListManager.getInstance().exitWishList(videoModel.getVideoId());
             if (wishList != null)
                 imvAddToWishList.setSelected(true);
         }
@@ -218,7 +214,8 @@ public class VideoDetailFragment extends BaseMainFragment {
         if (recentListManager.exitWishList(videoModel.getVideoId()) == null) {
             recentListManager.addVideo(videoModel);
         }
-        isWishList = DatabaseManager.getInstance(mContext).existVideoAtWithList((long) videoModel.getVideoId());
+        boolean isWishList = DatabaseManager.getInstance(mContext).existVideoAtWithList((long) videoModel.getVideoId());
+        updateStateViewWishList(isWishList);
 
         ImageLoader.getInstance().displayImage(videoModel.getImage(), imvThumbnail, options);
         tvnTime.setText(videoModel.getTimeRemain());
@@ -344,7 +341,13 @@ public class VideoDetailFragment extends BaseMainFragment {
 
     @OnClick(R.id.imvAddToWishList)
     void doAddWishList() {
-        isWishList= imvAddToWishList.isSelected();
+        if (!mAccountDataManager.isLogin()) {
+            DialogUtil.showMessageBox(mContext, getString(R.string.msg_request_login));
+
+            return;
+        }
+
+        boolean isWishList = imvAddToWishList.isSelected();
         if (isWishList) {
             DatabaseManager.getInstance(mContext).deleteVideoAtWishListByVideoId((long) videoModel.getVideoId());
         } else {
@@ -357,12 +360,17 @@ public class VideoDetailFragment extends BaseMainFragment {
             dbCourseWishList.setSeries(videoModel.getSeries());
             dbCourseWishList.setView(videoModel.getViewNumber());
 
-
             DatabaseManager.getInstance(mContext).insertVideoToWishList(dbCourseWishList);
         }
-//        isWishList = !isWishList;
-      imvAddToWishList.setSelected(!isWishList);
-        //updateViewStateWishList();
+
+        updateStateViewWishList(!isWishList);
+    }
+
+    void updateStateViewWishList(boolean isWishList) {
+        if (!mAccountDataManager.isLogin()) {
+            imvAddToWishList.setSelected(false);
+        } else
+            imvAddToWishList.setSelected(isWishList);
     }
 
     @OnClick(R.id.relativePlay)

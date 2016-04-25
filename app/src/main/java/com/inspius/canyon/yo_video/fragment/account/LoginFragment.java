@@ -8,6 +8,7 @@ import android.widget.EditText;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.base.BaseLoginFragment;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
+import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.listener.AccountDataListener;
 import com.inspius.canyon.yo_video.model.CustomerModel;
 import com.sromku.simple.fb.Permission;
@@ -44,8 +45,7 @@ public class LoginFragment extends BaseLoginFragment {
 
     @Override
     public void onInitView() {
-        editTextUserName.setText(mAccountDataManager.getUsername());
-        editTextPassword.setText(mAccountDataManager.getPassword());
+
     }
 
     @Override
