@@ -107,28 +107,18 @@
                     android:textColor="#cc3333" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="80dp"
+            <TextView
+                android:id="@+id/tvnView"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:layout_weight="0"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/icon_view" />
-
-                <TextView
-                    android:id="@+id/tvnView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:gravity="center"
-                    android:singleLine="true"
-                    android:text="12345678"
-                    android:textColor="#656565" />
-            </LinearLayout>
+                android:drawablePadding="5dp"
+                android:drawableRight="@drawable/icon_view"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="12345678"
+                android:textColor="#656565" />
 
         </LinearLayout>
     </LinearLayout>

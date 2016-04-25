@@ -24,7 +24,7 @@ public class WishListDao extends AbstractDao<WishList, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property VideoId = new Property(1, long.class, "videoId", false, "VIDEO_ID");
+        public final static Property VideoId = new Property(1, int.class, "videoId", false, "VIDEO_ID");
         public final static Property Name = new Property(2, String.class, "name", false, "NAME");
     };
 
@@ -80,7 +80,7 @@ public class WishListDao extends AbstractDao<WishList, Long> {
     public WishList readEntity(Cursor cursor, int offset) {
         WishList entity = new WishList( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.getLong(offset + 1), // videoId
+            cursor.getInt(offset + 1), // videoId
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // name
         );
         return entity;
@@ -90,7 +90,7 @@ public class WishListDao extends AbstractDao<WishList, Long> {
     @Override
     public void readEntity(Cursor cursor, WishList entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setVideoId(cursor.getLong(offset + 1));
+        entity.setVideoId(cursor.getInt(offset + 1));
         entity.setName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
      }
     

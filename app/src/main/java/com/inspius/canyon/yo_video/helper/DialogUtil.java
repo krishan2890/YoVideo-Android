@@ -1,6 +1,7 @@
 package com.inspius.canyon.yo_video.helper;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.Gravity;
@@ -73,5 +74,31 @@ public class DialogUtil {
         AlertDialog d = b.show();
 
         ((TextView) d.findViewById(android.R.id.message)).setGravity(Gravity.CENTER);
+    }
+
+    public static ProgressDialog showLoading(Context mContext, String message) {
+        try {
+            ProgressDialog loadingDialog = new ProgressDialog(mContext);
+            loadingDialog.setCancelable(false);
+            if (!message.isEmpty())
+                loadingDialog.setMessage(message);
+
+            loadingDialog.show();
+
+            return loadingDialog;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static void hideLoading(ProgressDialog loadingDialog) {
+        try {
+            if (loadingDialog != null && loadingDialog.isShowing())
+                loadingDialog.dismiss();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
