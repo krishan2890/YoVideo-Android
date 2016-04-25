@@ -78,7 +78,7 @@ public class GlobalApplication extends Application {
                 .setNamespace(AppConfig.FACEBOOK_APP_NAMESPACE)
                 .setPermissions(permissions)
                 .setDefaultAudience(DefaultAudience.FRIENDS)
-                .setAskForAllPermissionsAtOnce(false)
+                .setAskForAllPermissionsAtOnce(true)
                 // .setGraphVersion("v2.3")
                 .build();
 
