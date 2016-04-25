@@ -9,6 +9,8 @@ import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.app.GlobalApplication;
 import com.inspius.canyon.yo_video.greendao.DaoMaster;
 import com.inspius.canyon.yo_video.greendao.DaoSession;
+import com.inspius.canyon.yo_video.greendao.NewWishList;
+import com.inspius.canyon.yo_video.greendao.NewWishListDao;
 import com.inspius.canyon.yo_video.greendao.WishList;
 import com.inspius.canyon.yo_video.greendao.WishListDao;
 import com.inspius.canyon.yo_video.model.VideoJSON;
@@ -25,12 +27,12 @@ import de.greenrobot.dao.query.QueryBuilder;
 public class WishListManager {
     private static WishListManager mInstance;
     private Cursor cursor;
-    private WishListDao wishListDao;
+    private NewWishListDao wishListDao;
 
     private DaoMaster daoMaster;
     private DaoSession daoSession;
     private SQLiteDatabase db;
-    List<WishList> dataWishList;
+    List<NewWishList> dataWishList;
 
     public static synchronized WishListManager getInstance() {
         if (mInstance == null)
@@ -44,21 +46,19 @@ public class WishListManager {
         db = helper.getWritableDatabase();
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
-        wishListDao = daoSession.getWishListDao();
+        wishListDao = daoSession.getNewWishListDao();
         cursor = db.query(wishListDao.getTablename(), wishListDao.getAllColumns(), null, null, null, null, null);
 
         reloadWishListData();
     }
 
-    public WishList addVideo(VideoModel model) {
-        WishList note = new WishList(null, model.getVideoId(), model.getTitle());
-        long id = daoSession.insert(note);
-        cursor.requery();
-
-        dataWishList.add(0, note);
-
-        note.setId(id);
-        return note;
+    public NewWishList addVideo(VideoModel model) {
+//       // NewWishList note = new NewWishList(null, model.getVideoId(),model.getVideoUrl());
+//        long id = daoSession.insert(note);
+//        cursor.requery();
+//        dataWishList.add(0, note);
+//        note.setId(id);
+        return null;
     }
 
     public void deleteVideo(WishList model) {
@@ -68,7 +68,7 @@ public class WishListManager {
         dataWishList.remove(model);
     }
 
-    private List<WishList> reloadWishListData() {
+    private List<NewWishList> reloadWishListData() {
         QueryBuilder qb = wishListDao.queryBuilder();
         dataWishList = qb.list();
 
@@ -82,17 +82,17 @@ public class WishListManager {
         }
 
         List<Long> listId = new ArrayList<>();
-        for (WishList model : dataWishList)
-            listId.add(model.getVideoId());
+        for (NewWishList model : dataWishList)
+            listId.add((long) model.getVideoId());
 
         RPC.requestGetVideoWishListInfo(listId, listener);
     }
 
-    public WishList exitWishList(long id) {
+    public NewWishList exitWishList(long id) {
         if (dataWishList == null || dataWishList.isEmpty())
             return null;
 
-        for (WishList model : dataWishList)
+        for (NewWishList model : dataWishList)
             if (id == model.getVideoId())
                 return model;
 

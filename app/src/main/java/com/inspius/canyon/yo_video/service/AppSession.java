@@ -22,8 +22,8 @@ public class AppSession {
     public static void getCategoryData(final APIResponseListener listener) {
         if (categoryData != null)
             listener.onSuccess(categoryData);
-        //else
-         /*   RPC.requestGetCategories(false, new APIResponseListener() {
+        else
+            RPC.requestGetCategories(new APIResponseListener() {
                 @Override
                 public void onError(String message) {
                     listener.onError(message);
@@ -35,7 +35,7 @@ public class AppSession {
                     updateDataCategoryJSON(categoryData);
                     listener.onSuccess(categoryData);
                 }
-            });*/
+            });
     }
 
     public static void updateDataCategoryJSON(DataCategoryJSON data) {

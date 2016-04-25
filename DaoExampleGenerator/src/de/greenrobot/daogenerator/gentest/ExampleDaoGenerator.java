@@ -37,11 +37,23 @@ public class ExampleDaoGenerator {
         new DaoGenerator().generateAll(schema, "./app/src/main/java");
     }
 
-    private static void addWishList(Schema schema) {
-        Entity note = schema.addEntity("WishList");
+//    private static void addWishList(Schema schema) {
+//        Entity note = schema.addEntity("WishList");
+//        note.addIdProperty();
+//        note.addIntProperty("videoId").notNull();
+//        note.addStringProperty("name");
+//    }
+
+    private static void addWishList(Schema schema){
+        Entity note = schema.addEntity("NewWishList");
         note.addIdProperty();
-        note.addLongProperty("videoId").notNull();
-        note.addStringProperty("name");
+        note.addIntProperty("videoId").notNull();
+        note.addStringProperty("categoryname").notNull();
+        note.addStringProperty("series").notNull();
+        note.addStringProperty("view").notNull();
+        note.addStringProperty("image").notNull();
+        note.addStringProperty("link").notNull();
+        note.addStringProperty("name").notNull();
     }
 
     private static void addRecentList(Schema schema) {

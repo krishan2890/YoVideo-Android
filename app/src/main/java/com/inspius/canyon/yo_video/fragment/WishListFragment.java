@@ -1,18 +1,25 @@
 package com.inspius.canyon.yo_video.fragment;
 
+import android.app.ProgressDialog;
 import android.view.View;
 import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.adapter.GridVideoAdapter;
+import com.inspius.canyon.yo_video.adapter.WishLishAdapter;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
+import com.inspius.canyon.yo_video.greendao.NewWishList;
 import com.inspius.canyon.yo_video.helper.AppUtils;
+import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
+import com.inspius.canyon.yo_video.listener.WishLishAdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
+import com.inspius.canyon.yo_video.service.AppSession;
+import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.service.WishListManager;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
@@ -27,7 +34,7 @@ import butterknife.Bind;
 /**
  * Created by Billy on 12/1/15.
  */
-public class WishListFragment extends BaseMainFragment implements AdapterVideoActionListener {
+public class WishListFragment extends BaseMainFragment implements WishLishAdapterVideoActionListener {
     public static final String TAG = WishListFragment.class.getSimpleName();
 
     @Bind(R.id.ultimate_recycler_view)
@@ -40,7 +47,7 @@ public class WishListFragment extends BaseMainFragment implements AdapterVideoAc
     TextView tvnError;
 
     BasicGridLayoutManager mGridLayoutManager;
-    GridVideoAdapter mAdapter = null;
+    WishLishAdapter mAdapter = null;
     private int columns = 2;
     DataCategoryJSON dataCategory;
 
@@ -62,7 +69,7 @@ public class WishListFragment extends BaseMainFragment implements AdapterVideoAc
             tvnError.setText(getString(R.string.msg_request_login));
             return;
         } else {
-            /*AppSession.getCategoryData(new APIResponseListener() {
+            AppSession.getCategoryData(new APIResponseListener() {
                 @Override
                 public void onError(String message) {
                     stopAnimLoading();
@@ -73,8 +80,8 @@ public class WishListFragment extends BaseMainFragment implements AdapterVideoAc
                     dataCategory = (DataCategoryJSON) results;
                     requestGetDataProduct();
                 }
-            });*/
-            requestGetDataProduct();
+            });
+
         }
     }
 
@@ -101,7 +108,7 @@ public class WishListFragment extends BaseMainFragment implements AdapterVideoAc
         ultimateRecyclerView.addItemDecoration(
                 new GridDividerDecoration(columns, spacing, includeEdge));
 
-        mAdapter = new GridVideoAdapter();
+        mAdapter = new WishLishAdapter();
         mAdapter.setAdapterActionListener(this);
 
         mGridLayoutManager = new BasicGridLayoutManager(getContext(), columns, mAdapter);
@@ -117,14 +124,33 @@ public class WishListFragment extends BaseMainFragment implements AdapterVideoAc
 
     }
 
-    @Override
-    public void onPlayVideoListener(int position, VideoModel model) {
-        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance(model, true), true);
-    }
 
     @Override
     public void onItemClickListener(int position, Object model) {
-        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
+        NewWishList wishlishModel = (NewWishList) model;
+        requestGetVideoDetail(wishlishModel.getVideoId());
+    }
+
+    private void requestGetVideoDetail(int id) {
+        if (id <= 0)
+            return;
+
+        final ProgressDialog loadingDialog = DialogUtil.showLoading(mContext, "Loading");
+
+        RPC.requestGetVideoById(id, new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                DialogUtil.hideLoading(loadingDialog);
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                DialogUtil.hideLoading(loadingDialog);
+
+                VideoModel videoModel = new VideoModel((VideoJSON) results);
+                mHostActivityInterface.addFragment(VideoDetailFragment.newInstance(videoModel,false), true);
+            }
+        });
     }
 
     void startAnimLoading() {
@@ -139,44 +165,77 @@ public class WishListFragment extends BaseMainFragment implements AdapterVideoAc
     }
 
     void requestGetDataProduct() {
-        RPC.requestGetVideoInWihsLish(mAccountDataManager.getAccountID(), new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                stopAnimLoading();
-                if(tvnError!=null) {
-                    tvnError.setVisibility(View.VISIBLE);
-                    tvnError.setText(message);
-                }
-            }
+//        WishListManager.getInstance().getWishListDetail(new APIResponseListener() {
+//            @Override
+//            public void onError(String message) {
+//                stopAnimLoading();
+//                tvnError.setVisibility(View.VISIBLE);
+//                tvnError.setText(message);
+//            }
+//
+//            @Override
+//            public void onSuccess(Object results) {
+//                stopAnimLoading();
+//
+//                List<VideoJSON> data = (List<VideoJSON>) results;
+//                if (data == null)
+//                    return;
+//
+//                updateGridVideo(data);
+//            }
+//        });
+        startAnimLoading();
 
-            @Override
-            public void onSuccess(Object results) {
-                stopAnimLoading();
-                List<VideoJSON> data = (List<VideoJSON>) results;
-                if (data == null)
-                    return;
+        List<NewWishList> data = DatabaseManager.getInstance(mContext).listVideoAtWishList();
+        stopAnimLoading();
 
-                updateGridVideo(data);
-            }
-        });
-    }
-
-    void updateGridVideo(List<VideoJSON> data) {
+        if (data == null || data.isEmpty() || mAdapter == null)
+            return;
         mAdapter.clear();
-        List<VideoModel> listVideo = new ArrayList<>();
-        for (VideoJSON productModel : data) {
-            VideoModel vModel = new VideoModel(productModel);
-            vModel.setCategoryName(AppUtils.getCategoryName(dataCategory, productModel.categoryId));
-            listVideo.add(vModel);
-        }
-
-        mAdapter.add(listVideo);
+        mAdapter.add(data);
     }
+
+//    void updateGridVideo(List<VideoJSON> data) {
+//        mAdapter.clear();
+//        List<VideoModel> listVideo = new ArrayList<>();
+//        for (VideoJSON productModel : data) {
+//            VideoModel vModel = new VideoModel(productModel);
+//            vModel.setCategoryName(AppUtils.getCategoryName(dataCategory, productModel.categoryId));
+//            listVideo.add(vModel);
+//        }
+//
+//        mAdapter.add(listVideo);
+//    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
         WishListManager.getInstance().cancelRequestWishList();
+    }
+
+    @Override
+    public void onPlayVideoListener(int position, NewWishList model) {
+
+        NewWishList wishList = (NewWishList) model;
+        if (wishList.getVideoId() <= 0)
+            return;
+
+        final ProgressDialog loadingDialog = DialogUtil.showLoading(mContext, "Loading");
+
+        RPC.requestGetVideoById(wishList.getVideoId(), new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                DialogUtil.hideLoading(loadingDialog);
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                DialogUtil.hideLoading(loadingDialog);
+
+                VideoModel videoModel = new VideoModel((VideoJSON) results);
+                mHostActivityInterface.addFragment(VideoDetailFragment.newInstance(videoModel,true), true);
+            }
+        });
     }
 }

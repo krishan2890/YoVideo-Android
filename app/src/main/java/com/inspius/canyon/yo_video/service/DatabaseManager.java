@@ -9,6 +9,8 @@ import com.inspius.canyon.yo_video.greendao.DBKeywordSearch;
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearchDao;
 import com.inspius.canyon.yo_video.greendao.DaoMaster;
 import com.inspius.canyon.yo_video.greendao.DaoSession;
+import com.inspius.canyon.yo_video.greendao.NewWishList;
+import com.inspius.canyon.yo_video.greendao.NewWishListDao;
 import com.inspius.canyon.yo_video.helper.Logger;
 
 import java.util.ArrayList;
@@ -246,5 +248,100 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<NewWishList> listVideoAtWishList() {
+        List<NewWishList> data = null;
+        try {
+            openReadableDb();
+            NewWishListDao userDao = daoSession.getNewWishListDao();
+
+            QueryBuilder<NewWishList> queryBuilder = userDao.queryBuilder().orderDesc(NewWishListDao.Properties.Id);
+            data = queryBuilder.list();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (data != null) {
+            return new ArrayList<>(data);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean deleteVideoAtWishList(Long id) {
+        try {
+            openWritableDb();
+            NewWishListDao userDao = daoSession.getNewWishListDao();
+            userDao.deleteByKey(id);
+            daoSession.clear();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public void deleteVideoAtWishListByVideoId(Long id) {
+        try {
+            openWritableDb();
+            NewWishListDao userDao = daoSession.getNewWishListDao();
+            QueryBuilder<NewWishList> queryBuilder = userDao.queryBuilder().where(NewWishListDao.Properties.VideoId.eq(id));
+            queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteVideoAtWishList(NewWishList video) {
+        try {
+            openWritableDb();
+            NewWishListDao userDao = daoSession.getNewWishListDao();
+            userDao.delete(video);
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public NewWishList insertVideoToWishList(NewWishList video) {
+        try {
+            if (video != null) {
+                openWritableDb();
+                NewWishListDao userDao = daoSession.getNewWishListDao();
+                video.setId(userDao.insert(video));
+                Logger.d(TAG, "Inserted keyword: " + video.getName() + " to the schema.");
+                daoSession.clear();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return video;
+    }
+
+    @Override
+    public boolean existVideoAtWithList(Long id) {
+        long count = 0;
+        try {
+            openReadableDb();
+            NewWishListDao userDao = daoSession.getNewWishListDao();
+            QueryBuilder<NewWishList> queryBuilder = userDao.queryBuilder().where(NewWishListDao.Properties.VideoId.eq(id));
+            count = queryBuilder.count();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (count > 0) {
+            return true;
+        }
+        return false;
     }
 }

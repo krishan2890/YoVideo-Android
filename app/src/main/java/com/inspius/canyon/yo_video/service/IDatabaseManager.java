@@ -6,6 +6,7 @@ package com.inspius.canyon.yo_video.service;
 
 
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearch;
+import com.inspius.canyon.yo_video.greendao.NewWishList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,4 +69,16 @@ public interface IDatabaseManager {
      * Delete all the keyword from the DB
      */
     void clearKeyword();
+
+    List<NewWishList> listVideoAtWishList();
+
+    boolean deleteVideoAtWishList(Long id);
+
+    void deleteVideoAtWishListByVideoId(Long id);
+
+    void deleteVideoAtWishList(NewWishList course);
+
+    NewWishList insertVideoToWishList(NewWishList course);
+
+    boolean existVideoAtWithList(Long id);
 }

@@ -43,6 +43,7 @@ public class AppConstant {
     public static final String RELATIVE_URL_MORE_VIDEOS = "more-videos.json";
     public static final String RELATIVE_URL_LIST_NOTIFICATIONS = "list-notifications.json";
     public static final String RELATIVE_URL_VIDEO_CATEGORY = "api/getListVideoByCategory/%s";
+    public static final String RELATIVE_URL_VIDEO_BY_ID = "api/getVideoById/%s";
 
     /**
      * Key Bundle

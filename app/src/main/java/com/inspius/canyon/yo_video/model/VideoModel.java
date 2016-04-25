@@ -67,6 +67,10 @@ public class VideoModel implements Serializable {
         return AppUtils.getStatsFormat(String.valueOf(viewNumber));
     }
 
+    public Long getView(){
+        return viewNumber;
+    }
+
     public String getCategoryName() {
         if (TextUtils.isEmpty(categoryName))
             return String.valueOf(getCategoryID());
