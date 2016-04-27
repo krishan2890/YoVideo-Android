@@ -3,8 +3,8 @@
     <string name="app_name">YoVideo</string>
 
     <!-- Change Facebook Dev Id -->
-    <!--<string name="facebook_app_id">694268657341835</string>-->
-    <string name="facebook_app_id">1705400019740975</string>
+    <string name="facebook_app_id">694268657341835</string>
+    <!--<string name="facebook_app_id">1705400019740975</string>-->
 
     <!-- Change AdMob Banner Id -->
     <string name="banner_ad_unit_id">ca-app-pub-4515379129023944/1260293910</string>
@@ -128,5 +128,5 @@
     <string name="msg_request_login_vip">Some contents are only for premium members. Please log in to view</string>
     <string name="msg_need_vip">Some contents are only for premium members. Please update your account</string>
     <string name="msg_no_result">No result found</string>
-
+    <string name="msg_loading_common">Please wait while the content loads</string>
 </resources>

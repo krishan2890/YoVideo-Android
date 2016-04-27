@@ -73,7 +73,6 @@ public class AccountDataManager {
                 logoutFacebook(activity, listener);
                 break;
         }
-
     }
 
     public String getUsername() {
@@ -199,20 +198,6 @@ public class AccountDataManager {
             }
         });
     }
-
-//    public void callChangePass(String currentPass, final String newPass, String confirmPass, final APIResponseListener listener) {
-//        RPC.requestChangePass(getAccountID(), currentPass, newPass, confirmPass, new APIResponseListener() {
-//            @Override
-//            public void onError(String message) {
-//                listener.onError(message);
-//            }
-//
-//            @Override
-//            public void onSuccess(Object results) {
-//                Logger.d("aaaa",String.valueOf(results));
-//            }
-//        });
-//    }
 
     public void callUpdateCustomer(CustomerModel customerUpdate, final AccountDataListener listener) {
         customerUpdate.id = getAccountID();

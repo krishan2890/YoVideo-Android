@@ -1209,9 +1209,7 @@ public class RPC {
                 try {
                     boolean checkData = parseResponseData(response, listener);
                     if (checkData) {
-
                         VideoJSON listData = new Gson().fromJson(response.getString("content"), VideoJSON.class);
-
                         listener.onSuccess(listData);
                     }
                     Log.d("question", String.valueOf(response));
@@ -1228,7 +1226,7 @@ public class RPC {
                     }
                 });
 
-        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, AppConstant.RELATIVE_URL_VIDEO_BY_ID);
     }
     /* ======================================= COMMON END=======================================*/
 }
