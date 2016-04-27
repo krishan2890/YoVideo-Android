@@ -351,16 +351,17 @@ public class VideoDetailFragment extends BaseMainFragment {
         if (isWishList) {
             DatabaseManager.getInstance(mContext).deleteVideoAtWishListByVideoId((long) videoModel.getVideoId());
         } else {
-            NewWishList dbCourseWishList = new NewWishList();
-            dbCourseWishList.setVideoId(videoModel.getVideoId());
-            dbCourseWishList.setCategoryname(videoModel.getCategoryName());
-            dbCourseWishList.setName(videoModel.getTitle());
-            dbCourseWishList.setImage(videoModel.getImage());
-            dbCourseWishList.setLink(videoModel.getVideoUrl());
-            dbCourseWishList.setSeries(videoModel.getSeries());
-            dbCourseWishList.setView(videoModel.getViewNumber());
+            NewWishList dbWishList = new NewWishList();
+            dbWishList.setVideoId(videoModel.getVideoId());
+            dbWishList.setCategoryname(videoModel.getCategoryName());
+            dbWishList.setName(videoModel.getTitle());
+            dbWishList.setImage(videoModel.getImage());
+            dbWishList.setLink(videoModel.getVideoUrl());
+            dbWishList.setSeries(videoModel.getSeries());
+            dbWishList.setView(videoModel.getViewNumber());
+            dbWishList.setUserID(mAccountDataManager.getAccountID());
 
-            DatabaseManager.getInstance(mContext).insertVideoToWishList(dbCourseWishList);
+            DatabaseManager.getInstance(mContext).insertVideoToWishList(dbWishList);
         }
 
         updateStateViewWishList(!isWishList);

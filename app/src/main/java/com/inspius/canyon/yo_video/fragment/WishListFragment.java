@@ -123,7 +123,7 @@ public class WishListFragment extends BaseMainFragment implements WishLishAdapte
     void requestGetDataProduct() {
         startAnimLoading();
 
-        List<NewWishList> data = DatabaseManager.getInstance(mContext).listVideoAtWishList();
+        List<NewWishList> data = DatabaseManager.getInstance(mContext).listVideoAtWishList(mAccountDataManager.getAccountID());
         stopAnimLoading();
 
         if (data == null || data.isEmpty() || mAdapter == null)

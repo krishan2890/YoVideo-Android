@@ -54,6 +54,7 @@ public class ExampleDaoGenerator {
         note.addStringProperty("image").notNull();
         note.addStringProperty("link").notNull();
         note.addStringProperty("name").notNull();
+        note.addIntProperty("userID").notNull();
     }
 
     private static void addRecentList(Schema schema) {
