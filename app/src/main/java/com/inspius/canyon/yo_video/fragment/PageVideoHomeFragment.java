@@ -78,8 +78,6 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
 
         ultimateRecyclerView.setAdapter(mAdapter);
 
-        mAdapter.add(listVideo);
-
         RPC.requestGetCategories( new APIResponseListener() {
             @Override
             public void onError(String message) {
@@ -95,6 +93,8 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
                 mAdapter.updateCategoryName(data.listCategory);
             }
         });
+
+        mAdapter.add(listVideo);
     }
 
     @Override
