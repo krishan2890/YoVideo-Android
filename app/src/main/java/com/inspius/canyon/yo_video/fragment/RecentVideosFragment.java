@@ -106,21 +106,6 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
         ultimateRecyclerView.setClipToPadding(false);
 
         requestGetDataProduct();
-        RPC.requestGetCategories( new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-
-            }
-
-            @Override
-            public void onSuccess(Object results) {
-                DataCategoryJSON data = (DataCategoryJSON) results;
-                if (data == null || data.listCategory == null)
-                    return;
-
-                mAdapter.updateCategoryName(data.listCategory);
-            }
-        });
         ultimateRecyclerView.setAdapter(mAdapter);
         startAnimLoading();
     }

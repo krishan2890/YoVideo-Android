@@ -1,7 +1,5 @@
 package com.inspius.canyon.yo_video.api;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -14,7 +12,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.app.GlobalApplication;
@@ -32,9 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -590,7 +585,66 @@ public class RPC {
             VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
         }*/
     }
+    public static void requestGetVideoMostView(final int pageNumber, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_VIDEO_MOST_VIEW;
+        final String url = getAbsoluteUrl(String.format(tag, pageNumber, AppConstant.LIMIT_PAGE_HOMES));
+        Logger.d(LOG_TAG, url);
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    boolean checkData = parseResponseData(response, listener);
+                    if (checkData) {
+                        Type type = new TypeToken<List<VideoJSON>>() {
+                        }.getType();
+                        List<VideoJSON> listData = new Gson().fromJson(response.getJSONObject("content").getString("most_view"), type);
 
+                        listener.onSuccess(listData);
+                    }
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                });
+
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
+    }
+    public static void requestGetVideoLatest(final int pageNumber, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_VIDEO_LATEST;
+        final String url = getAbsoluteUrl(String.format(tag, pageNumber, AppConstant.LIMIT_PAGE_HOMES));
+        Logger.d(LOG_TAG, url);
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    boolean checkData = parseResponseData(response, listener);
+                    if (checkData) {
+                        Type type = new TypeToken<List<VideoJSON>>() {
+                        }.getType();
+                        List<VideoJSON> listData = new Gson().fromJson(response.getJSONObject("content").getString("latest"), type);
+
+                        listener.onSuccess(listData);
+                    }
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                });
+
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
+    }
     public static void requestGetVideosByCategory(int categoryId, final APIResponseListener listener) {
         final String tag = String.format(AppConstant.RELATIVE_URL_VIDEO_CATEGORY, categoryId);
         final String url = getAbsoluteUrl(tag);
