@@ -167,7 +167,6 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
         ultimateRecyclerView.setAdapter(menuAdapter);
     }
 
-
     void requestAutoAuthentic() {
         mAccountDataManager.callAutoLoginRequest(getActivity(), new AccountDataListener() {
             @Override

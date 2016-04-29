@@ -125,7 +125,6 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
                 requestGetDataProduct();
             }
         });
-        Logger.d("qqqqq", String.valueOf(categoryModel.id));
         requestGetDataProduct();
 
     }

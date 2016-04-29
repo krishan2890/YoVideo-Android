@@ -151,7 +151,6 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
     }
 
     void updateGridVideo(List<VideoJSON> data) {
-        mAdapter.clear();
         List<VideoModel> listVideo = new ArrayList<>();
         for (VideoJSON productModel : data) {
             VideoModel vModel = new VideoModel(productModel);

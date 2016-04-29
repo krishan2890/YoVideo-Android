@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.greendao.NewWishList;
+import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.listener.AnimateFirstDisplayListener;
 import com.inspius.canyon.yo_video.model.CategoryJSON;
@@ -48,30 +49,10 @@ public class GridVideoAdapter extends UltimateGridLayoutAdapter<VideoModel, Grid
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .imageScaleType(ImageScaleType.EXACTLY)
                 .build();
-
     }
 
     public void setAdapterActionListener(AdapterVideoActionListener listener) {
         this.listener = listener;
-    }
-
-    public void updateCategoryName(List<CategoryJSON> listCategory) {
-        for (VideoModel video : mItems) {
-            String categoryName = "";
-            for (CategoryJSON category : listCategory) {
-                if (video.getCategoryID() == category.id) {
-                    categoryName = category.name;
-                    break;
-                }
-            }
-
-            if (TextUtils.isEmpty(categoryName))
-                categoryName = "Other";
-
-            video.setCategoryName(categoryName);
-        }
-
-        notifyDataSetChanged();
     }
 
 //    public void insert(List<VideoModel> data) {
@@ -87,7 +68,9 @@ public class GridVideoAdapter extends UltimateGridLayoutAdapter<VideoModel, Grid
 //    }
 
     public void clear() {
-        //removeAll();
+        removeAll();
+//        for (int i = getAdapterItemCount() - 1; i > 0; i--)
+//            removeAt(i);
     }
 
     @Override

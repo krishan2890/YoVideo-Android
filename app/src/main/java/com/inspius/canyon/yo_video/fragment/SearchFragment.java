@@ -2,6 +2,7 @@ package com.inspius.canyon.yo_video.fragment;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -78,9 +79,24 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     String currentKeySearch;
     DataCategoryJSON dataCategory;
     Random random;
-    boolean isResponseData;
-    List<VideoModel> data;
     String keyword;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        AppSession.getCategoryData(new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                stopAnimLoading();
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                dataCategory = (DataCategoryJSON) results;
+            }
+        });
+    }
 
     @Override
     public String getTagText() {
@@ -103,18 +119,6 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         mActivityInterface.updateHeaderTitle(getString(R.string.search));
         mActivityInterface.setVisibleHeaderMenu(false);
         mActivityInterface.setVisibleHeaderSearch(false);
-        AppSession.getCategoryData(new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                stopAnimLoading();
-            }
-
-            @Override
-            public void onSuccess(Object results) {
-                dataCategory = (DataCategoryJSON) results;
-                callSearchData();
-            }
-        });
     }
 
     @Override
@@ -159,18 +163,17 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         ultimateRecyclerView.setSaveEnabled(true);
         ultimateRecyclerView.setClipToPadding(false);
 
+        ultimateRecyclerView.reenableLoadmore();
+        ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
+            @Override
+            public void loadMore(int itemsCount, int maxLastVisiblePosition) {
+                callSearchData();
+            }
+        });
+
         ultimateRecyclerView.setAdapter(mAdapter);
 
-
-//        ultimateRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mGridLayoutManager) {
-//            @Override
-//            public void onLoadMore(int current_page) {
-//                requestGetDataProduct();
-//            }
-//        });
-
         // tag view
-
         prepareTags();
         setTags("");
 
@@ -199,21 +202,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             public void onTagClick(Tag tag, int position) {
                 edtKeyWord.setText(tag.text);
                 edtKeyWord.setSelection(tag.text.length());//to set cursor position
-                RPC.requestGetCategories(new APIResponseListener() {
-                    @Override
-                    public void onError(String message) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(Object results) {
-                        DataCategoryJSON data = (DataCategoryJSON) results;
-                        if (data == null || data.listCategory == null)
-                            return;
-
-                        mAdapter.updateCategoryName(data.listCategory);
-                    }
-                });
+                mAdapter.clear();
                 callSearchData();
             }
         });
@@ -226,19 +215,6 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
                 prepareTags();
             }
         });
-
-        // Data Search
-//        RPC.requestGetCategories(new APIResponseListener() {
-//            @Override
-//            public void onError(String message) {
-//
-//            }
-//
-//            @Override
-//            public void onSuccess(Object results) {
-//                dataCategory= (DataCategoryJSON) results;
-//            }
-//        });
     }
 
     private void callSearchData() {
@@ -255,7 +231,6 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
 
         currentKeySearch = keyword;
 
-        mAdapter.clear();
         tagslayout.setVisibility(View.GONE);
         ultimateRecyclerView.setVisibility(View.VISIBLE);
 
@@ -263,7 +238,6 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         RPC.requestSearchVideoByKeyWord(edtKeyWord.getText().toString(), new APIResponseListener() {
             @Override
             public void onError(String message) {
-
 
                 //isResponseData = true;
                 stopAnimLoading();

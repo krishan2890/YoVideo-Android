@@ -1,24 +1,29 @@
 package com.inspius.canyon.yo_video.fragment;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.adapter.GridVideoAdapter;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
+import com.inspius.canyon.yo_video.app.AppEnum;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
+import com.inspius.canyon.yo_video.helper.AppUtils;
+import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
+import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
 import com.ogaclejapan.smarttablayout.utils.v4.Bundler;
+import com.wang.avi.AVLoadingIndicatorView;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,24 +38,25 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
     @Bind(R.id.ultimate_recycler_view)
     UltimateRecyclerView ultimateRecyclerView;
 
+    @Bind(R.id.avloadingIndicatorView)
+    AVLoadingIndicatorView avloadingIndicatorView;
+
     BasicGridLayoutManager mGridLayoutManager;
     GridVideoAdapter mAdapter = null;
-    List<VideoModel> listVideo;
     private int columns = 2;
+    int pageNumber;
+    DataCategoryJSON dataCategory;
+    AppEnum.HOME_TYPE type;
 
-    public static Bundle arguments(List<VideoJSON> listProduct) {
-        return new Bundler().putSerializable(AppConstant.KEY_BUNDLE_LIST_PRODUCT, (Serializable) listProduct).get();
+    public static Bundle arguments(AppEnum.HOME_TYPE type) {
+        return new Bundler().putSerializable(AppConstant.KEY_BUNDLE_TYPE, type).get();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        List<VideoJSON> listProduct = (List<VideoJSON>) getArguments().getSerializable(AppConstant.KEY_BUNDLE_LIST_PRODUCT);
-        listVideo = new ArrayList<>();
-        for (VideoJSON productModel : listProduct) {
-            listVideo.add(new VideoModel(productModel));
-        }
+        this.type = (AppEnum.HOME_TYPE) getArguments().getSerializable(AppConstant.KEY_BUNDLE_TYPE);
     }
 
     @Override
@@ -73,27 +79,87 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
         ultimateRecyclerView.setLayoutManager(mGridLayoutManager);
 
         ultimateRecyclerView.setHasFixedSize(true);
-        ultimateRecyclerView.setSaveEnabled(true);
-        ultimateRecyclerView.setClipToPadding(false);
+
+//        ultimateRecyclerView.reenableLoadmore();
+//        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                pageNumber = 1;
+//                requestGetData();
+//            }
+//        });
+
+        // setting load more Recycler View
+        ultimateRecyclerView.reenableLoadmore();
+        ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
+            @Override
+            public void loadMore(int itemsCount, int maxLastVisiblePosition) {
+                requestGetData();
+            }
+        });
 
         ultimateRecyclerView.setAdapter(mAdapter);
 
-        RPC.requestGetCategories( new APIResponseListener() {
+        startAnimLoading();
+
+        AppSession.getCategoryData(new APIResponseListener() {
             @Override
             public void onError(String message) {
-
+                stopAnimLoading();
             }
 
             @Override
             public void onSuccess(Object results) {
-                DataCategoryJSON data = (DataCategoryJSON) results;
-                if (data == null || data.listCategory == null)
-                    return;
-
-                mAdapter.updateCategoryName(data.listCategory);
+                dataCategory = (DataCategoryJSON) results;
+                pageNumber = 1;
+                requestGetData();
             }
         });
+    }
 
+    void requestGetData() {
+        // check page number
+        if (pageNumber < 1)
+            pageNumber = 1;
+
+        RPC.requestGetVideoAtHome(type, pageNumber, new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                stopAnimLoading();
+                DialogUtil.showMessageBox(mContext, message);
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                stopAnimLoading();
+                if (ultimateRecyclerView == null)
+                    return;
+                ultimateRecyclerView.setRefreshing(false);
+                // parse data
+                List<VideoJSON> listData = (List<VideoJSON>) results;
+
+                // check end data
+                if (listData == null || listData.isEmpty())
+                    return;
+
+                // check first get data
+                if (pageNumber == 1)
+                    mAdapter.clear();
+
+                // update data to view
+                pageNumber++;
+                updateData(listData);
+            }
+        });
+    }
+
+    void updateData(List<VideoJSON> listData) {
+        List<VideoModel> listVideo = new ArrayList<VideoModel>();
+        for (VideoJSON model : listData) {
+            VideoModel vModel = new VideoModel(model);
+            vModel.setCategoryName(AppUtils.getCategoryName(dataCategory, model.categoryId));
+            listVideo.add(vModel);
+        }
         mAdapter.insert(listVideo);
     }
 
@@ -116,9 +182,19 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
 //        startActivity(intent);
     }
 
+    void startAnimLoading() {
+        if (avloadingIndicatorView != null)
+            avloadingIndicatorView.setVisibility(View.VISIBLE);
+    }
+
+    void stopAnimLoading() {
+        if (avloadingIndicatorView != null)
+            avloadingIndicatorView.setVisibility(View.GONE);
+    }
+
     @Override
     public void onItemClickListener(int position, Object model) {
         mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
-        Logger.d("aaaa",String.valueOf(((VideoModel) model).getVideoId()));
+        Logger.d("aaaa", String.valueOf(((VideoModel) model).getVideoId()));
     }
 }

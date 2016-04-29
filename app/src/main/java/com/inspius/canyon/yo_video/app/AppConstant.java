@@ -59,6 +59,7 @@ public class AppConstant {
     public static final String KEY_BUNDLE_OPEN_REGISTER = "open_register";
     public static final String KEY_BUNDLE_VIDEO_YOUTUBE_ID = "KEY_VIDEO_ID";
     public static final String KEY_BUNDLE_NOTIFICATION_CONTENT = "content";
+    public static final String KEY_BUNDLE_TYPE = "type";
     /**
      * SharedPreferences
      */
