@@ -10,10 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
+import com.inspius.canyon.yo_video.greendao.NewWishList;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.listener.AnimateFirstDisplayListener;
 import com.inspius.canyon.yo_video.model.CategoryJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
+import com.marshalchen.ultimaterecyclerview.UltimateGridLayoutAdapter;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -27,15 +29,15 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class GridVideoAdapter extends UltimateViewAdapter<GridVideoAdapter.HolderGirdCell> {
+public class GridVideoAdapter extends UltimateGridLayoutAdapter<VideoModel, GridVideoAdapter.HolderGirdCell> {
     private List<VideoModel> mItems;
     AdapterVideoActionListener listener;
-
     private DisplayImageOptions options;
     private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
-    public GridVideoAdapter() {
-        this.mItems = new ArrayList<>();
+    public GridVideoAdapter(List<VideoModel> items) {
+        super(items);
+        this.mItems = items;
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.img_video_default)
@@ -46,22 +48,50 @@ public class GridVideoAdapter extends UltimateViewAdapter<GridVideoAdapter.Holde
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .imageScaleType(ImageScaleType.EXACTLY)
                 .build();
+
     }
 
     public void setAdapterActionListener(AdapterVideoActionListener listener) {
         this.listener = listener;
     }
 
-    @Override
-    public HolderGirdCell onCreateViewHolder(ViewGroup parent) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_grid_video, parent, false);
-        HolderGirdCell vh = new HolderGirdCell(v, true);
-        return vh;
+    public void updateCategoryName(List<CategoryJSON> listCategory) {
+        for (VideoModel video : mItems) {
+            String categoryName = "";
+            for (CategoryJSON category : listCategory) {
+                if (video.getCategoryID() == category.id) {
+                    categoryName = category.name;
+                    break;
+                }
+            }
+
+            if (TextUtils.isEmpty(categoryName))
+                categoryName = "Other";
+
+            video.setCategoryName(categoryName);
+        }
+
+        notifyDataSetChanged();
+    }
+
+//    public void insert(List<VideoModel> data) {
+//        insertInternal(data, mItems);
+//    }
+//
+//    public void insert(VideoModel model, int position) {
+//        insertInternal(mItems, model, position);
+//    }
+//
+//    public void remove(int position) {
+//        removeInternal(mItems, position);
+//    }
+
+    public void clear() {
+        removeAll();
     }
 
     @Override
-    public void onBindViewHolder(final HolderGirdCell holder, final int position) {
+    protected void bindNormal(GridVideoAdapter.HolderGirdCell holder, VideoModel videoModel, final int position) {
         final VideoModel model = getItem(position);
         if (model != null) {
             holder.tvnName.setText(model.getTitle());
@@ -86,64 +116,30 @@ public class GridVideoAdapter extends UltimateViewAdapter<GridVideoAdapter.Holde
             });
 
             ImageLoader.getInstance().displayImage(model.getImage(), holder.imvThumbnail, options, animateFirstListener);
-
         }
     }
 
-
-    public void add(List<VideoModel> listData) {
-        mItems.addAll(listData);
-        notifyDataSetChanged();
-    }
-
-    public void updateCategoryName(List<CategoryJSON> listCategory) {
-        for (VideoModel video : mItems) {
-            String categoryName = "";
-            for (CategoryJSON category : listCategory) {
-                if (video.getCategoryID() == category.id) {
-                    categoryName = category.name;
-                    break;
-                }
-            }
-
-            if (TextUtils.isEmpty(categoryName))
-                categoryName = "Other";
-
-            video.setCategoryName(categoryName);
-        }
-
-        notifyDataSetChanged();
-    }
-
-    public void clear() {
-//        clear(mItems);
-        mItems.clear();
-        notifyDataSetChanged();
+    @Override
+    protected int getNormalLayoutResId() {
+        return R.layout.item_grid_video;
     }
 
     @Override
-    public int getAdapterItemCount() {
-        return mItems.size();
+    protected GridVideoAdapter.HolderGirdCell newViewHolder(View view) {
+        return new HolderGirdCell(view, true);
     }
 
     @Override
-    public HolderGirdCell getViewHolder(View view) {
-        return new HolderGirdCell(view, false);
+    protected void withBindHolder(GridVideoAdapter.HolderGirdCell holder, VideoModel data, int position) {
+
     }
 
-    @Override
-    public long generateHeaderId(int position) {
-        return 0;
-    }
-
-    @Override
-    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup viewGroup) {
-        return null;
-    }
-
-    @Override
-    public void onBindHeaderViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-
+    public VideoModel getItem(int position) {
+        if (customHeaderView != null)
+            position--;
+        if (position < mItems.size())
+            return mItems.get(position);
+        else return null;
     }
 
     public class HolderGirdCell extends UltimateRecyclerviewViewHolder {
@@ -172,13 +168,5 @@ public class GridVideoAdapter extends UltimateViewAdapter<GridVideoAdapter.Holde
                 ButterKnife.bind(this, itemView);
             }
         }
-    }
-
-    public VideoModel getItem(int position) {
-        if (customHeaderView != null)
-            position--;
-        if (position < mItems.size())
-            return mItems.get(position);
-        else return null;
     }
 }

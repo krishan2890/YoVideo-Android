@@ -19,7 +19,7 @@ import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.uiUtils.BasicGridLayoutManager;
+import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.List;

@@ -2,7 +2,6 @@ package com.inspius.canyon.yo_video.adapter;
 
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +10,8 @@ import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.greendao.NewWishList;
-import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.listener.AnimateFirstDisplayListener;
 import com.inspius.canyon.yo_video.listener.WishLishAdapterVideoActionListener;
-import com.inspius.canyon.yo_video.model.CategoryJSON;
-import com.inspius.canyon.yo_video.model.VideoModel;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -129,8 +125,13 @@ public class WishLishAdapter extends UltimateViewAdapter<WishLishAdapter.HolderG
     }
 
     @Override
-    public HolderGirdCell getViewHolder(View view) {
-        return new HolderGirdCell(view, false);
+    public HolderGirdCell newFooterHolder(View view) {
+        return null;
+    }
+
+    @Override
+    public HolderGirdCell newHeaderHolder(View view) {
+        return null;
     }
 
     @Override

@@ -17,7 +17,7 @@ import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.service.RecentListManager;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.uiUtils.BasicGridLayoutManager;
+import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
         ultimateRecyclerView.addItemDecoration(
                 new GridDividerDecoration(columns, spacing, includeEdge));
 
-        mAdapter = new GridVideoAdapter();
+        mAdapter = new GridVideoAdapter(new ArrayList<VideoModel>());
         mAdapter.setAdapterActionListener(this);
 
         mGridLayoutManager = new BasicGridLayoutManager(getContext(), columns, mAdapter);
@@ -159,7 +159,7 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
             listVideo.add(vModel);
         }
 
-        mAdapter.add(listVideo);
+        mAdapter.insert(listVideo);
     }
     @Override
     public void onItemClickListener(int position, Object model) {

@@ -18,7 +18,7 @@ import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.uiUtils.BasicGridLayoutManager;
+import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class PageVideoMostViewFragment extends BaseMainFragment implements Adapt
         ultimateRecyclerView.addItemDecoration(
                 new GridDividerDecoration(columns, spacing, includeEdge));
 
-        mAdapter = new GridVideoAdapter();
+        mAdapter = new GridVideoAdapter(new ArrayList<VideoModel>());
         mAdapter.setAdapterActionListener(this);
 
         mGridLayoutManager = new BasicGridLayoutManager(getContext(), columns, mAdapter);
@@ -83,7 +83,6 @@ public class PageVideoMostViewFragment extends BaseMainFragment implements Adapt
         });
 
         // setting load more Recycler View
-        ultimateRecyclerView.enableLoadmore();
         ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
             @Override
             public void loadMore(int itemsCount, int maxLastVisiblePosition) {
@@ -154,7 +153,7 @@ public class PageVideoMostViewFragment extends BaseMainFragment implements Adapt
             vModel.setCategoryName(AppUtils.getCategoryName(dataCategory, model.categoryId));
             events.add(vModel);
         }
-        mAdapter.add(events);
+        mAdapter.insert(events);
     }
 
     @Override

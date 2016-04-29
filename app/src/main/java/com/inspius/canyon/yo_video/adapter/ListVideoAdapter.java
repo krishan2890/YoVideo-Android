@@ -139,8 +139,13 @@ public class ListVideoAdapter extends UltimateViewAdapter<ListVideoAdapter.Holde
     }
 
     @Override
-    public HolderListCell getViewHolder(View view) {
-        return new HolderListCell(view, false);
+    public HolderListCell newFooterHolder(View view) {
+        return null;
+    }
+
+    @Override
+    public HolderListCell newHeaderHolder(View view) {
+        return null;
     }
 
     @Override

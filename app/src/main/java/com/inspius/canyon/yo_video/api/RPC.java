@@ -588,7 +588,6 @@ public class RPC {
     public static void requestGetVideoMostView(final int pageNumber, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_VIDEO_MOST_VIEW;
         final String url = getAbsoluteUrl(String.format(tag, pageNumber, AppConstant.LIMIT_PAGE_HOMES));
-        Logger.d(LOG_TAG, url);
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -618,7 +617,7 @@ public class RPC {
     public static void requestGetVideoLatest(final int pageNumber, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_VIDEO_LATEST;
         final String url = getAbsoluteUrl(String.format(tag, pageNumber, AppConstant.LIMIT_PAGE_HOMES));
-        Logger.d(LOG_TAG, url);
+
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -1146,6 +1145,7 @@ public class RPC {
      * @return
      */
     private static String getAbsoluteUrl(String relativeUrl) {
+        Logger.d(LOG_TAG, AppConfig.BASE_URL + relativeUrl);
         return AppConfig.BASE_URL + relativeUrl;
     }
 

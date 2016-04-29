@@ -29,7 +29,7 @@ import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.uiUtils.BasicGridLayoutManager;
+import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
@@ -81,6 +81,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     boolean isResponseData;
     List<VideoModel> data;
     String keyword;
+
     @Override
     public String getTagText() {
         return TAG;
@@ -148,7 +149,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         ultimateRecyclerView.addItemDecoration(
                 new GridDividerDecoration(columns, spacing, includeEdge));
 
-        mAdapter = new GridVideoAdapter();
+        mAdapter = new GridVideoAdapter(new ArrayList<VideoModel>());
         mAdapter.setAdapterActionListener(this);
 
         mGridLayoutManager = new BasicGridLayoutManager(getContext(), columns, mAdapter);
@@ -198,7 +199,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             public void onTagClick(Tag tag, int position) {
                 edtKeyWord.setText(tag.text);
                 edtKeyWord.setSelection(tag.text.length());//to set cursor position
-                RPC.requestGetCategories( new APIResponseListener() {
+                RPC.requestGetCategories(new APIResponseListener() {
                     @Override
                     public void onError(String message) {
 
@@ -371,8 +372,8 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     }
 
     void stopAnimLoading() {
-        if(avloadingIndicatorView != null)
-        avloadingIndicatorView.setVisibility(View.GONE);
+        if (avloadingIndicatorView != null)
+            avloadingIndicatorView.setVisibility(View.GONE);
     }
 
     @OnClick(R.id.btnSearch)
@@ -384,8 +385,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance(mContext).insertKeyword(keyword);
             if (dbKeywordSearch != null)
                 prepareTags();
-        }
-        else  {
+        } else {
             mActivityInterface.showCroutonAlert(getString(R.string.msg_null_key_word));
             return;
         }
@@ -397,9 +397,8 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         startAnimLoading();
         //isResponseData = false;
 
-       callSearchData();
+        callSearchData();
     }
-
 
 
     void updateDataProduct(List<VideoJSON> data) {
@@ -410,7 +409,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             listVideo.add(vModel);
         }
 
-        mAdapter.add(listVideo);
+        mAdapter.insert(listVideo);
     }
 
     @Override

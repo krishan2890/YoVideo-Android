@@ -30,7 +30,34 @@ public class ListSlideMenuAdapter extends UltimateViewAdapter<ListSlideMenuAdapt
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public ViewHolder newFooterHolder(View view) {
+        return null;
+    }
+
+    @Override
+    public ViewHolder newHeaderHolder(View view) {
+        return null;
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent) {
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_slide_menu, parent, false);
+        return new ViewHolder(v, true);
+    }
+
+    @Override
+    public int getAdapterItemCount() {
+        return slideMenuList.size();
+    }
+
+    @Override
+    public long generateHeaderId(int position) {
+        return 0;
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         final SlideMenuModel slideMenuModel = getItem(position);
         if (slideMenuModel != null) {
             holder.tvnMenuTitle.setText(slideMenuModel.title);
@@ -48,64 +75,25 @@ public class ListSlideMenuAdapter extends UltimateViewAdapter<ListSlideMenuAdapt
                 holder.onItemSelected();
             else holder.onItemClear();
         }
+
     }
 
     @Override
-    public int getAdapterItemCount() {
-        return slideMenuList.size();
-    }
-
-    @Override
-    public ViewHolder getViewHolder(View view) {
-        return new ViewHolder(view, false);
-    }
-
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_slide_menu, parent, false);
-        ViewHolder vh = new ViewHolder(v, true);
-        return vh;
-    }
-
-    @Override
-    public void toggleSelection(int pos) {
-        super.toggleSelection(pos);
-    }
-
-    @Override
-    public void setSelected(int pos) {
-        super.setSelected(pos);
-    }
-
-    @Override
-    public void clearSelection(int pos) {
-        super.clearSelection(pos);
-    }
-
-    @Override
-    public long generateHeaderId(int position) {
-        return -1;
-    }
-
-    @Override
-    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup viewGroup) {
+    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
         return null;
     }
 
     @Override
-    public void onBindHeaderViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
 
     }
 
-    @Override
-    public void onItemMove(int fromPosition, int toPosition) {
-        super.onItemMove(fromPosition, toPosition);
-    }
-
-    @Override
-    public void onItemDismiss(int position) {
-        super.onItemDismiss(position);
+    public SlideMenuModel getItem(int position) {
+        if (customHeaderView != null)
+            position--;
+        if (position < slideMenuList.size())
+            return slideMenuList.get(position);
+        else return new SlideMenuModel();
     }
 
     public class ViewHolder extends UltimateRecyclerviewViewHolder {
@@ -137,12 +125,5 @@ public class ListSlideMenuAdapter extends UltimateViewAdapter<ListSlideMenuAdapt
             itemView.setBackgroundColor(Color.TRANSPARENT);
             viewLine.setBackgroundColor(Color.TRANSPARENT);
         }
-    }
-
-    public SlideMenuModel getItem(int position) {
-        if (position < slideMenuList.size())
-            return slideMenuList.get(position);
-        else
-            return null;
     }
 }

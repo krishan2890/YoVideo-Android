@@ -20,7 +20,7 @@ import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.AppSession;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.divideritemdecoration.HorizontalDividerItemDecoration;
+import com.marshalchen.ultimaterecyclerview.ui.divideritemdecoration.HorizontalDividerItemDecoration;
 import com.ogaclejapan.smarttablayout.utils.v4.Bundler;
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -92,12 +92,12 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
         }
         ultimateRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getContext()).sizeResId(R.dimen.divider_height_list_product).color(Color.TRANSPARENT).build());
 
-       // ultimateRecyclerView.enableLoadmore();
-      //  ultimateRecyclerView.setOnLoadMoreListener(this);
+        // ultimateRecyclerView.enableLoadmore();
+        //  ultimateRecyclerView.setOnLoadMoreListener(this);
 
         mAdapter = new ListVideoAdapter();
         mAdapter.setAdapterActionListener(this);
-       mAdapter.updateCategoryName(categoryModel);
+        mAdapter.updateCategoryName(categoryModel);
         linearLayoutManager = new LinearLayoutManager(getContext());
         ultimateRecyclerView.setLayoutManager(linearLayoutManager);
         ultimateRecyclerView.setAdapter(mAdapter);
@@ -125,7 +125,7 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
                 requestGetDataProduct();
             }
         });
-        Logger.d("qqqqq",String.valueOf(categoryModel.id));
+        Logger.d("qqqqq", String.valueOf(categoryModel.id));
         requestGetDataProduct();
 
     }

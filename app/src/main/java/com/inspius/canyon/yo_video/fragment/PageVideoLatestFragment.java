@@ -18,7 +18,7 @@ import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.uiUtils.BasicGridLayoutManager;
+import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
@@ -49,7 +49,6 @@ public class PageVideoLatestFragment extends BaseMainFragment implements Adapter
         super.onResume();
 
 
-
     }
 
     @Override
@@ -65,7 +64,7 @@ public class PageVideoLatestFragment extends BaseMainFragment implements Adapter
         ultimateRecyclerView.addItemDecoration(
                 new GridDividerDecoration(columns, spacing, includeEdge));
 
-        mAdapter = new GridVideoAdapter();
+        mAdapter = new GridVideoAdapter(new ArrayList<VideoModel>());
         mAdapter.setAdapterActionListener(this);
 
         mGridLayoutManager = new BasicGridLayoutManager(getContext(), columns, mAdapter);
@@ -75,6 +74,7 @@ public class PageVideoLatestFragment extends BaseMainFragment implements Adapter
         ultimateRecyclerView.setSaveEnabled(true);
         ultimateRecyclerView.setClipToPadding(false);
 
+        ultimateRecyclerView.reenableLoadmore();
         ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -84,13 +84,15 @@ public class PageVideoLatestFragment extends BaseMainFragment implements Adapter
         });
 
         // setting load more Recycler View
-        ultimateRecyclerView.enableLoadmore();
+        ultimateRecyclerView.reenableLoadmore();
         ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
             @Override
             public void loadMore(int itemsCount, int maxLastVisiblePosition) {
                 requestGetData();
             }
         });
+
+        Logger.d(TAG, ultimateRecyclerView.isLoadMoreEnabled() + "");
 
         ultimateRecyclerView.setAdapter(mAdapter);
 
@@ -105,7 +107,7 @@ public class PageVideoLatestFragment extends BaseMainFragment implements Adapter
             @Override
             public void onSuccess(Object results) {
                 dataCategory = (DataCategoryJSON) results;
-                pageNumber=1;
+                pageNumber = 1;
                 requestGetData();
             }
         });
@@ -115,6 +117,7 @@ public class PageVideoLatestFragment extends BaseMainFragment implements Adapter
         // check page number
         if (pageNumber < 1)
             pageNumber = 1;
+
         RPC.requestGetVideoLatest(pageNumber, new APIResponseListener() {
             @Override
             public void onError(String message) {
@@ -153,7 +156,7 @@ public class PageVideoLatestFragment extends BaseMainFragment implements Adapter
             vModel.setCategoryName(AppUtils.getCategoryName(dataCategory, model.categoryId));
             listVideo.add(vModel);
         }
-        mAdapter.add(listVideo);
+        mAdapter.insert(listVideo);
     }
 
     @Override

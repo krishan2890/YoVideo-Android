@@ -30,7 +30,7 @@ import com.inspius.canyon.yo_video.service.AppNotificationManager;
 import com.inspius.coreapp.CoreAppFragment;
 import com.inspius.coreapp.helper.IntentUtils;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.divideritemdecoration.HorizontalDividerItemDecoration;
+import com.marshalchen.ultimaterecyclerview.ui.divideritemdecoration.HorizontalDividerItemDecoration;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
@@ -300,13 +300,15 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
         mActivityInterface.clearBackStackFragment();
         mHostActivityInterface.addFragment(AccountOptionFragment.newInstance(), true);
     }
+
     @OnClick(R.id.imvAvatar)
-    void doChangeAvatar(){
+    void doChangeAvatar() {
         Intent intent = IntentUtils.pickImage();
         startActivityForResult(intent, AppConstant.REQUEST_ALBUM_PIC);
     }
+
     @Override
-    public void  onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         Logger.d(TAG, "onActivityResult = " + String.valueOf(resultCode));
@@ -316,13 +318,13 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
                 mActivityInterface.showLoading("Updating avatar...");
                 mAccountDataManager.callUpdateAvatar(getContext(), data, new APIResponseListener() {
                     @Override
-                    public void onError( String message) {
+                    public void onError(String message) {
                         mActivityInterface.hideLoading();
                         DialogUtil.showMessageBox(getContext(), message);
                     }
 
                     @Override
-                    public void onSuccess( Object results) {
+                    public void onSuccess(Object results) {
                         mActivityInterface.hideLoading();
                         ImageLoader.getInstance().displayImage(mAccountDataManager.getCustomerModel().avatar, imvAvatar, options, animateFirstListener);
                     }
@@ -330,6 +332,7 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
             }
         }
     }
+
     @Override
     public void onNotificationNotReadChanged(int number) {
         tvnNumberNotification.setText(String.valueOf(number));

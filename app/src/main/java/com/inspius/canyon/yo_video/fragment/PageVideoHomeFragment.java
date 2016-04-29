@@ -15,7 +15,7 @@ import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.uiUtils.BasicGridLayoutManager;
+import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
 import com.ogaclejapan.smarttablayout.utils.v4.Bundler;
 
 import java.io.Serializable;
@@ -66,7 +66,7 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
         ultimateRecyclerView.addItemDecoration(
                 new GridDividerDecoration(columns, spacing, includeEdge));
 
-        mAdapter = new GridVideoAdapter();
+        mAdapter = new GridVideoAdapter(new ArrayList<VideoModel>());
         mAdapter.setAdapterActionListener(this);
 
         mGridLayoutManager = new BasicGridLayoutManager(getContext(), columns, mAdapter);
@@ -94,7 +94,7 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
             }
         });
 
-        mAdapter.add(listVideo);
+        mAdapter.insert(listVideo);
     }
 
     @Override
