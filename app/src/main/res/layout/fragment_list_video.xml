@@ -12,6 +12,7 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="10dp"
+        app:recyclerviewEmptyView="@layout/empty_view"
         app:recyclerviewScrollbars="vertical" />
 
     <com.wang.avi.AVLoadingIndicatorView xmlns:app="http://schemas.android.com/apk/res-auto"

@@ -2,6 +2,7 @@ package com.inspius.canyon.yo_video.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
@@ -12,7 +13,6 @@ import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.helper.AppUtils;
-import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.CategoryJSON;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
@@ -100,15 +100,25 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
         mAdapter.updateCategoryName(categoryModel);
         linearLayoutManager = new LinearLayoutManager(getContext());
         ultimateRecyclerView.setLayoutManager(linearLayoutManager);
+        ultimateRecyclerView.reenableLoadmore();
+
+        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                pageNumber = 1;
+                requestGetDataProduct();
+            }
+        });
+        // setting load more Recycler View
+        ultimateRecyclerView.reenableLoadmore();
+        ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
+            @Override
+            public void loadMore(int itemsCount, int maxLastVisiblePosition) {
+                requestGetDataProduct();
+            }
+        });
         ultimateRecyclerView.setAdapter(mAdapter);
 
-//        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                pageNumber = 1;
-//                requestGetDataProduct();
-//            }
-//        });
 
         startAnimLoading();
 
@@ -150,7 +160,10 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
     }
 
     void requestGetDataProduct() {
-        RPC.requestGetVideosByCategory(categoryModel.id, new APIResponseListener() {
+        if (pageNumber < 1)
+            pageNumber = 1;
+
+        RPC.requestGetVideosByCategory(categoryModel.id,pageNumber, new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -170,10 +183,10 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
                 if (data == null || data.isEmpty())
                     return;
 
-//                if (pageNumber == 1)
-//                    mAdapter.clear();
-//
-//                pageNumber++;
+                if (pageNumber == 1)
+                    mAdapter.clear();
+
+                pageNumber++;
                 updateDataProduct(data);
             }
         });

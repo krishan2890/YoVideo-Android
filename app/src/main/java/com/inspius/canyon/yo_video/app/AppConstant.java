@@ -30,7 +30,7 @@ public class AppConstant {
     public static final String RELATIVE_URL_UPDATE_STATIC = "api/updateStatistics";
     public static final String RELATIVE_URL_ADD_WISHLISH = "api/addToWishlist";
     public static final String RELATIVE_URL_WISHLISH = "api/getWishlist/%s";
-    public static final String RELATIVE_URL_RENCENT = "api/getListRecentVideo/%s/20";
+    public static final String RELATIVE_URL_RENCENT = "api/getListRecentVideo/%s/%s/%s";
     public static final String RELATIVE_URL_SEARCH_BY_KEYWORD = "api/getListVideoByKeyword";
     public static final String RELATIVE_URL_CHANGEPROFILE = "api/change_profile";
     public static final String RELATIVE_URL_CHANGEAVATAR = "api/change_avatar";
@@ -42,7 +42,7 @@ public class AppConstant {
     public static final String RELATIVE_URL_LIST_VIDEOS_VIMEO = "list-video-vimeo.json";
     public static final String RELATIVE_URL_MORE_VIDEOS = "more-videos.json";
     public static final String RELATIVE_URL_LIST_NOTIFICATIONS = "list-notifications.json";
-    public static final String RELATIVE_URL_VIDEO_CATEGORY = "api/getListVideoByCategory/%s";
+    public static final String RELATIVE_URL_VIDEO_CATEGORY = "api/getListVideoByCategory/%s/%s/%s";
     public static final String RELATIVE_URL_VIDEO_BY_ID = "api/getVideoById/%s";
     public static final String RELATIVE_URL_VIDEO_MOST_VIEW= "api/getListVideoMostView/%s/%s";
     public static final String RELATIVE_URL_VIDEO_LATEST= "api/getListVideoLasted/%s/%s";

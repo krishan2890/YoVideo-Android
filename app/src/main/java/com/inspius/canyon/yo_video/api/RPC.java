@@ -555,10 +555,9 @@ public class RPC {
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-    public static void requestGetVideosByCategory(int categoryId, final APIResponseListener listener) {
-        final String tag = String.format(AppConstant.RELATIVE_URL_VIDEO_CATEGORY, categoryId);
-        final String url = getAbsoluteUrl(tag);
-
+    public static void requestGetVideosByCategory(int categoryId,int pageNumber, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_VIDEO_CATEGORY;
+        final String url = getAbsoluteUrl(String.format(tag,categoryId, pageNumber, AppConstant.LIMIT_PAGE_HOMES));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -712,10 +711,9 @@ public class RPC {
      * @param listener
      */
 
-    public static void requestGetVideoRencent(final int userID, final APIResponseListener listener) {
-        final String tag = String.format(AppConstant.RELATIVE_URL_RENCENT, userID);
-        final String url = getAbsoluteUrl(tag);
-
+    public static void requestGetVideoRencent(final int userID,int pageNumber, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_RENCENT;
+        final String url = getAbsoluteUrl(String.format(tag,userID, pageNumber, AppConstant.LIMIT_PAGE_HOMES));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
