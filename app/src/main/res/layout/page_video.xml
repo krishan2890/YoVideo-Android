@@ -7,6 +7,7 @@
         android:id="@+id/ultimate_recycler_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        app:recyclerviewEmptyView="@layout/empty_view"
         app:recyclerviewScrollbars="vertical" />
 
     <com.wang.avi.AVLoadingIndicatorView xmlns:app="http://schemas.android.com/apk/res-auto"

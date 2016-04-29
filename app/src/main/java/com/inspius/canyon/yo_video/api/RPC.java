@@ -536,7 +536,7 @@ public class RPC {
                     if (checkData) {
                         Type type = new TypeToken<List<VideoJSON>>() {
                         }.getType();
-                        List<VideoJSON> listData = new Gson().fromJson(response.getJSONObject("content").getString("latest"), type);
+                        List<VideoJSON> listData = new Gson().fromJson(response.getJSONObject("content").getString("videos"), type);
 
                         listener.onSuccess(listData);
                     }

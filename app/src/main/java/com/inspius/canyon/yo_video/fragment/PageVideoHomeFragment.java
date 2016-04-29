@@ -1,6 +1,7 @@
 package com.inspius.canyon.yo_video.fragment;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 
 import com.inspius.canyon.yo_video.R;
@@ -80,15 +81,15 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
 
         ultimateRecyclerView.setHasFixedSize(true);
 
-//        ultimateRecyclerView.reenableLoadmore();
-//        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                pageNumber = 1;
-//                requestGetData();
-//            }
-//        });
+        ultimateRecyclerView.reenableLoadmore();
 
+        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                pageNumber = 1;
+                requestGetData();
+            }
+        });
         // setting load more Recycler View
         ultimateRecyclerView.reenableLoadmore();
         ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
