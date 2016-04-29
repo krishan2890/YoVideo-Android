@@ -85,6 +85,12 @@ public class GlobalApplication extends Application {
         SimpleFacebook.setConfiguration(configuration);
     }
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
+
     public static synchronized GlobalApplication getInstance() {
         return mInstance;
     }
