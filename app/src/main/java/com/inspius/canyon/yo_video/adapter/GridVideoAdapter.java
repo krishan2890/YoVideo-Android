@@ -87,7 +87,7 @@ public class GridVideoAdapter extends UltimateGridLayoutAdapter<VideoModel, Grid
 //    }
 
     public void clear() {
-        removeAll();
+        //removeAll();
     }
 
     @Override
