@@ -23,9 +23,7 @@ public class AppConfig {
     /**
      * replace to your server
      */
-    //public static final String BASE_URL = "http://demo.inspius.com/mobile/life-video/xml/";
     public static final String BASE_URL = "http://test.inspius.com/yovideo/";
-    public static final String BASE_URL_AUTHEN = "http://test.inspius.com/yovideo/";
 
     /**
      * Please replace this with a valid API key which is enabled for the
@@ -50,10 +48,10 @@ public class AppConfig {
 
     /**
      * - Set to PayPalConfiguration.ENVIRONMENT_PRODUCTION to move real money.
-     *
+     * <p>
      * - Set to PayPalConfiguration.ENVIRONMENT_SANDBOX to use your test credentials
      * from https://developer.paypal.com
-     *
+     * <p>
      * - Set to PayPalConfiguration.ENVIRONMENT_NO_NETWORK to kick the tires
      * without communicating to PayPal's servers.
      */
