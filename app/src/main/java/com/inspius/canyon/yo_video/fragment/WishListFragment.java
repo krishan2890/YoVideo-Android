@@ -101,6 +101,7 @@ public class WishListFragment extends BaseMainFragment implements WishLishAdapte
         ultimateRecyclerView.setClipToPadding(false);
 
         ultimateRecyclerView.setAdapter(mAdapter);
+        startAnimLoading();
     }
 
     @Override
@@ -121,7 +122,6 @@ public class WishListFragment extends BaseMainFragment implements WishLishAdapte
     }
 
     void requestGetDataProduct() {
-        startAnimLoading();
 
         List<NewWishList> data = DatabaseManager.getInstance(mContext).listVideoAtWishList(mAccountDataManager.getAccountID());
         stopAnimLoading();

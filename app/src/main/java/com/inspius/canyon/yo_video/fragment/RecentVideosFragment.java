@@ -58,6 +58,13 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
 
         mActivityInterface.updateHeaderTitle(getString(R.string.menu_recent_video));
         mActivityInterface.setVisibleHeaderMenu(true);
+
+        if (!mAccountDataManager.isLogin()) {
+            stopAnimLoading();
+            tvnError.setVisibility(View.VISIBLE);
+            tvnError.setText(getString(R.string.msg_request_login));
+            return;
+        }
     }
 
     @Override
@@ -149,10 +156,11 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
             @Override
             public void onError(String message) {
                 stopAnimLoading();
-                if (tvnError != null) {
-                    tvnError.setVisibility(View.VISIBLE);
-                    tvnError.setText(message);
-                }
+//                if (tvnError != null) {
+//                    tvnError.setVisibility(View.VISIBLE);
+//                    tvnError.setText(message);
+//                    Logger.d("qqqq",message);
+//                }
             }
 
             @Override

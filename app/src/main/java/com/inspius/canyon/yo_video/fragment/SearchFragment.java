@@ -3,6 +3,7 @@ package com.inspius.canyon.yo_video.fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -123,7 +124,6 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
 
     @Override
     public void onInitView() {
-        stopAnimLoading();
         edtKeyWord.setImeOptions(EditorInfo.IME_ACTION_DONE);
         edtKeyWord.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -162,7 +162,14 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         ultimateRecyclerView.setHasFixedSize(true);
         ultimateRecyclerView.setSaveEnabled(true);
         ultimateRecyclerView.setClipToPadding(false);
-
+        ultimateRecyclerView.reenableLoadmore();
+        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                pageNumber = 1;
+                callSearchData();
+            }
+        });
         ultimateRecyclerView.reenableLoadmore();
         ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
             @Override
@@ -172,7 +179,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         });
 
         ultimateRecyclerView.setAdapter(mAdapter);
-
+        startAnimLoading();
         // tag view
         prepareTags();
         setTags("");
@@ -234,7 +241,8 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         tagslayout.setVisibility(View.GONE);
         ultimateRecyclerView.setVisibility(View.VISIBLE);
 
-        startAnimLoading();
+        if (pageNumber < 1)
+            pageNumber = 1;
         RPC.requestSearchVideoByKeyWord(edtKeyWord.getText().toString(), new APIResponseListener() {
             @Override
             public void onError(String message) {
@@ -252,7 +260,8 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
                 List<VideoJSON> data = (List<VideoJSON>) results;
                 if (data == null || data.isEmpty())
                     return;
-
+                if (pageNumber == 1)
+                    mAdapter.clear();
                 pageNumber++;
                 updateDataProduct(data);
             }
