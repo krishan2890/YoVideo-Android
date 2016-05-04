@@ -162,7 +162,6 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         ultimateRecyclerView.setHasFixedSize(true);
         ultimateRecyclerView.setSaveEnabled(true);
         ultimateRecyclerView.setClipToPadding(false);
-        ultimateRecyclerView.reenableLoadmore();
         ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -243,7 +242,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
 
         if (pageNumber < 1)
             pageNumber = 1;
-        RPC.requestSearchVideoByKeyWord(keyword,pageNumber,AppConstant.LIMIT_PAGE_HOMES, new APIResponseListener() {
+        RPC.requestSearchVideoByKeyWord(edtKeyWord.getText().toString(),pageNumber,AppConstant.LIMIT_PAGE_HOMES, new APIResponseListener() {
             @Override
             public void onError(String message) {
 

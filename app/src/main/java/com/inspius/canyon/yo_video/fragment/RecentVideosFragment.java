@@ -99,7 +99,6 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
         ultimateRecyclerView.setHasFixedSize(true);
         ultimateRecyclerView.setSaveEnabled(true);
         ultimateRecyclerView.setClipToPadding(false);
-        ultimateRecyclerView.reenableLoadmore();
 
         ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

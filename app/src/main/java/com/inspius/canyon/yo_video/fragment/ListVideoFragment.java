@@ -100,7 +100,6 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
         mAdapter.updateCategoryName(categoryModel);
         linearLayoutManager = new LinearLayoutManager(getContext());
         ultimateRecyclerView.setLayoutManager(linearLayoutManager);
-        ultimateRecyclerView.reenableLoadmore();
 
         ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

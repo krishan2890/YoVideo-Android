@@ -81,8 +81,6 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
 
         ultimateRecyclerView.setHasFixedSize(true);
 
-        ultimateRecyclerView.reenableLoadmore();
-
         ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
