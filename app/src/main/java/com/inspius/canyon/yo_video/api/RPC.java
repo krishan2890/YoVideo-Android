@@ -606,7 +606,7 @@ public class RPC {
     }
 
     //SearchByKeyWord
-    public static void requestSearchVideoByKeyWord(final String keyWord, final APIResponseListener listener) {
+    public static void requestSearchVideoByKeyWord(final String keyWord, final int pageNumber,final int limit, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_SEARCH_BY_KEYWORD;
         final String url = getAbsoluteUrl(tag);
 
@@ -638,6 +638,8 @@ public class RPC {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(AppConstant.KEY_KEYWORD, keyWord);
+                params.put(AppConstant.KEY_PAGENUMBER,String.valueOf(pageNumber));
+                params.put(AppConstant.KEY_LIMIT,String.valueOf(limit));
                 return params;
             }
         };

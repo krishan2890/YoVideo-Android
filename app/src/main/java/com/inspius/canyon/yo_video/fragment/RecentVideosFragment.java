@@ -156,11 +156,7 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
             @Override
             public void onError(String message) {
                 stopAnimLoading();
-//                if (tvnError != null) {
-//                    tvnError.setVisibility(View.VISIBLE);
-//                    tvnError.setText(message);
-//                    Logger.d("qqqq",message);
-//                }
+
             }
 
             @Override

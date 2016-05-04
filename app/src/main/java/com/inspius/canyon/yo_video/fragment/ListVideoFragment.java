@@ -135,7 +135,6 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
                 requestGetDataProduct();
             }
         });
-        requestGetDataProduct();
 
     }
 

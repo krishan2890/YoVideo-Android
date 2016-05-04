@@ -100,4 +100,6 @@ public class AppConstant {
     public static final String KEY_VIDEO_ID= "video_id";
     public static final String KEY_FIELD= "field";
     public static final String KEY_KEYWORD= "keyword";
+    public static final String KEY_LIMIT= "limit";
+    public static final String KEY_PAGENUMBER= "page";
 }

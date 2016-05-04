@@ -129,8 +129,8 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
                         || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    pageNumber=1;
                     callSearchData();
-
                     String keyword = edtKeyWord.getText().toString();
                     if (!TextUtils.isEmpty(keyword)) {
                         DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance(mContext).insertKeyword(keyword);
@@ -243,7 +243,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
 
         if (pageNumber < 1)
             pageNumber = 1;
-        RPC.requestSearchVideoByKeyWord(edtKeyWord.getText().toString(), new APIResponseListener() {
+        RPC.requestSearchVideoByKeyWord(keyword,pageNumber,AppConstant.LIMIT_PAGE_HOMES, new APIResponseListener() {
             @Override
             public void onError(String message) {
 
@@ -256,12 +256,19 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
                 // isResponseData = true;
 
                 stopAnimLoading();
+                if (ultimateRecyclerView == null)
+                    return;
+
+                ultimateRecyclerView.setRefreshing(false);
+
 
                 List<VideoJSON> data = (List<VideoJSON>) results;
                 if (data == null || data.isEmpty())
                     return;
+
                 if (pageNumber == 1)
                     mAdapter.clear();
+
                 pageNumber++;
                 updateDataProduct(data);
             }
@@ -280,54 +287,6 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     }
 
     private void setTags(CharSequence cs) {
-//        String text = cs.toString();
-//        ArrayList<Tag> tags = new ArrayList<>();
-//        Tag tag;
-//        /**
-//         * counter for prevent frozen effect
-//         * if the tags number is greather than 20 some device will a bit frozen
-//         */
-//        int counter = 0;
-//
-//        /**
-//         * for empty edittext
-//         */
-//        if (TextUtils.isEmpty(text)) {
-//            counter = 20;
-//            if (counter > tagList.size())
-//                counter = tagList.size();
-//
-//            for (int k = 0; k < counter; k++) {
-//                int i = random.nextInt(tagList.size());
-//                tag = new Tag(tagList.get(i).getName());
-//                tag.radius = 10f;
-//                tag.layoutColor = (Color.parseColor(tagList.get(i).getColor()));
-//                if (i % 2 == 0) // you can set deletable or not
-//                    tag.isDeletable = true;
-//                tags.add(tag);
-//            }
-//        } else {
-//            for (int i = 0; i < tagList.size(); i++) {
-//                if (tagList.get(i).getName().toLowerCase().startsWith(text.toLowerCase())) {
-//                    tag = new Tag(tagList.get(i).getName());
-//                    tag.radius = 10f;
-//                    tag.layoutColor = (Color.parseColor(tagList.get(i).getColor()));
-//                    if (i % 2 == 0) // you can set deletable or not
-//                        tag.isDeletable = true;
-//                    tags.add(tag);
-//                    counter++;
-//                    /**
-//                     * if you don't want show all tags. You can set a limit.
-//                     if (counter == 10)
-//                     break;
-//                     */
-//
-//                }
-//            }
-//        }
-//
-//        tagGroup.addTags(tags);
-
         String text = cs.toString();
         ArrayList<Tag> tags = new ArrayList<>();
         Tag tag;
@@ -376,7 +335,6 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         currentKeySearch = keyword;
         mActivityInterface.hideKeyBoard();
         mAdapter.clear();
-        pageNumber = 1;
         startAnimLoading();
         //isResponseData = false;
 
