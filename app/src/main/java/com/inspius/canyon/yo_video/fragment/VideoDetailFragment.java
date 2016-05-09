@@ -390,7 +390,8 @@ public class VideoDetailFragment extends BaseMainFragment {
         } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.YOUTUBE)
             intent = new Intent(getActivity(), PlayerYoutubeActivity.class);
         else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.VIMEO) {
-            String urlVimeo = String.format("http://player.vimeo.com/video/%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
+//            String urlVimeo = String.format("http://player.vimeo.com/video/%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
+            String urlVimeo = String.format("%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlVimeo)));
             return;
         }
