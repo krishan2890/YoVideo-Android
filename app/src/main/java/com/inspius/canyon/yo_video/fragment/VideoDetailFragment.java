@@ -394,6 +394,9 @@ public class VideoDetailFragment extends BaseMainFragment {
             String urlVimeo = String.format("%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlVimeo)));
             return;
+        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.MP3) {
+            startActivity(IntentUtils.openAudio(Uri.parse(videoModel.getVideoUrl())));
+            return;
         }
 
         if (intent == null)

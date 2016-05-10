@@ -9,7 +9,7 @@ public class AppEnum {
      */
 
     public enum VIDEO_TYPE {
-        UPLOAD("UPLOAD"), YOUTUBE("YOUTUBE"), VIMEO("VIMEO"),;
+        UPLOAD("UPLOAD"), YOUTUBE("YOUTUBE"), VIMEO("VIMEO"),MP3("MP3");
 
         private final String text;
 
