@@ -249,6 +249,7 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
         } else if (type.equalsIgnoreCase("download")) {
         } else if (type.equalsIgnoreCase("about_us")) {
             fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_ABOUT_US, slideMenuModelSelected.title);
+//            fragment = WebViewFragment.newInstance("https://player.vimeo.com/video/7980975", slideMenuModelSelected.title);
         } else if (type.equalsIgnoreCase("term_condition")) {
             fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_TERM_CONDITION, slideMenuModelSelected.title);
         }

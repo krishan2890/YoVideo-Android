@@ -25,6 +25,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.activity.MainActivity;
+import com.inspius.canyon.yo_video.activity.PlayerVimeoActivity;
 import com.inspius.canyon.yo_video.activity.PlayerYoutubeActivity;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
@@ -391,9 +392,11 @@ public class VideoDetailFragment extends BaseMainFragment {
             intent = new Intent(getActivity(), PlayerYoutubeActivity.class);
         else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.VIMEO) {
 //            String urlVimeo = String.format("http://player.vimeo.com/video/%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
-            String urlVimeo = String.format("%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlVimeo)));
-            return;
+//            String urlVimeo = String.format("%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
+//            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlVimeo)));
+//            return;
+            intent = new Intent(getActivity(), PlayerVimeoActivity.class);
+
         } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.MP3) {
             startActivity(IntentUtils.openAudio(Uri.parse(videoModel.getVideoUrl())));
             return;
