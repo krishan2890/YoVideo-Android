@@ -62,12 +62,7 @@ public class PlayerVimeoActivity extends CoreAppActivity {
         } else
             getSupportActionBar().show();
     }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
+    
 
     @OnClick(R.id.imvHeaderBack)
     void doBack() {

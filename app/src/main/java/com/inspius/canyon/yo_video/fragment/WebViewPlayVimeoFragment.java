@@ -44,7 +44,8 @@ public class WebViewPlayVimeoFragment extends BaseFragment {
 
     @Override
     public boolean onBackPressed() {
-        return mHostActivityInterface.popBackStack();
+        getActivity().finish();
+        return true;
     }
 
     @Override
