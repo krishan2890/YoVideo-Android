@@ -4,6 +4,7 @@ package com.inspius.canyon.yo_video.app;
  * Created by Billy on 12/1/15.
  */
 public class AppConstant {
+
     public static int RESPONSE_OK = 1;
     public static int RESULT_OK = -1;
     public static int PICK_IMAGE_REQUEST = 1;
@@ -44,6 +45,7 @@ public class AppConstant {
     public static final String RELATIVE_URL_VIDEO_BY_ID = "api/getVideoById/%s";
     public static final String RELATIVE_URL_VIDEO_MOST_VIEW= "api/getListVideoMostView/%s/%s";
     public static final String RELATIVE_URL_VIDEO_LATEST= "api/getListVideoLasted/%s/%s";
+    public static final String RELATIVE_URL_SERIES = "api/getVideosBySeries";
 
     /**
      * Key Bundle
@@ -102,4 +104,7 @@ public class AppConstant {
     public static final String KEY_KEYWORD= "keyword";
     public static final String KEY_LIMIT= "limit";
     public static final String KEY_PAGENUMBER= "page";
+    public static final String KEY_BUNDLE_SERIES= "series";
+
+
 }

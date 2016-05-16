@@ -79,8 +79,6 @@ public class VideoDetailFragment extends BaseMainFragment {
     @Bind(R.id.tvnDescription)
     TextView tvnDescription;
 
-    @Bind(R.id.tvnSeries)
-    TextView tvnSeries;
 
     @Bind(R.id.tvnViewNumber)
     TextView tvnViewNumber;
@@ -102,6 +100,9 @@ public class VideoDetailFragment extends BaseMainFragment {
 
     @Bind(R.id.ad_view)
     AdView mAdView;
+
+    @Bind(R.id.tvnSeries)
+    TextView tvnSeries;
 
     VideoModel videoModel;
     boolean isAutoPlay;
@@ -430,6 +431,12 @@ public class VideoDetailFragment extends BaseMainFragment {
         }
 
         return true;
+    }
+
+    @OnClick(R.id.tvnSeries)
+    void doClickSeries(){
+        String series=tvnSeries.getText().toString();
+        mHostActivityInterface.addFragment(SeriesFragment.getInstance(series),false);
     }
 
     @OnClick(R.id.imvDownload)

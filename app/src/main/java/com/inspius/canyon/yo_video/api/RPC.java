@@ -646,6 +646,46 @@ public class RPC {
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
+    public static void requestGetVideoBySeries(final String series, final int pageNumber,final int limit, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_SERIES;
+        final String url = getAbsoluteUrl(tag);
+
+        StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String strResponse) {
+                try {
+                    JSONObject response = new JSONObject(strResponse);
+                    boolean checkData = parseResponseData(response, listener);
+                    if (checkData) {
+                        Type type = new TypeToken<List<VideoJSON>>() {
+                        }.getType();
+                        List<VideoJSON> listData = new Gson().fromJson(response.getString("content"), type);
+
+                        listener.onSuccess(listData);
+                    }
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(AppConstant.KEY_BUNDLE_SERIES, series);
+                params.put(AppConstant.KEY_PAGENUMBER,String.valueOf(pageNumber));
+                params.put(AppConstant.KEY_LIMIT,String.valueOf(limit));
+                return params;
+            }
+        };
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
+    }
+
     /**
      * Videos Recent
      *
