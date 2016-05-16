@@ -436,7 +436,7 @@ public class VideoDetailFragment extends BaseMainFragment {
     @OnClick(R.id.tvnSeries)
     void doClickSeries(){
         String series=tvnSeries.getText().toString();
-        mHostActivityInterface.addFragment(SeriesFragment.getInstance(series),false);
+        mHostActivityInterface.addFragment(SeriesFragment.getInstance(videoModel),false);
     }
 
     @OnClick(R.id.imvDownload)
