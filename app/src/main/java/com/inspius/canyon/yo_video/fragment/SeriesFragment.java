@@ -41,25 +41,26 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
 
     private LinearLayoutManager linearLayoutManager;
     private ListVideoAdapter mAdapter = null;
-    private String series=null;
+    private VideoModel videoModel;
     int pageNumber;
+    DataCategoryJSON dataCategory;
 
-    public static SeriesFragment getInstance(String series){
-        SeriesFragment fragment=new SeriesFragment();
-        fragment.setArguments(new Bundler().putString(AppConstant.KEY_BUNDLE_SERIES,series).get());
+    public static SeriesFragment getInstance(VideoModel videoModel) {
+        SeriesFragment fragment = new SeriesFragment();
+        fragment.setArguments(new Bundler().putSerializable(AppConstant.KEY_BUNDLE_VIDEO, videoModel).get());
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        series=getArguments().getString(AppConstant.KEY_BUNDLE_SERIES);
+        videoModel = (VideoModel) getArguments().getSerializable(AppConstant.KEY_BUNDLE_VIDEO);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mActivityInterface.updateHeaderTitle(series);
+        mActivityInterface.updateHeaderTitle(videoModel.getSeries());
         mActivityInterface.setVisibleHeaderMenu(false);
     }
 
@@ -75,7 +76,7 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
 
     @Override
     public void onItemClickListener(int position, Object model) {
-
+        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
     }
 
     @Override
@@ -92,12 +93,9 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
         }
         ultimateRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getContext()).sizeResId(R.dimen.divider_height_list_product).color(Color.TRANSPARENT).build());
 
-        // ultimateRecyclerView.enableLoadmore();
-        //  ultimateRecyclerView.setOnLoadMoreListener(this);
 
         mAdapter = new ListVideoAdapter();
         mAdapter.setAdapterActionListener(this);
-       // mAdapter.updateCategoryName(categoryModel);
         linearLayoutManager = new LinearLayoutManager(getContext());
         ultimateRecyclerView.setLayoutManager(linearLayoutManager);
 
@@ -120,29 +118,25 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
 
 
         startAnimLoading();
-        requestGetDataProduct();
+        AppSession.getCategoryData(new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                stopAnimLoading();
+            }
 
-//        AppSession.getCategoryData(new APIResponseListener() {
-//            @Override
-//            public void onError(String message) {
-//                stopAnimLoading();
-//            }
-//
-//            @Override
-//            public void onSuccess(Object results) {
-//                dataCategory = (DataCategoryJSON) results;
-//                pageNumber = 1;
-//
-//            }
-//        });
-
+            @Override
+            public void onSuccess(Object results) {
+                dataCategory = (DataCategoryJSON) results;
+                requestGetDataProduct();
+            }
+        });
     }
 
     private void requestGetDataProduct() {
         if (pageNumber < 1)
             pageNumber = 1;
 
-        RPC.requestGetVideoBySeries(series,pageNumber,10, new APIResponseListener() {
+        RPC.requestGetVideoBySeries(videoModel.getSeries(), pageNumber, 10, new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -170,6 +164,7 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
             }
         });
     }
+
     void startAnimLoading() {
         if (avloadingIndicatorView != null)
             avloadingIndicatorView.setVisibility(View.VISIBLE);
@@ -184,7 +179,7 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
         List<VideoModel> listVideo = new ArrayList<>();
         for (VideoJSON productModel : data) {
             VideoModel vModel = new VideoModel(productModel);
-            //vModel.setCategoryName(AppUtils.getCategoryName(dataCategory, productModel.categoryId));
+            vModel.setCategoryName(AppUtils.getCategoryName(dataCategory, productModel.categoryId));
             listVideo.add(vModel);
         }
 
@@ -195,6 +190,7 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
     public String getTagText() {
         return TAG;
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
