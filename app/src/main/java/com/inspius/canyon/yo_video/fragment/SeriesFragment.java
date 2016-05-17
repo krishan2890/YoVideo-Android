@@ -20,6 +20,7 @@ import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.AppSession;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.ui.divideritemdecoration.HorizontalDividerItemDecoration;
+import com.ogaclejapan.smarttablayout.utils.v4.Bundler;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
@@ -40,29 +41,25 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
 
     private LinearLayoutManager linearLayoutManager;
     private ListVideoAdapter mAdapter = null;
-    private VideoModel videoModel;
-    DataCategoryJSON dataCategory;
+    private String series=null;
     int pageNumber;
 
-    public static SeriesFragment getInstance(VideoModel videoModel) {
-        SeriesFragment fragment = new SeriesFragment();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(AppConstant.KEY_BUNDLE_VIDEO, videoModel);
-        fragment.setArguments(bundle);
+    public static SeriesFragment getInstance(String series){
+        SeriesFragment fragment=new SeriesFragment();
+        fragment.setArguments(new Bundler().putString(AppConstant.KEY_BUNDLE_SERIES,series).get());
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        videoModel = (VideoModel) getArguments().getSerializable(AppConstant.KEY_BUNDLE_VIDEO);
-
+        series=getArguments().getString(AppConstant.KEY_BUNDLE_SERIES);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mActivityInterface.updateHeaderTitle(videoModel.getSeries());
+        mActivityInterface.updateHeaderTitle(series);
         mActivityInterface.setVisibleHeaderMenu(false);
     }
 
@@ -78,7 +75,7 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
 
     @Override
     public void onItemClickListener(int position, Object model) {
-        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
+
     }
 
     @Override
@@ -95,9 +92,12 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
         }
         ultimateRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getContext()).sizeResId(R.dimen.divider_height_list_product).color(Color.TRANSPARENT).build());
 
+        // ultimateRecyclerView.enableLoadmore();
+        //  ultimateRecyclerView.setOnLoadMoreListener(this);
 
         mAdapter = new ListVideoAdapter();
         mAdapter.setAdapterActionListener(this);
+       // mAdapter.updateCategoryName(categoryModel);
         linearLayoutManager = new LinearLayoutManager(getContext());
         ultimateRecyclerView.setLayoutManager(linearLayoutManager);
 
@@ -120,26 +120,29 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
 
 
         startAnimLoading();
-        AppSession.getCategoryData(new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                stopAnimLoading();
-            }
+        requestGetDataProduct();
 
-            @Override
-            public void onSuccess(Object results) {
-                dataCategory = (DataCategoryJSON) results;
-                pageNumber = 1;
-                requestGetDataProduct();
-            }
-        });
+//        AppSession.getCategoryData(new APIResponseListener() {
+//            @Override
+//            public void onError(String message) {
+//                stopAnimLoading();
+//            }
+//
+//            @Override
+//            public void onSuccess(Object results) {
+//                dataCategory = (DataCategoryJSON) results;
+//                pageNumber = 1;
+//
+//            }
+//        });
+
     }
 
     private void requestGetDataProduct() {
         if (pageNumber < 1)
             pageNumber = 1;
 
-        RPC.requestGetVideoBySeries(videoModel.getSeries(), pageNumber, 10, new APIResponseListener() {
+        RPC.requestGetVideoBySeries(series,pageNumber,10, new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -167,7 +170,6 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
             }
         });
     }
-
     void startAnimLoading() {
         if (avloadingIndicatorView != null)
             avloadingIndicatorView.setVisibility(View.VISIBLE);
@@ -182,7 +184,7 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
         List<VideoModel> listVideo = new ArrayList<>();
         for (VideoJSON productModel : data) {
             VideoModel vModel = new VideoModel(productModel);
-            vModel.setCategoryName(AppUtils.getCategoryName(dataCategory, productModel.categoryId));
+            //vModel.setCategoryName(AppUtils.getCategoryName(dataCategory, productModel.categoryId));
             listVideo.add(vModel);
         }
 
@@ -193,7 +195,6 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
     public String getTagText() {
         return TAG;
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
