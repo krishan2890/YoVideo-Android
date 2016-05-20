@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -39,7 +40,6 @@ import java.util.List;
 import java.util.Random;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 import cuneyt.example.com.tagview.Models.TagClass;
 import cuneyt.example.com.tagview.Tag.OnTagClickListener;
 import cuneyt.example.com.tagview.Tag.OnTagDeleteListener;
@@ -72,6 +72,8 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     @Bind(R.id.tags_layout)
     ScrollView tagslayout;
 
+    @Bind(R.id.btnSearch)
+    Button btnSearch;
     BasicGridLayoutManager mGridLayoutManager;
     GridVideoAdapter mAdapter = null;
     private int columns = 2;
@@ -129,7 +131,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
                         || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                    pageNumber=1;
+                    pageNumber = 1;
                     callSearchData();
                     String keyword = edtKeyWord.getText().toString();
                     if (!TextUtils.isEmpty(keyword)) {
@@ -141,7 +143,19 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
                 return false;
             }
         });
-
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pageNumber = 1;
+                callSearchData();
+                String keyword = edtKeyWord.getText().toString();
+                if (!TextUtils.isEmpty(keyword)) {
+                    DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance(mContext).insertKeyword(keyword);
+                    if (dbKeywordSearch != null)
+                        prepareTags();
+                }
+            }
+        });
         random = new Random();
         boolean includeEdge = true;
         int spacing = getResources().getDimensionPixelSize(R.dimen.divider_grid_video);
@@ -242,7 +256,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
 
         if (pageNumber < 1)
             pageNumber = 1;
-        RPC.requestSearchVideoByKeyWord(edtKeyWord.getText().toString(),pageNumber,AppConstant.LIMIT_PAGE_HOMES, new APIResponseListener() {
+        RPC.requestSearchVideoByKeyWord(edtKeyWord.getText().toString(), pageNumber, AppConstant.LIMIT_PAGE_HOMES, new APIResponseListener() {
             @Override
             public void onError(String message) {
 
@@ -316,31 +330,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         if (avloadingIndicatorView != null)
             avloadingIndicatorView.setVisibility(View.GONE);
     }
-
-    @OnClick(R.id.btnSearch)
-    void doSearch() {
-        keyword = edtKeyWord.getText().toString();
-
-
-        if (!TextUtils.isEmpty(keyword)) {
-            DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance(mContext).insertKeyword(keyword);
-            if (dbKeywordSearch != null)
-                prepareTags();
-        } else {
-            mActivityInterface.showCroutonAlert(getString(R.string.msg_null_key_word));
-            return;
-        }
-        tagslayout.setVisibility(View.GONE);
-        currentKeySearch = keyword;
-        mActivityInterface.hideKeyBoard();
-        mAdapter.clear();
-        startAnimLoading();
-        //isResponseData = false;
-
-        callSearchData();
-    }
-
-
+    
     void updateDataProduct(List<VideoJSON> data) {
         List<VideoModel> listVideo = new ArrayList<>();
         for (VideoJSON productModel : data) {
