@@ -780,7 +780,7 @@ public class RPC {
      */
     public static void requestGetListNotifications(final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_LIST_NOTIFICATIONS;
-        final String url = getAbsoluteUrl(tag);
+        final String url = "http://demo.inspius.com/mobile/life-video/xml/"+tag;
 
         StringRequest jsonObjReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
