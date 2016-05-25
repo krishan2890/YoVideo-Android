@@ -2,6 +2,7 @@ package com.inspius.canyon.yo_video.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
@@ -12,7 +13,6 @@ import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.helper.AppUtils;
-import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.CategoryJSON;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
@@ -20,7 +20,7 @@ import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.AppSession;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.divideritemdecoration.HorizontalDividerItemDecoration;
+import com.marshalchen.ultimaterecyclerview.ui.divideritemdecoration.HorizontalDividerItemDecoration;
 import com.ogaclejapan.smarttablayout.utils.v4.Bundler;
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -92,23 +92,32 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
         }
         ultimateRecyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getContext()).sizeResId(R.dimen.divider_height_list_product).color(Color.TRANSPARENT).build());
 
-       // ultimateRecyclerView.enableLoadmore();
-      //  ultimateRecyclerView.setOnLoadMoreListener(this);
+        // ultimateRecyclerView.enableLoadmore();
+        //  ultimateRecyclerView.setOnLoadMoreListener(this);
 
         mAdapter = new ListVideoAdapter();
         mAdapter.setAdapterActionListener(this);
-       mAdapter.updateCategoryName(categoryModel);
+        mAdapter.updateCategoryName(categoryModel);
         linearLayoutManager = new LinearLayoutManager(getContext());
         ultimateRecyclerView.setLayoutManager(linearLayoutManager);
+
+        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                pageNumber = 1;
+                requestGetDataProduct();
+            }
+        });
+        // setting load more Recycler View
+        ultimateRecyclerView.reenableLoadmore();
+        ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
+            @Override
+            public void loadMore(int itemsCount, int maxLastVisiblePosition) {
+                requestGetDataProduct();
+            }
+        });
         ultimateRecyclerView.setAdapter(mAdapter);
 
-//        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                pageNumber = 1;
-//                requestGetDataProduct();
-//            }
-//        });
 
         startAnimLoading();
 
@@ -125,8 +134,6 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
                 requestGetDataProduct();
             }
         });
-        Logger.d("qqqqq",String.valueOf(categoryModel.id));
-        requestGetDataProduct();
 
     }
 
@@ -151,7 +158,10 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
     }
 
     void requestGetDataProduct() {
-        RPC.requestGetVideosByCategory(categoryModel.id, new APIResponseListener() {
+        if (pageNumber < 1)
+            pageNumber = 1;
+
+        RPC.requestGetVideosByCategory(categoryModel.id,pageNumber, new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -171,10 +181,10 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
                 if (data == null || data.isEmpty())
                     return;
 
-//                if (pageNumber == 1)
-//                    mAdapter.clear();
-//
-//                pageNumber++;
+                if (pageNumber == 1)
+                    mAdapter.clear();
+
+                pageNumber++;
                 updateDataProduct(data);
             }
         });

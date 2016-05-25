@@ -9,7 +9,7 @@ public class AppEnum {
      */
 
     public enum VIDEO_TYPE {
-        UPLOAD("UPLOAD"), YOUTUBE("YOUTUBE"),VIMEO("VIMEO"),;
+        UPLOAD("UPLOAD"), YOUTUBE("YOUTUBE"), VIMEO("VIMEO"),MP3("MP3");
 
         private final String text;
 
@@ -25,6 +25,21 @@ public class AppEnum {
 
     public enum LOGIN_TYPE {
         NOT_LOGIN, SYSTEM, FACEBOOK;
+    }
+
+    public enum HOME_TYPE {
+        MOST_VIEW("most-view"), LATEST("latest");
+
+        private final String text;
+
+        private HOME_TYPE(final String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
     }
 
     /**

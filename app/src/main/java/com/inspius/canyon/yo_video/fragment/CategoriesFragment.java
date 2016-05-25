@@ -15,8 +15,10 @@ import com.inspius.canyon.yo_video.model.CategoryJSON;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.uiUtils.BasicGridLayoutManager;
+import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
 import com.wang.avi.AVLoadingIndicatorView;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 
@@ -81,7 +83,7 @@ public class CategoriesFragment extends BaseMainFragment implements AdapterActio
         ultimateRecyclerView.addItemDecoration(
                 new GridDividerDecoration(columns, spacing, includeEdge));
 
-        mAdapterAllCategory = new GridAllCategoryAdapter();
+        mAdapterAllCategory = new GridAllCategoryAdapter(new ArrayList<CategoryJSON>());
         mAdapterAllCategory.setAdapterActionListener(this);
 
         mGridLayoutManager = new BasicGridLayoutManager(getContext(), columns, mAdapterAllCategory);
@@ -110,17 +112,17 @@ public class CategoriesFragment extends BaseMainFragment implements AdapterActio
 
     void startAnimLoading() {
         if (avloadingIndicatorView != null)
-        avloadingIndicatorView.setVisibility(View.VISIBLE);
+            avloadingIndicatorView.setVisibility(View.VISIBLE);
     }
 
     void stopAnimLoading() {
         if (avloadingIndicatorView != null)
-        avloadingIndicatorView.setVisibility(View.GONE);
+            avloadingIndicatorView.setVisibility(View.GONE);
     }
 
     void requestGetData() {
         startAnimLoading();
-        RPC.requestGetCategories( new APIResponseListener() {
+        RPC.requestGetCategories(new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -140,8 +142,8 @@ public class CategoriesFragment extends BaseMainFragment implements AdapterActio
                     for (long id : data.listIdTopCategory)
                         for (CategoryJSON model : data.listCategory)
                             if (model.id == id) {
-                                if(model.enable==1)
-                                mAdapterTopCategory.insert(model);
+                                if (model.enable == 1)
+                                    mAdapterTopCategory.insert(model);
                                 break;
                             }
                 }

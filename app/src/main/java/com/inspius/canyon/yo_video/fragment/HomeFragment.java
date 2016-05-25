@@ -2,19 +2,16 @@ package com.inspius.canyon.yo_video.fragment;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 
 import com.inspius.canyon.yo_video.R;
-import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
+import com.inspius.canyon.yo_video.app.AppEnum;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
-import com.inspius.canyon.yo_video.model.DataHomeJSON;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItem;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
-import com.wang.avi.AVLoadingIndicatorView;
 
 import butterknife.Bind;
 
@@ -35,11 +32,8 @@ public class HomeFragment extends BaseMainFragment {
     @Bind(R.id.viewpager)
     ViewPager viewPager;
 
-    @Bind(R.id.avloadingIndicatorView)
-    AVLoadingIndicatorView avloadingIndicatorView;
-
     private FragmentPagerItemAdapter mAdapter;
-    int pageNumber;
+
 
     @Override
     public String getTagText() {
@@ -58,31 +52,7 @@ public class HomeFragment extends BaseMainFragment {
 
     @Override
     public void onInitView() {
-        startAnimLoading();
-
-        RPC.requestGetVideosHome(new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                stopAnimLoading();
-            }
-
-            @Override
-            public void onSuccess(Object results) {
-                stopAnimLoading();
-                DataHomeJSON dataHome = (DataHomeJSON) results;
-                initTabLayout(dataHome);
-            }
-        });
-    }
-
-    void startAnimLoading() {
-        if (avloadingIndicatorView != null)
-            avloadingIndicatorView.setVisibility(View.VISIBLE);
-    }
-
-    void stopAnimLoading() {
-        if (avloadingIndicatorView != null)
-            avloadingIndicatorView.setVisibility(View.GONE);
+        initTabLayout();
     }
 
     @Override
@@ -92,11 +62,11 @@ public class HomeFragment extends BaseMainFragment {
         mActivityInterface.setVisibleHeaderMenu(true);
     }
 
-    public void initTabLayout(DataHomeJSON dataHome) {
+    public void initTabLayout() {
         FragmentPagerItems pages = new FragmentPagerItems(getContext());
         if (getActivity() != null && isAdded()) {
-            pages.add(FragmentPagerItem.of(getString(R.string.menu_latest), PageVideoHomeFragment.class, PageVideoHomeFragment.arguments(dataHome.listVideoLatest)));
-            pages.add(FragmentPagerItem.of(getString(R.string.menu_most_view), PageVideoHomeFragment.class, PageVideoHomeFragment.arguments(dataHome.listVideoMostView)));
+            pages.add(FragmentPagerItem.of(getString(R.string.menu_latest), PageVideoHomeFragment.class, PageVideoHomeFragment.arguments(AppEnum.HOME_TYPE.LATEST)));
+            pages.add(FragmentPagerItem.of(getString(R.string.menu_most_view), PageVideoHomeFragment.class, PageVideoHomeFragment.arguments(AppEnum.HOME_TYPE.MOST_VIEW)));
 
             mAdapter = new FragmentPagerItemAdapter(
                     getChildFragmentManager(), pages);
@@ -109,6 +79,7 @@ public class HomeFragment extends BaseMainFragment {
     public void onDestroy() {
         super.onDestroy();
 
-        RPC.cancelRequestByTag(AppConstant.RELATIVE_URL_DATA_HOME);
+        RPC.cancelRequestByTag(AppConstant.RELATIVE_URL_VIDEO_MOST_VIEW);
+        RPC.cancelRequestByTag(AppConstant.RELATIVE_URL_VIDEO_LATEST);
     }
 }

@@ -13,7 +13,7 @@ import com.inspius.canyon.yo_video.listener.NotificationListener;
 import com.inspius.canyon.yo_video.model.NotificationJSON;
 import com.inspius.canyon.yo_video.service.AppNotificationManager;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.divideritemdecoration.HorizontalDividerItemDecoration;
+import com.marshalchen.ultimaterecyclerview.ui.divideritemdecoration.HorizontalDividerItemDecoration;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.List;

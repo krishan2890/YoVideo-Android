@@ -126,57 +126,42 @@ public class SplashFragment extends BaseFragment {
 
         currentLoad = 0;
         startLoading();
-        RPC.requestGetVideosHome( new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                if (getActivity() == null || isDestroy)
-                    return;
 
-                animatedCircleLoadingView.stopFailure();
-                onLoadDataFinish();
-            }
 
-            @Override
-            public void onSuccess(Object results) {
-                if (getActivity() == null || isDestroy)
-                    return;
+        currentLoad++;
+        final int totalPercent = 100 * currentLoad / sizeLoad;
+        if (currentPercent < totalPercent) {
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        for (int i = currentPercent; i <= totalPercent; i++) {
+                            Thread.sleep(duration);
 
-                currentLoad++;
-                final int totalPercent = 100 * currentLoad / sizeLoad;
-                if (currentPercent < totalPercent) {
-                    Runnable runnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                for (int i = currentPercent; i <= totalPercent; i++) {
-                                    Thread.sleep(duration);
+                            if (getActivity() == null || isDestroy)
+                                return;
 
-                                    if (getActivity() == null || isDestroy)
-                                        return;
-
-                                    changePercent(i);
-                                    if (i == totalPercent) {
-                                        currentPercent = totalPercent;
-                                        getCategories();
-                                    }
-                                }
-
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                            changePercent(i);
+                            if (i == totalPercent) {
+                                currentPercent = totalPercent;
+                                getCategories();
                             }
                         }
-                    };
-                    new Thread(runnable).start();
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        });
+            };
+            new Thread(runnable).start();
+        }
     }
 
     void getCategories() {
         if (getActivity() == null || isDestroy)
             return;
 
-        RPC.requestGetCategories( new APIResponseListener() {
+        RPC.requestGetCategories(new APIResponseListener() {
             @Override
             public void onError(String message) {
                 if (getActivity() == null || isDestroy)

@@ -25,6 +25,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.activity.MainActivity;
+import com.inspius.canyon.yo_video.activity.PlayerVimeoActivity;
 import com.inspius.canyon.yo_video.activity.PlayerYoutubeActivity;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
@@ -78,8 +79,6 @@ public class VideoDetailFragment extends BaseMainFragment {
     @Bind(R.id.tvnDescription)
     TextView tvnDescription;
 
-    @Bind(R.id.tvnSeries)
-    TextView tvnSeries;
 
     @Bind(R.id.tvnViewNumber)
     TextView tvnViewNumber;
@@ -101,6 +100,9 @@ public class VideoDetailFragment extends BaseMainFragment {
 
     @Bind(R.id.ad_view)
     AdView mAdView;
+
+    @Bind(R.id.tvnSeries)
+    TextView tvnSeries;
 
     VideoModel videoModel;
     boolean isAutoPlay;
@@ -351,16 +353,17 @@ public class VideoDetailFragment extends BaseMainFragment {
         if (isWishList) {
             DatabaseManager.getInstance(mContext).deleteVideoAtWishListByVideoId((long) videoModel.getVideoId());
         } else {
-            NewWishList dbCourseWishList = new NewWishList();
-            dbCourseWishList.setVideoId(videoModel.getVideoId());
-            dbCourseWishList.setCategoryname(videoModel.getCategoryName());
-            dbCourseWishList.setName(videoModel.getTitle());
-            dbCourseWishList.setImage(videoModel.getImage());
-            dbCourseWishList.setLink(videoModel.getVideoUrl());
-            dbCourseWishList.setSeries(videoModel.getSeries());
-            dbCourseWishList.setView(videoModel.getViewNumber());
+            NewWishList dbWishList = new NewWishList();
+            dbWishList.setVideoId(videoModel.getVideoId());
+            dbWishList.setCategoryname(videoModel.getCategoryName());
+            dbWishList.setName(videoModel.getTitle());
+            dbWishList.setImage(videoModel.getImage());
+            dbWishList.setLink(videoModel.getVideoUrl());
+            dbWishList.setSeries(videoModel.getSeries());
+            dbWishList.setView(videoModel.getViewNumber());
+            dbWishList.setUserID(mAccountDataManager.getAccountID());
 
-            DatabaseManager.getInstance(mContext).insertVideoToWishList(dbCourseWishList);
+            DatabaseManager.getInstance(mContext).insertVideoToWishList(dbWishList);
         }
 
         updateStateViewWishList(!isWishList);
@@ -389,8 +392,14 @@ public class VideoDetailFragment extends BaseMainFragment {
         } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.YOUTUBE)
             intent = new Intent(getActivity(), PlayerYoutubeActivity.class);
         else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.VIMEO) {
-            String urlVimeo = String.format("http://player.vimeo.com/video/%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlVimeo)));
+//            String urlVimeo = String.format("http://player.vimeo.com/video/%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
+//            String urlVimeo = String.format("%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
+//            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlVimeo)));
+//            return;
+            intent = new Intent(getActivity(), PlayerVimeoActivity.class);
+
+        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.MP3) {
+            startActivity(IntentUtils.openAudio(Uri.parse(videoModel.getVideoUrl())));
             return;
         }
 
@@ -422,6 +431,12 @@ public class VideoDetailFragment extends BaseMainFragment {
         }
 
         return true;
+    }
+
+    @OnClick(R.id.tvnSeries)
+    void doClickSeries(){
+        String series=tvnSeries.getText().toString();
+        mHostActivityInterface.addFragment(SeriesFragment.getInstance(videoModel),false);
     }
 
     @OnClick(R.id.imvDownload)

@@ -31,6 +31,7 @@ public class NewWishListDao extends AbstractDao<NewWishList, Long> {
         public final static Property Image = new Property(5, String.class, "image", false, "IMAGE");
         public final static Property Link = new Property(6, String.class, "link", false, "LINK");
         public final static Property Name = new Property(7, String.class, "name", false, "NAME");
+        public final static Property UserID = new Property(8, int.class, "userID", false, "USER_ID");
     };
 
 
@@ -53,7 +54,8 @@ public class NewWishListDao extends AbstractDao<NewWishList, Long> {
                 "\"VIEW\" TEXT NOT NULL ," + // 4: view
                 "\"IMAGE\" TEXT NOT NULL ," + // 5: image
                 "\"LINK\" TEXT NOT NULL ," + // 6: link
-                "\"NAME\" TEXT NOT NULL );"); // 7: name
+                "\"NAME\" TEXT NOT NULL ," + // 7: name
+                "\"USER_ID\" INTEGER NOT NULL );"); // 8: userID
     }
 
     /** Drops the underlying database table. */
@@ -78,6 +80,7 @@ public class NewWishListDao extends AbstractDao<NewWishList, Long> {
         stmt.bindString(6, entity.getImage());
         stmt.bindString(7, entity.getLink());
         stmt.bindString(8, entity.getName());
+        stmt.bindLong(9, entity.getUserID());
     }
 
     /** @inheritdoc */
@@ -97,7 +100,8 @@ public class NewWishListDao extends AbstractDao<NewWishList, Long> {
             cursor.getString(offset + 4), // view
             cursor.getString(offset + 5), // image
             cursor.getString(offset + 6), // link
-            cursor.getString(offset + 7) // name
+            cursor.getString(offset + 7), // name
+            cursor.getInt(offset + 8) // userID
         );
         return entity;
     }
@@ -113,6 +117,7 @@ public class NewWishListDao extends AbstractDao<NewWishList, Long> {
         entity.setImage(cursor.getString(offset + 5));
         entity.setLink(cursor.getString(offset + 6));
         entity.setName(cursor.getString(offset + 7));
+        entity.setUserID(cursor.getInt(offset + 8));
      }
     
     /** @inheritdoc */

@@ -86,12 +86,12 @@ public class ListTopCategoryAdapter extends UltimateViewAdapter<ListTopCategoryA
     }
 
     public void insert(CategoryJSON model) {
-        insert(mItems, model, getAdapterItemCount());
+        insertInternal(mItems, model, getAdapterItemCount());
     }
 
 
     public void clear() {
-        clear(mItems);
+        clearInternal(mItems);
     }
 
     @Override
@@ -100,8 +100,13 @@ public class ListTopCategoryAdapter extends UltimateViewAdapter<ListTopCategoryA
     }
 
     @Override
-    public HolderGirdCell getViewHolder(View view) {
-        return new HolderGirdCell(view, false);
+    public HolderGirdCell newFooterHolder(View view) {
+        return null;
+    }
+
+    @Override
+    public HolderGirdCell newHeaderHolder(View view) {
+        return null;
     }
 
     @Override

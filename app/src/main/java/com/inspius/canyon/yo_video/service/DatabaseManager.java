@@ -251,13 +251,13 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     }
 
     @Override
-    public List<NewWishList> listVideoAtWishList() {
+    public List<NewWishList> listVideoAtWishList(int userID) {
         List<NewWishList> data = null;
         try {
             openReadableDb();
             NewWishListDao userDao = daoSession.getNewWishListDao();
 
-            QueryBuilder<NewWishList> queryBuilder = userDao.queryBuilder().orderDesc(NewWishListDao.Properties.Id);
+            QueryBuilder<NewWishList> queryBuilder = userDao.queryBuilder().where(NewWishListDao.Properties.UserID.eq(userID)).orderDesc(NewWishListDao.Properties.Id);
             data = queryBuilder.list();
 
             daoSession.clear();

@@ -70,7 +70,7 @@ public interface IDatabaseManager {
      */
     void clearKeyword();
 
-    List<NewWishList> listVideoAtWishList();
+    List<NewWishList> listVideoAtWishList(int userID);
 
     boolean deleteVideoAtWishList(Long id);
 

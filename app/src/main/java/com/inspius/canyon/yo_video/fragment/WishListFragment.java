@@ -19,7 +19,7 @@ import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.uiUtils.BasicGridLayoutManager;
+import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.List;
@@ -101,6 +101,7 @@ public class WishListFragment extends BaseMainFragment implements WishLishAdapte
         ultimateRecyclerView.setClipToPadding(false);
 
         ultimateRecyclerView.setAdapter(mAdapter);
+        startAnimLoading();
     }
 
     @Override
@@ -121,9 +122,8 @@ public class WishListFragment extends BaseMainFragment implements WishLishAdapte
     }
 
     void requestGetDataProduct() {
-        startAnimLoading();
 
-        List<NewWishList> data = DatabaseManager.getInstance(mContext).listVideoAtWishList();
+        List<NewWishList> data = DatabaseManager.getInstance(mContext).listVideoAtWishList(mAccountDataManager.getAccountID());
         stopAnimLoading();
 
         if (data == null || data.isEmpty() || mAdapter == null)

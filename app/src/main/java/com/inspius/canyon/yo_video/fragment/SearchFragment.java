@@ -2,6 +2,8 @@ package com.inspius.canyon.yo_video.fragment;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -9,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -29,7 +32,7 @@ import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
-import com.marshalchen.ultimaterecyclerview.uiUtils.BasicGridLayoutManager;
+import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
@@ -37,7 +40,6 @@ import java.util.List;
 import java.util.Random;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 import cuneyt.example.com.tagview.Models.TagClass;
 import cuneyt.example.com.tagview.Tag.OnTagClickListener;
 import cuneyt.example.com.tagview.Tag.OnTagDeleteListener;
@@ -70,6 +72,8 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     @Bind(R.id.tags_layout)
     ScrollView tagslayout;
 
+    @Bind(R.id.btnSearch)
+    Button btnSearch;
     BasicGridLayoutManager mGridLayoutManager;
     GridVideoAdapter mAdapter = null;
     private int columns = 2;
@@ -78,9 +82,25 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     String currentKeySearch;
     DataCategoryJSON dataCategory;
     Random random;
-    boolean isResponseData;
-    List<VideoModel> data;
     String keyword;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        AppSession.getCategoryData(new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+                stopAnimLoading();
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                dataCategory = (DataCategoryJSON) results;
+            }
+        });
+    }
+
     @Override
     public String getTagText() {
         return TAG;
@@ -102,30 +122,17 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         mActivityInterface.updateHeaderTitle(getString(R.string.search));
         mActivityInterface.setVisibleHeaderMenu(false);
         mActivityInterface.setVisibleHeaderSearch(false);
-        AppSession.getCategoryData(new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                stopAnimLoading();
-            }
-
-            @Override
-            public void onSuccess(Object results) {
-                dataCategory = (DataCategoryJSON) results;
-                callSearchData();
-            }
-        });
     }
 
     @Override
     public void onInitView() {
-        stopAnimLoading();
         edtKeyWord.setImeOptions(EditorInfo.IME_ACTION_DONE);
         edtKeyWord.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
                         || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    pageNumber = 1;
                     callSearchData();
-
                     String keyword = edtKeyWord.getText().toString();
                     if (!TextUtils.isEmpty(keyword)) {
                         DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance(mContext).insertKeyword(keyword);
@@ -136,7 +143,19 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
                 return false;
             }
         });
-
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pageNumber = 1;
+                callSearchData();
+                String keyword = edtKeyWord.getText().toString();
+                if (!TextUtils.isEmpty(keyword)) {
+                    DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance(mContext).insertKeyword(keyword);
+                    if (dbKeywordSearch != null)
+                        prepareTags();
+                }
+            }
+        });
         random = new Random();
         boolean includeEdge = true;
         int spacing = getResources().getDimensionPixelSize(R.dimen.divider_grid_video);
@@ -148,7 +167,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         ultimateRecyclerView.addItemDecoration(
                 new GridDividerDecoration(columns, spacing, includeEdge));
 
-        mAdapter = new GridVideoAdapter();
+        mAdapter = new GridVideoAdapter(new ArrayList<VideoModel>());
         mAdapter.setAdapterActionListener(this);
 
         mGridLayoutManager = new BasicGridLayoutManager(getContext(), columns, mAdapter);
@@ -157,19 +176,24 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         ultimateRecyclerView.setHasFixedSize(true);
         ultimateRecyclerView.setSaveEnabled(true);
         ultimateRecyclerView.setClipToPadding(false);
+        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                pageNumber = 1;
+                callSearchData();
+            }
+        });
+        ultimateRecyclerView.reenableLoadmore();
+        ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
+            @Override
+            public void loadMore(int itemsCount, int maxLastVisiblePosition) {
+                callSearchData();
+            }
+        });
 
         ultimateRecyclerView.setAdapter(mAdapter);
-
-
-//        ultimateRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mGridLayoutManager) {
-//            @Override
-//            public void onLoadMore(int current_page) {
-//                requestGetDataProduct();
-//            }
-//        });
-
+        startAnimLoading();
         // tag view
-
         prepareTags();
         setTags("");
 
@@ -198,21 +222,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             public void onTagClick(Tag tag, int position) {
                 edtKeyWord.setText(tag.text);
                 edtKeyWord.setSelection(tag.text.length());//to set cursor position
-                RPC.requestGetCategories( new APIResponseListener() {
-                    @Override
-                    public void onError(String message) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(Object results) {
-                        DataCategoryJSON data = (DataCategoryJSON) results;
-                        if (data == null || data.listCategory == null)
-                            return;
-
-                        mAdapter.updateCategoryName(data.listCategory);
-                    }
-                });
+                mAdapter.clear();
                 callSearchData();
             }
         });
@@ -225,19 +235,6 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
                 prepareTags();
             }
         });
-
-        // Data Search
-//        RPC.requestGetCategories(new APIResponseListener() {
-//            @Override
-//            public void onError(String message) {
-//
-//            }
-//
-//            @Override
-//            public void onSuccess(Object results) {
-//                dataCategory= (DataCategoryJSON) results;
-//            }
-//        });
     }
 
     private void callSearchData() {
@@ -254,15 +251,14 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
 
         currentKeySearch = keyword;
 
-        mAdapter.clear();
         tagslayout.setVisibility(View.GONE);
         ultimateRecyclerView.setVisibility(View.VISIBLE);
 
-        startAnimLoading();
-        RPC.requestSearchVideoByKeyWord(edtKeyWord.getText().toString(), new APIResponseListener() {
+        if (pageNumber < 1)
+            pageNumber = 1;
+        RPC.requestSearchVideoByKeyWord(edtKeyWord.getText().toString(), pageNumber, AppConstant.LIMIT_PAGE_HOMES, new APIResponseListener() {
             @Override
             public void onError(String message) {
-
 
                 //isResponseData = true;
                 stopAnimLoading();
@@ -273,10 +269,18 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
                 // isResponseData = true;
 
                 stopAnimLoading();
+                if (ultimateRecyclerView == null)
+                    return;
+
+                ultimateRecyclerView.setRefreshing(false);
+
 
                 List<VideoJSON> data = (List<VideoJSON>) results;
                 if (data == null || data.isEmpty())
                     return;
+
+                if (pageNumber == 1)
+                    mAdapter.clear();
 
                 pageNumber++;
                 updateDataProduct(data);
@@ -296,54 +300,6 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     }
 
     private void setTags(CharSequence cs) {
-//        String text = cs.toString();
-//        ArrayList<Tag> tags = new ArrayList<>();
-//        Tag tag;
-//        /**
-//         * counter for prevent frozen effect
-//         * if the tags number is greather than 20 some device will a bit frozen
-//         */
-//        int counter = 0;
-//
-//        /**
-//         * for empty edittext
-//         */
-//        if (TextUtils.isEmpty(text)) {
-//            counter = 20;
-//            if (counter > tagList.size())
-//                counter = tagList.size();
-//
-//            for (int k = 0; k < counter; k++) {
-//                int i = random.nextInt(tagList.size());
-//                tag = new Tag(tagList.get(i).getName());
-//                tag.radius = 10f;
-//                tag.layoutColor = (Color.parseColor(tagList.get(i).getColor()));
-//                if (i % 2 == 0) // you can set deletable or not
-//                    tag.isDeletable = true;
-//                tags.add(tag);
-//            }
-//        } else {
-//            for (int i = 0; i < tagList.size(); i++) {
-//                if (tagList.get(i).getName().toLowerCase().startsWith(text.toLowerCase())) {
-//                    tag = new Tag(tagList.get(i).getName());
-//                    tag.radius = 10f;
-//                    tag.layoutColor = (Color.parseColor(tagList.get(i).getColor()));
-//                    if (i % 2 == 0) // you can set deletable or not
-//                        tag.isDeletable = true;
-//                    tags.add(tag);
-//                    counter++;
-//                    /**
-//                     * if you don't want show all tags. You can set a limit.
-//                     if (counter == 10)
-//                     break;
-//                     */
-//
-//                }
-//            }
-//        }
-//
-//        tagGroup.addTags(tags);
-
         String text = cs.toString();
         ArrayList<Tag> tags = new ArrayList<>();
         Tag tag;
@@ -371,37 +327,10 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     }
 
     void stopAnimLoading() {
-        if(avloadingIndicatorView != null)
-        avloadingIndicatorView.setVisibility(View.GONE);
+        if (avloadingIndicatorView != null)
+            avloadingIndicatorView.setVisibility(View.GONE);
     }
-
-    @OnClick(R.id.btnSearch)
-    void doSearch() {
-        keyword = edtKeyWord.getText().toString();
-
-
-        if (!TextUtils.isEmpty(keyword)) {
-            DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance(mContext).insertKeyword(keyword);
-            if (dbKeywordSearch != null)
-                prepareTags();
-        }
-        else  {
-            mActivityInterface.showCroutonAlert(getString(R.string.msg_null_key_word));
-            return;
-        }
-        tagslayout.setVisibility(View.GONE);
-        currentKeySearch = keyword;
-        mActivityInterface.hideKeyBoard();
-        mAdapter.clear();
-        pageNumber = 1;
-        startAnimLoading();
-        //isResponseData = false;
-
-       callSearchData();
-    }
-
-
-
+    
     void updateDataProduct(List<VideoJSON> data) {
         List<VideoModel> listVideo = new ArrayList<>();
         for (VideoJSON productModel : data) {
@@ -410,7 +339,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             listVideo.add(vModel);
         }
 
-        mAdapter.add(listVideo);
+        mAdapter.insert(listVideo);
     }
 
     @Override

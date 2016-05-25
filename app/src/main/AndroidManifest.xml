@@ -79,7 +79,12 @@
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppTheme" />
-
+        <activity
+            android:name=".activity.PlayerVimeoActivity"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppTheme" />
         <!--Include the FacebookActivity configChanges and theme. -->
         <activity
             android:name="com.facebook.FacebookActivity"

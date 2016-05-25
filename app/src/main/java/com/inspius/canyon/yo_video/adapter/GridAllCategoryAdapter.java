@@ -3,10 +3,7 @@ package com.inspius.canyon.yo_video.adapter;
 import android.graphics.Bitmap;
 import android.graphics.EmbossMaskFilter;
 import android.graphics.MaskFilter;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,20 +11,19 @@ import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.listener.AdapterActionListener;
 import com.inspius.canyon.yo_video.listener.AnimateFirstDisplayListener;
 import com.inspius.canyon.yo_video.model.CategoryJSON;
+import com.marshalchen.ultimaterecyclerview.UltimateGridLayoutAdapter;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
-import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class GridAllCategoryAdapter extends UltimateViewAdapter<GridAllCategoryAdapter.HolderGirdCell> {
+public class GridAllCategoryAdapter extends UltimateGridLayoutAdapter<CategoryJSON, GridAllCategoryAdapter.HolderGirdCell> {
     private List<CategoryJSON> mItems;
     AdapterActionListener listener;
 
@@ -35,8 +31,10 @@ public class GridAllCategoryAdapter extends UltimateViewAdapter<GridAllCategoryA
     private DisplayImageOptions optionsIcon;
     private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
-    public GridAllCategoryAdapter() {
-        this.mItems = new ArrayList<>();
+    public GridAllCategoryAdapter(List<CategoryJSON> items) {
+        super(items);
+
+        this.mItems = items;
 
         optionsThumbnail = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.category_default)
@@ -63,16 +61,14 @@ public class GridAllCategoryAdapter extends UltimateViewAdapter<GridAllCategoryA
         this.listener = listener;
     }
 
-    @Override
-    public HolderGirdCell onCreateViewHolder(ViewGroup parent) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_grid_category, parent, false);
-        HolderGirdCell vh = new HolderGirdCell(v, true);
-        return vh;
+
+    public void insert(CategoryJSON model) {
+        insertInternal(mItems, model, getAdapterItemCount());
     }
 
+
     @Override
-    public void onBindViewHolder(final HolderGirdCell holder, final int position) {
+    protected void bindNormal(HolderGirdCell holder, CategoryJSON categoryJSON, final int position) {
         final CategoryJSON model = getItem(position);
         if (model != null) {
             holder.tvnName.setText(model.name);
@@ -95,43 +91,27 @@ public class GridAllCategoryAdapter extends UltimateViewAdapter<GridAllCategoryA
         }
     }
 
-
-    public void add(List<CategoryJSON> listData) {
-        mItems.addAll(listData);
-        notifyDataSetChanged();
-    }
-    public void insert(CategoryJSON model) {
-        insert(mItems, model, getAdapterItemCount());
-    }
-
-
-    public void clear() {
-        clear(mItems);
+    @Override
+    protected int getNormalLayoutResId() {
+        return R.layout.item_grid_category;
     }
 
     @Override
-    public int getAdapterItemCount() {
-        return mItems.size();
+    protected HolderGirdCell newViewHolder(View view) {
+        return new HolderGirdCell(view, true);
     }
 
     @Override
-    public HolderGirdCell getViewHolder(View view) {
-        return new HolderGirdCell(view, false);
+    protected void withBindHolder(HolderGirdCell holder, CategoryJSON data, int position) {
+
     }
 
-    @Override
-    public long generateHeaderId(int position) {
-        return 0;
-    }
-
-    @Override
-    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup viewGroup) {
-        return null;
-    }
-
-    @Override
-    public void onBindHeaderViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-
+    public CategoryJSON getItem(int position) {
+        if (customHeaderView != null)
+            position--;
+        if (position < mItems.size())
+            return mItems.get(position);
+        else return null;
     }
 
     public class HolderGirdCell extends UltimateRecyclerviewViewHolder {
@@ -151,13 +131,5 @@ public class GridAllCategoryAdapter extends UltimateViewAdapter<GridAllCategoryA
                 ButterKnife.bind(this, itemView);
             }
         }
-    }
-
-    public CategoryJSON getItem(int position) {
-        if (customHeaderView != null)
-            position--;
-        if (position < mItems.size())
-            return mItems.get(position);
-        else return null;
     }
 }

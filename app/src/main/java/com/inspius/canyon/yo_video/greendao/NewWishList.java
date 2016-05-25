@@ -20,6 +20,7 @@ public class NewWishList {
     private String link;
     /** Not-null value. */
     private String name;
+    private int userID;
 
     public NewWishList() {
     }
@@ -28,7 +29,7 @@ public class NewWishList {
         this.id = id;
     }
 
-    public NewWishList(Long id, int videoId, String categoryname, String series, String view, String image, String link, String name) {
+    public NewWishList(Long id, int videoId, String categoryname, String series, String view, String image, String link, String name, int userID) {
         this.id = id;
         this.videoId = videoId;
         this.categoryname = categoryname;
@@ -37,6 +38,7 @@ public class NewWishList {
         this.image = image;
         this.link = link;
         this.name = name;
+        this.userID = userID;
     }
 
     public Long getId() {
@@ -113,6 +115,14 @@ public class NewWishList {
     /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getUserID() {
+        return userID;
+    }
+
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
 
 }

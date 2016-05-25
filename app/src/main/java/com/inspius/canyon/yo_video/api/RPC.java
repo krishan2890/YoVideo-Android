@@ -1,7 +1,5 @@
 package com.inspius.canyon.yo_video.api;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -14,14 +12,13 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.AppConstant;
+import com.inspius.canyon.yo_video.app.AppEnum;
 import com.inspius.canyon.yo_video.app.GlobalApplication;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.model.CustomerModel;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
-import com.inspius.canyon.yo_video.model.DataHomeJSON;
 import com.inspius.canyon.yo_video.model.ImageObj;
 import com.inspius.canyon.yo_video.model.NotificationJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
@@ -32,9 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -129,32 +124,10 @@ public class RPC {
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-    public static void requestGetCustomer(final APIResponseListener listener) {
-        final String tag = AppConstant.RELATIVE_URL_CUSTOMER;
-        final String url = getAbsoluteUrl(tag);
-
-        StringRequest jsonObjReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Logger.d(tag, response);
-
-                CustomerModel data = new Gson().fromJson(response, CustomerModel.class);
-                listener.onSuccess(data);
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        parseError(error, listener);
-                    }
-                });
-
-        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
-    }
 
     public static void requestForgotPassword(final String email, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_FORGOT_PASSWORD;
-        final String url = getAbsoluteUrlAuthen(tag);
+        final String url = getAbsoluteUrl(tag);
 
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -192,7 +165,7 @@ public class RPC {
     public static void requestRegister(final String username, final String email, final String password, final String passwordVerify, final APIResponseListener listener) {
         //requestGetCustomer(listener);
         final String tag = AppConstant.RELATIVE_URL_REGISTER;
-        final String url = getAbsoluteUrlAuthen(tag);
+        final String url = getAbsoluteUrl(tag);
 
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -233,7 +206,7 @@ public class RPC {
 
     public static void requestUpdateCustomerInfo(final CustomerModel customerModel, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_CHANGEPROFILE;
-        final String url = getAbsoluteUrlAuthen(tag);
+        final String url = getAbsoluteUrl(tag);
 
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -407,7 +380,7 @@ public class RPC {
 
     public static void requestChangePass(final int accountID, final String currentPass, final String newPass, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_CHANGEPASS;
-        final String url = getAbsoluteUrlAuthen(tag);
+        final String url = getAbsoluteUrl(tag);
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String strResponse) {
@@ -448,51 +421,12 @@ public class RPC {
 
     /**
      * Get categories
-     * <p/>
+     * <p>
      * //  * @param isGetDataCache
      *
      * @param listener
      */
-   /* public static void requestGetCategories(boolean isGetDataCache, final APIResponseListener listener) {
-        final String tag = AppConstant.RELATIVE_URL_CATEGORIES;
-        final String url = getAbsoluteUrl(tag);
 
-        if (isGetDataCache) {
-            Cache cache = VolleySingleton.getInstance().getRequestQueue().getCache();
-            Cache.Entry entry = cache.get(getCacheKey(Request.Method.GET, url));
-            if (entry != null) {
-                try {
-                    String data = new String(entry.data, "UTF-8");
-                    DataCategoryJSON dataCategoryJSON = new Gson().fromJson(data, DataCategoryJSON.class);
-                    listener.onSuccess(dataCategoryJSON);
-
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            } else
-                requestGetCategories(!isGetDataCache, listener);
-        } else {
-
-            StringRequest jsonObjReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Logger.d(tag, response);
-
-                    DataCategoryJSON data = new Gson().fromJson(response, DataCategoryJSON.class);
-                    listener.onSuccess(data);
-                }
-            },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            parseError(error, listener);
-                        }
-                    });
-
-            jsonObjReq.setShouldCache(true);
-            VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
-        }
-    }*/
     public static void requestGetCategories(final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_CATEGORIES;
         final String url = getAbsoluteUrl(tag);
@@ -521,14 +455,17 @@ public class RPC {
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-    /**
-     * Get Videos at Home
-     *
-     * @param listener
-     */
-    public static void requestGetVideosHome(final APIResponseListener listener) {
-        final String tag = String.format(AppConstant.RELATIVE_URL_DATA_HOME);
-        final String url = getAbsoluteUrl(tag);
+    public static void requestGetVideoAtHome(AppEnum.HOME_TYPE type, final int pageNumber, final APIResponseListener listener) {
+        String tag = AppConstant.RELATIVE_URL_VIDEO_LATEST;
+        switch (type) {
+            case LATEST:
+                tag = AppConstant.RELATIVE_URL_VIDEO_LATEST;
+                break;
+            case MOST_VIEW:
+                tag = AppConstant.RELATIVE_URL_VIDEO_MOST_VIEW;
+                break;
+        }
+        final String url = getAbsoluteUrl(String.format(tag, pageNumber, AppConstant.LIMIT_PAGE_HOMES));
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
@@ -536,12 +473,12 @@ public class RPC {
                 try {
                     boolean checkData = parseResponseData(response, listener);
                     if (checkData) {
+                        Type type = new TypeToken<List<VideoJSON>>() {
+                        }.getType();
+                        List<VideoJSON> listData = new Gson().fromJson(response.getJSONObject("content").getString("videos"), type);
 
-                        DataHomeJSON data = new Gson().fromJson(response.getString("content"), DataHomeJSON.class);
-                        listener.onSuccess(data);
+                        listener.onSuccess(listData);
                     }
-                    Log.d("question", String.valueOf(response));
-
                 } catch (JSONException e) {
                     listener.onError("Error data");
                 }
@@ -555,46 +492,11 @@ public class RPC {
                 });
 
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
-
-       /* if (isGetDataCache) {
-            Cache cache = VolleySingleton.getInstance().getRequestQueue().getCache();
-            Cache.Entry entry = cache.get(getCacheKey(Request.Method.GET, url));
-            if (entry != null) {
-                try {
-                    String data = new String(entry.data, "UTF-8");
-                    DataHomeJSON dataHomeModel = new Gson().fromJson(data, DataHomeJSON.class);
-                    listener.onSuccess(dataHomeModel);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            } else
-                requestGetVideosHome(!isGetDataCache, listener);
-        } else {
-            StringRequest jsonObjReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Logger.d(tag, response);
-
-                    DataHomeJSON dataHomeModel = new Gson().fromJson(response, DataHomeJSON.class);
-                    listener.onSuccess(dataHomeModel);
-                }
-            },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            parseError(error, listener);
-                        }
-                    });
-
-            jsonObjReq.setShouldCache(true);
-            VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
-        }*/
     }
 
-    public static void requestGetVideosByCategory(int categoryId, final APIResponseListener listener) {
-        final String tag = String.format(AppConstant.RELATIVE_URL_VIDEO_CATEGORY, categoryId);
-        final String url = getAbsoluteUrl(tag);
-
+    public static void requestGetVideosByCategory(int categoryId,int pageNumber, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_VIDEO_CATEGORY;
+        final String url = getAbsoluteUrl(String.format(tag,categoryId, pageNumber, AppConstant.LIMIT_PAGE_HOMES));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -626,7 +528,7 @@ public class RPC {
 
     public static void updateVideoStatic(final int videoID, final String field, final int userID, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_UPDATE_STATIC;
-        final String url = getAbsoluteUrlAuthen(tag);
+        final String url = getAbsoluteUrl(tag);
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String strResponse) {
@@ -666,7 +568,7 @@ public class RPC {
 
     public static void requestGetVideoToWishLish(final int userID, final int videoID, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_ADD_WISHLISH;
-        final String url = getAbsoluteUrlAuthen(tag);
+        final String url = getAbsoluteUrl(tag);
         StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String strResponse) {
@@ -703,134 +605,8 @@ public class RPC {
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-    //UploadVideo
-
-    /**
-     * Videos from category
-     *
-     * @param categoryId
-     * @param pageNumber
-     * @param listener
-     */
-//    public static void requestGetVideosByCategory(long categoryId, int pageNumber, final APIResponseListener listener) {
-//        if (pageNumber > 1) {
-//            // categoryId == 11 : vimeo
-//            if (categoryId == 11)
-//                requestGetVideosVimeo(listener);
-//            else
-//                requestGetMoreVideos(listener);
-//
-//            return;
-//        }
-//
-//        // categoryId == 11 : vimeo
-//        if (categoryId == 11)
-//            requestGetVideosVimeo(listener);
-//        else
-//            requestGetVideos(listener);
-//    }
-
-    /**
-     * Videos WishList
-     *
-     * @param listId
-     * @param listener
-     */
-    public static void requestGetVideoWishListInfo(final List<Long> listId, final APIResponseListener listener) {
-        requestGetVideosHome(new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                listener.onError(message);
-            }
-
-            @Override
-            public void onSuccess(Object results) {
-                DataHomeJSON list = (DataHomeJSON) results;
-                List<VideoJSON> listData=list.listVideoMostView;
-                List<VideoJSON> dataResponse = new ArrayList<>();
-                for (long id : listId) {
-                    for (VideoJSON model : listData) {
-                        if (model.id == id)
-                            dataResponse.add(model);
-                    }
-                }
-
-                listener.onSuccess(dataResponse);
-            }
-        });
-//        final String tag = AppConstant.RELATIVE_URL_DATA_HOME;
-//        final String url = getAbsoluteUrl(tag);
-//
-//        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                try {
-//                    boolean checkData = parseResponseData(response, listener);
-//                    if (checkData) {
-//                        Type type = new TypeToken<List<VideoJSON>>() {
-//                        }.getType();
-//                        List<VideoJSON> listData = new Gson().fromJson(response.getString("content"), type);
-//
-//                        listener.onSuccess(listData);
-//                    }
-//                    Log.d("question", String.valueOf(response));
-//
-//                } catch (JSONException e) {
-//                    listener.onError("Error data");
-//                }
-//            }
-//        },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        parseError(error, listener);
-//                    }
-//                });
-//
-//        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
-    }
-
-    public static void requestGetVideoInWihsLish(final int userID, final APIResponseListener listener) {
-        final String tag = String.format(AppConstant.RELATIVE_URL_WISHLISH, userID);
-        final String url = getAbsoluteUrl(tag);
-
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    boolean checkData = parseResponseData(response, listener);
-                    if (checkData) {
-                        Type type = new TypeToken<List<VideoJSON>>() {
-                        }.getType();
-                        List<VideoJSON> listData = new Gson().fromJson(response.getString("content"), type);
-
-                        listener.onSuccess(listData);
-                    }
-                    Log.d("question", String.valueOf(response));
-
-                } catch (JSONException e) {
-                    listener.onError("Error data");
-                }
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        parseError(error, listener);
-                    }
-                }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put(AppConstant.KEY_USER_ID, String.valueOf(userID));
-                return params;
-            }
-        };
-        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
-    }
-
     //SearchByKeyWord
-    public static void requestSearchVideoByKeyWord(final String keyWord, final APIResponseListener listener) {
+    public static void requestSearchVideoByKeyWord(final String keyWord, final int pageNumber,final int limit, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_SEARCH_BY_KEYWORD;
         final String url = getAbsoluteUrl(tag);
 
@@ -847,8 +623,6 @@ public class RPC {
 
                         listener.onSuccess(listData);
                     }
-                    Log.d("question", String.valueOf(response));
-
                 } catch (JSONException e) {
                     listener.onError("Error data");
                 }
@@ -864,6 +638,48 @@ public class RPC {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(AppConstant.KEY_KEYWORD, keyWord);
+                params.put(AppConstant.KEY_PAGENUMBER,String.valueOf(pageNumber));
+                params.put(AppConstant.KEY_LIMIT,String.valueOf(limit));
+                return params;
+            }
+        };
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
+    }
+
+    public static void requestGetVideoBySeries(final String series, final int pageNumber,final int limit, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_SERIES;
+        final String url = getAbsoluteUrl(tag);
+
+        StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String strResponse) {
+                try {
+                    JSONObject response = new JSONObject(strResponse);
+                    boolean checkData = parseResponseData(response, listener);
+                    if (checkData) {
+                        Type type = new TypeToken<List<VideoJSON>>() {
+                        }.getType();
+                        List<VideoJSON> listData = new Gson().fromJson(response.getString("content"), type);
+
+                        listener.onSuccess(listData);
+                    }
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(AppConstant.KEY_BUNDLE_SERIES, series);
+                params.put(AppConstant.KEY_PAGENUMBER,String.valueOf(pageNumber));
+                params.put(AppConstant.KEY_LIMIT,String.valueOf(limit));
                 return params;
             }
         };
@@ -876,10 +692,9 @@ public class RPC {
      * @param listener
      */
 
-    public static void requestGetVideoRencent(final int userID, final APIResponseListener listener) {
-        final String tag = String.format(AppConstant.RELATIVE_URL_RENCENT, userID);
-        final String url = getAbsoluteUrl(tag);
-
+    public static void requestGetVideoRencent(final int userID,int pageNumber, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_RENCENT;
+        final String url = getAbsoluteUrl(String.format(tag,userID, pageNumber, AppConstant.LIMIT_PAGE_HOMES));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -1070,7 +885,35 @@ public class RPC {
                 });
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
+    public static void requestGetVideoById(int videoID, final APIResponseListener listener) {
+        final String tag = String.format(AppConstant.RELATIVE_URL_VIDEO_BY_ID, videoID);
+        final String url = getAbsoluteUrl(tag);
 
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    boolean checkData = parseResponseData(response, listener);
+                    if (checkData) {
+                        VideoJSON listData = new Gson().fromJson(response.getString("content"), VideoJSON.class);
+                        listener.onSuccess(listData);
+                    }
+                    Log.d("question", String.valueOf(response));
+
+                } catch (JSONException e) {
+                    listener.onError("Error data");
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        parseError(error, listener);
+                    }
+                });
+
+        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, AppConstant.RELATIVE_URL_VIDEO_BY_ID);
+    }
     /* ======================================= OTHER END =======================================*/
 
     /* ======================================= COMMON =======================================*/
@@ -1092,6 +935,7 @@ public class RPC {
      * @return
      */
     private static String getAbsoluteUrl(String relativeUrl) {
+        Logger.d(LOG_TAG, AppConfig.BASE_URL + relativeUrl);
         return AppConfig.BASE_URL + relativeUrl;
     }
 
@@ -1195,38 +1039,7 @@ public class RPC {
         return true;
     }
 
-    private static String getAbsoluteUrlAuthen(String relativeUrl) {
-        return AppConfig.BASE_URL_AUTHEN + relativeUrl;
-    }
 
-    public static void requestGetVideoById(int videoID, final APIResponseListener listener) {
-        final String tag = String.format(AppConstant.RELATIVE_URL_VIDEO_BY_ID, videoID);
-        final String url = getAbsoluteUrl(tag);
 
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    boolean checkData = parseResponseData(response, listener);
-                    if (checkData) {
-                        VideoJSON listData = new Gson().fromJson(response.getString("content"), VideoJSON.class);
-                        listener.onSuccess(listData);
-                    }
-                    Log.d("question", String.valueOf(response));
-
-                } catch (JSONException e) {
-                    listener.onError("Error data");
-                }
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        parseError(error, listener);
-                    }
-                });
-
-        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, AppConstant.RELATIVE_URL_VIDEO_BY_ID);
-    }
     /* ======================================= COMMON END=======================================*/
 }
