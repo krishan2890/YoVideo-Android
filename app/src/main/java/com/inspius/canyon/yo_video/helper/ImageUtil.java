@@ -8,42 +8,46 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.model.ImageObj;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by Admin on 15/4/2016.
  */
 public class ImageUtil {
-    public static ImageObj getByteImageAvatar(Context context, Uri selectedImage) {
+    public static ImageObj getOutputMediaFile(Context context, Uri selectedImage) {
 
-        String mimeType = "image/jpeg";
-        String picturePath = null;
+        String mimeType;
+        String picturePath;
 
         picturePath = getRealPathFromURI(context, selectedImage);
-        File file = new File(picturePath);
-        Bitmap orgBitmap = decodeSampledBitmapFromFile(picturePath);
+        if (TextUtils.isEmpty(picturePath))
+            return null;
 
-        // rotate
-        int ori = getExifOrientation(picturePath);
-        Bitmap bitmap = rotate(ori, orgBitmap);
+        File file = new File(picturePath);
+
+        if (file == null)
+            return null;
+
+//        Bitmap orgBitmap = decodeSampledBitmapFromFile(picturePath);
+//        // rotate
+//        int ori = getExifOrientation(picturePath);
+//        Bitmap bitmap = rotate(ori, orgBitmap);
 
         // image info
         mimeType = getContentTypeFromFileString(file);
+        if (TextUtils.isEmpty(mimeType))
+            mimeType = "image/jpeg";
+
         String name = file.getName();
 
-        return new ImageObj(name, mimeType, bitmap, file);
+        return new ImageObj(name, mimeType, file);
     }
 
     private static String getContentTypeFromFileString(File file) {

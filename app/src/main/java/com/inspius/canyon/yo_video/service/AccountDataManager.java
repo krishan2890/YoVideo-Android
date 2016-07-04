@@ -222,7 +222,7 @@ public class AccountDataManager {
             @Override
             public void run() {
                 try {
-                    ImageObj imageObj = ImageUtil.getByteImageAvatar(context, data.getData());
+                    ImageObj imageObj = ImageUtil.getOutputMediaFile(context, data.getData());
                     Message msgObj = handler.obtainMessage();
                     Bundle b = new Bundle();
                     b.putSerializable("imageObj", imageObj);
@@ -238,6 +238,9 @@ public class AccountDataManager {
                 @Override
                 public void handleMessage(Message msg) {
                     ImageObj imageObj = (ImageObj) msg.getData().getSerializable("imageObj");
+
+                    if (imageObj == null)
+                        return;
 
                     RPC.requestUpdateAvatar(getAccountID(), imageObj, new APIResponseListener() {
                         @Override

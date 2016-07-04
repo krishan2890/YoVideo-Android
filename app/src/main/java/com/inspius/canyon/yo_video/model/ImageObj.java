@@ -1,12 +1,6 @@
 package com.inspius.canyon.yo_video.model;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.Serializable;
 
 /**
@@ -16,22 +10,22 @@ import java.io.Serializable;
 public class ImageObj implements Serializable {
     private String mimeType;
     private String name;
-    private Bitmap bitmap;
+    //    private Bitmap bitmap;
     private File file;
 
-    public ImageObj(String name, String mimeType, Bitmap bitmap, File file) {
+    public ImageObj(String name, String mimeType, File file) {
         this.mimeType = mimeType;
         this.name = name;
-        this.bitmap = bitmap;
+//        this.bitmap = bitmap;
         this.file = file;
     }
 
-    public byte[] getImgBytes() {
-        if (bitmap == null)
-            return null;
-
-        return getByteBitmap(bitmap);
-    }
+//    public byte[] getImgBytes() {
+//        if (bitmap == null)
+//            return null;
+//
+//        return getByteBitmap(bitmap);
+//    }
 
 // public byte[] getImgBytes(int requiredSize) {
 //  if (bitmap == null)
@@ -58,24 +52,24 @@ public class ImageObj implements Serializable {
 //
 //  return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, false);
 // }
-
-    private byte[] getByteBitmap(Bitmap bmp) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        if (mimeType.equalsIgnoreCase("image/jpeg")) {
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        } else {
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        }
-        return stream.toByteArray();
-    }
-
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
-    }
-
-    public Bitmap getBitmap() {
-        return bitmap;
-    }
+//
+//    private byte[] getByteBitmap(Bitmap bmp) {
+//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        if (mimeType.equalsIgnoreCase("image/jpeg")) {
+//            bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//        } else {
+//            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//        }
+//        return stream.toByteArray();
+//    }
+//
+//    public void setBitmap(Bitmap bitmap) {
+//        this.bitmap = bitmap;
+//    }
+//
+//    public Bitmap getBitmap() {
+//        return bitmap;
+//    }
 
     public String getMimeType() {
         return mimeType;

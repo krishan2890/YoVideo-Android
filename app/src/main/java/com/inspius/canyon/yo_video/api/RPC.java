@@ -258,10 +258,12 @@ public class RPC {
     public static void requestUpdateAvatar(int accountID, ImageObj imagePath, final APIResponseListener listener) {
         RequestParams params = new RequestParams();
         params.put(AppConstant.KEY_USER_ID, accountID);
-        byte[] b = imagePath.getImgBytes();
-        String name = imagePath.getName();
-        String type = imagePath.getMimeType();
-        params.put(AppConstant.KEY_AVATAR, new ByteArrayInputStream(b), name, type);
+
+        try {
+            String type = imagePath.getMimeType();
+            params.put(AppConstant.KEY_AVATAR, imagePath.getFile(), type);
+        } catch (FileNotFoundException e) {
+        }
 
         AppRestClient.post(AppConstant.RELATIVE_URL_CHANGEAVATAR, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
@@ -421,7 +423,7 @@ public class RPC {
 
     /**
      * Get categories
-     * <p>
+     * <p/>
      * //  * @param isGetDataCache
      *
      * @param listener
@@ -494,9 +496,9 @@ public class RPC {
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-    public static void requestGetVideosByCategory(int categoryId,int pageNumber, final APIResponseListener listener) {
+    public static void requestGetVideosByCategory(int categoryId, int pageNumber, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_VIDEO_CATEGORY;
-        final String url = getAbsoluteUrl(String.format(tag,categoryId, pageNumber, AppConstant.LIMIT_PAGE_HOMES));
+        final String url = getAbsoluteUrl(String.format(tag, categoryId, pageNumber, AppConstant.LIMIT_PAGE_HOMES));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -606,7 +608,7 @@ public class RPC {
     }
 
     //SearchByKeyWord
-    public static void requestSearchVideoByKeyWord(final String keyWord, final int pageNumber,final int limit, final APIResponseListener listener) {
+    public static void requestSearchVideoByKeyWord(final String keyWord, final int pageNumber, final int limit, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_SEARCH_BY_KEYWORD;
         final String url = getAbsoluteUrl(tag);
 
@@ -638,15 +640,15 @@ public class RPC {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(AppConstant.KEY_KEYWORD, keyWord);
-                params.put(AppConstant.KEY_PAGENUMBER,String.valueOf(pageNumber));
-                params.put(AppConstant.KEY_LIMIT,String.valueOf(limit));
+                params.put(AppConstant.KEY_PAGENUMBER, String.valueOf(pageNumber));
+                params.put(AppConstant.KEY_LIMIT, String.valueOf(limit));
                 return params;
             }
         };
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
 
-    public static void requestGetVideoBySeries(final String series, final int pageNumber,final int limit, final APIResponseListener listener) {
+    public static void requestGetVideoBySeries(final String series, final int pageNumber, final int limit, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_SERIES;
         final String url = getAbsoluteUrl(tag);
 
@@ -678,8 +680,8 @@ public class RPC {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(AppConstant.KEY_BUNDLE_SERIES, series);
-                params.put(AppConstant.KEY_PAGENUMBER,String.valueOf(pageNumber));
-                params.put(AppConstant.KEY_LIMIT,String.valueOf(limit));
+                params.put(AppConstant.KEY_PAGENUMBER, String.valueOf(pageNumber));
+                params.put(AppConstant.KEY_LIMIT, String.valueOf(limit));
                 return params;
             }
         };
@@ -692,9 +694,9 @@ public class RPC {
      * @param listener
      */
 
-    public static void requestGetVideoRencent(final int userID,int pageNumber, final APIResponseListener listener) {
+    public static void requestGetVideoRencent(final int userID, int pageNumber, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_RENCENT;
-        final String url = getAbsoluteUrl(String.format(tag,userID, pageNumber, AppConstant.LIMIT_PAGE_HOMES));
+        final String url = getAbsoluteUrl(String.format(tag, userID, pageNumber, AppConstant.LIMIT_PAGE_HOMES));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -780,7 +782,7 @@ public class RPC {
      */
     public static void requestGetListNotifications(final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_LIST_NOTIFICATIONS;
-        final String url = "http://demo.inspius.com/mobile/life-video/xml/"+tag;
+        final String url = "http://demo.inspius.com/mobile/life-video/xml/" + tag;
 
         StringRequest jsonObjReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -885,6 +887,7 @@ public class RPC {
                 });
         VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
     }
+
     public static void requestGetVideoById(int videoID, final APIResponseListener listener) {
         final String tag = String.format(AppConstant.RELATIVE_URL_VIDEO_BY_ID, videoID);
         final String url = getAbsoluteUrl(tag);

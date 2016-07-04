@@ -311,8 +311,6 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Logger.d(TAG, "onActivityResult = " + String.valueOf(resultCode));
-
         if (requestCode == AppConstant.REQUEST_ALBUM_PIC) {
             if (resultCode == Activity.RESULT_OK) {
                 mActivityInterface.showLoading("Updating avatar...");
