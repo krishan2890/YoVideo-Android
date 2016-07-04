@@ -17,17 +17,17 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <!--
-    IMPORTANT: Change "com.parse.starter.permission.C2D_MESSAGE" in the lines below
-    to match your app's package name + ".permission.C2D_MESSAGE".
-    -->
-    <permission
-        android:name="com.inspius.canyon.yo_video.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-    <uses-permission android:name="com.inspius.canyon.yo_video.permission.C2D_MESSAGE" />
+    <!--&lt;!&ndash;-->
+    <!--IMPORTANT: Change "com.parse.starter.permission.C2D_MESSAGE" in the lines below-->
+    <!--to match your app's package name + ".permission.C2D_MESSAGE".-->
+    <!--&ndash;&gt;-->
+    <!--<permission-->
+        <!--android:name="com.inspius.canyon.yo_video.permission.C2D_MESSAGE"-->
+        <!--android:protectionLevel="signature" />-->
+    <!--<uses-permission android:name="com.inspius.canyon.yo_video.permission.C2D_MESSAGE" />-->
 
     <application
-        android:name="com.inspius.canyon.yo_video.app.GlobalApplication"
+        android:name=".app.GlobalApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -35,7 +35,7 @@
         android:theme="@style/Theme.AppTheme"
         tools:replace="android:icon,android:theme,android:label">
         <activity
-            android:name="com.inspius.canyon.yo_video.activity.VideoActivity"
+            android:name=".activity.VideoActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -113,35 +113,35 @@
             android:name="io.fabric.ApiKey"
             android:value="b582a4de8e8bb7f104a2fde4bbb1c31aaf09d449" />
 
-        <!-- Added for Parse push notifications -->
-        <service android:name="com.parse.PushService" />
+        <!--&lt;!&ndash; Added for Parse push notifications &ndash;&gt;-->
+        <!--<service android:name="com.parse.PushService" />-->
 
-        <receiver
-            android:name=".service.CustomPushReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-                <action android:name="com.parse.push.intent.RECEIVE" />
-                <action android:name="com.parse.push.intent.DELETE" />
-                <action android:name="com.parse.push.intent.OPEN" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.parse.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+        <!--<receiver-->
+            <!--android:name=".service.CustomPushReceiver"-->
+            <!--android:exported="false">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
+                <!--<action android:name="android.intent.action.USER_PRESENT" />-->
+                <!--<action android:name="com.parse.push.intent.RECEIVE" />-->
+                <!--<action android:name="com.parse.push.intent.DELETE" />-->
+                <!--<action android:name="com.parse.push.intent.OPEN" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
+        <!--<receiver-->
+            <!--android:name="com.parse.GcmBroadcastReceiver"-->
+            <!--android:permission="com.google.android.c2dm.permission.SEND">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.google.android.c2dm.intent.RECEIVE" />-->
+                <!--<action android:name="com.google.android.c2dm.intent.REGISTRATION" />-->
 
-                <!--
-                  IMPORTANT: Change "com.parse.starter" to match your app's package name.
-                -->
-                <category android:name="com.inspius.canyon.yo_video" />
-            </intent-filter>
-        </receiver>
+                <!--&lt;!&ndash;-->
+                  <!--IMPORTANT: Change "com.parse.starter" to match your app's package name.-->
+                <!--&ndash;&gt;-->
+                <!--<category android:name="com.inspius.canyon.yo_video" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
-        <!-- /Added for Parse push notifications -->
+        <!--&lt;!&ndash; /Added for Parse push notifications &ndash;&gt;-->
 
         <service
             android:name=".service.DownloadIntentService"
