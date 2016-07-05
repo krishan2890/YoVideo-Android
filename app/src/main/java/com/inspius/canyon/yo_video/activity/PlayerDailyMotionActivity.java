@@ -52,9 +52,9 @@ public class PlayerDailyMotionActivity extends CoreAppActivity {
             finish();
 
         tvnHeaderTitle.setText(videoModel.getTitle());
-        videoView.setVideoId("x26hv6c");
+      //  videoView.setVideoId("x26hv6c");
         videoView.loadUrl(videoModel.getVideoUrl());
-        //videoView.setAutoPlay(true);
+        videoView.setAutoPlay(true);
     }
 
     @Override
