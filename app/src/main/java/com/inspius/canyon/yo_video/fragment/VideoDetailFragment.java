@@ -25,6 +25,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.activity.MainActivity;
+import com.inspius.canyon.yo_video.activity.PlayerDailyMotionActivity;
 import com.inspius.canyon.yo_video.activity.PlayerVimeoActivity;
 import com.inspius.canyon.yo_video.activity.PlayerYoutubeActivity;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
@@ -401,8 +402,10 @@ public class VideoDetailFragment extends BaseMainFragment {
         } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.MP3) {
             startActivity(IntentUtils.openAudio(Uri.parse(videoModel.getVideoUrl())));
             return;
-        }
 
+        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.DAILY_MOTION) {
+            intent = new Intent(getActivity(), PlayerDailyMotionActivity.class);
+        }
         if (intent == null)
             return;
 
