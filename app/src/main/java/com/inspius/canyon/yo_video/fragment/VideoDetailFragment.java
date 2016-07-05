@@ -25,9 +25,11 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.activity.MainActivity;
+import com.inspius.canyon.yo_video.activity.MusicPlayerActivity;
 import com.inspius.canyon.yo_video.activity.PlayerDailyMotionActivity;
 import com.inspius.canyon.yo_video.activity.PlayerVimeoActivity;
 import com.inspius.canyon.yo_video.activity.PlayerYoutubeActivity;
+import com.inspius.canyon.yo_video.activity.VitamioActivity;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConfig;
@@ -388,8 +390,9 @@ public class VideoDetailFragment extends BaseMainFragment {
         Intent intent = null;
         if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.UPLOAD) {
             //intent = new Intent(getActivity(), PlayerUploadActivity.class);
-            startActivity(IntentUtils.openVideo(Uri.parse(videoModel.getVideoUrl())));
-            return;
+//            startActivity(IntentUtils.openVideo(Uri.parse(videoModel.getVideoUrl())));
+//            return;
+            intent = new Intent(getActivity(), VitamioActivity.class);
         } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.YOUTUBE)
             intent = new Intent(getActivity(), PlayerYoutubeActivity.class);
         else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.VIMEO) {
@@ -400,9 +403,9 @@ public class VideoDetailFragment extends BaseMainFragment {
             intent = new Intent(getActivity(), PlayerVimeoActivity.class);
 
         } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.MP3) {
-            startActivity(IntentUtils.openAudio(Uri.parse(videoModel.getVideoUrl())));
-            return;
-
+//            startActivity(IntentUtils.openAudio(Uri.parse(videoModel.getVideoUrl())));
+//            return;
+            intent = new Intent(getActivity(), MusicPlayerActivity.class);
         } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.DAILY_MOTION) {
             intent = new Intent(getActivity(), PlayerDailyMotionActivity.class);
         }
@@ -437,9 +440,9 @@ public class VideoDetailFragment extends BaseMainFragment {
     }
 
     @OnClick(R.id.tvnSeries)
-    void doClickSeries(){
-        String series=tvnSeries.getText().toString();
-        mHostActivityInterface.addFragment(SeriesFragment.getInstance(videoModel),false);
+    void doClickSeries() {
+        String series = tvnSeries.getText().toString();
+        mHostActivityInterface.addFragment(SeriesFragment.getInstance(videoModel), false);
     }
 
     @OnClick(R.id.imvDownload)

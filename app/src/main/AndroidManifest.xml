@@ -85,6 +85,18 @@
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppTheme" />
+        <activity
+            android:name=".activity.VitamioActivity"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppTheme" />
+        <activity
+            android:name=".activity.MusicPlayerActivity"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppTheme" />
         <!--Include the FacebookActivity configChanges and theme. -->
         <activity
             android:name="com.facebook.FacebookActivity"

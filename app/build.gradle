@@ -75,6 +75,9 @@ repositories {
     maven { url "http://jzaccone.github.io/SlidingMenu-aar" }
     maven { url 'https://maven.fabric.io/public' }
     maven { url "http://dl.bintray.com/jjhesk/maven" }
+    maven {
+        url "https://jitpack.io"
+    }
 }
 
 dependencies {
@@ -173,4 +176,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
+    compile 'com.github.iammert:MusicPlayerView:e3b937c729'
+    compile project(':vitamio')
 }
