@@ -28,7 +28,6 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -333,52 +332,6 @@ public class RPC {
             }
         });
     }
-
-//    /**
-//     * @param accountID
-//     * @param imagePath
-//     * @param listener
-//     */
-//    public static void requestUpdateAvatar(final int accountID, final ImageObj imagePath, final APIResponseListener listener) {
-//        final String tag = AppConstant.RELATIVE_URL_CHANGEAVATAR;
-//        final String url = getAbsoluteUrlAuthen(tag);
-//
-//        StringRequest jsonObjReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String strResponse) {
-//                try {
-//                    JSONObject response = new JSONObject(strResponse);
-//
-//                    boolean checkData = parseResponseData(response, listener);
-//
-//                    if (checkData) {
-//                        CustomerModel accountInfo = new Gson().fromJson(response.getString("content"), CustomerModel.class);
-//                        listener.onSuccess(accountInfo);
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError("Error data");
-//                }
-//            }
-//        },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        parseError(error, listener);
-//                    }
-//                }) {
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//
-//                Map<String, String> params = new HashMap<String, String>();
-//                params.put("user_id", String.valueOf(accountID));
-//                params.put("avatar", imagePath.getImgStr());
-//                return params;
-//            }
-//        };
-//
-//        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
-//    }
-
 
     public static void requestChangePass(final int accountID, final String currentPass, final String newPass, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_CHANGEPASS;
