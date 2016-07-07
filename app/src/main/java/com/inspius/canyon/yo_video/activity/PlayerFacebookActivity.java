@@ -53,9 +53,13 @@ public class PlayerFacebookActivity extends CoreAppActivity {
             finish();
 
         tvnHeaderTitle.setText(videoModel.getTitle());
-       // String urlFacebook = String.format("%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
         String urlFacebook = String.format("http://test.inspius.com/yovideo/api/playFacebookVideo?video_url=%s", videoModel.getVideoUrl());
         startWebView(urlFacebook);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 
     public void startWebView(String url) {
@@ -97,7 +101,30 @@ public class PlayerFacebookActivity extends CoreAppActivity {
 
     @OnClick(R.id.imvHeaderBack)
     void doBack() {
-        finish();
+        onBackPressed();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (webView != null)
+            webView.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        if (webView != null)
+            webView.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (webView != null)
+            webView.destroy();
+    }
 }
