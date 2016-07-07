@@ -86,6 +86,12 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.AppTheme" />
         <activity
+            android:name=".activity.PlayerFacebookActivity"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppTheme" />
+        <activity
             android:name=".activity.VitamioActivity"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|screenSize"

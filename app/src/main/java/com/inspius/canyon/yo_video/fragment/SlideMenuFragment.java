@@ -16,6 +16,7 @@ import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.fragment.account.AccountOptionFragment;
+import com.inspius.canyon.yo_video.helper.AppUtils;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.helper.XMLParser;
@@ -303,6 +304,8 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
 
     @OnClick(R.id.imvAvatar)
     void doChangeAvatar() {
+        if (!AppUtils.verifyStoragePermissions(getActivity()))
+            return;
         Intent intent = IntentUtils.pickImage();
         startActivityForResult(intent, AppConstant.REQUEST_ALBUM_PIC);
     }

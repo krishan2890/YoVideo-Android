@@ -27,6 +27,7 @@ import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.activity.MainActivity;
 import com.inspius.canyon.yo_video.activity.MusicPlayerActivity;
 import com.inspius.canyon.yo_video.activity.PlayerDailyMotionActivity;
+import com.inspius.canyon.yo_video.activity.PlayerFacebookActivity;
 import com.inspius.canyon.yo_video.activity.PlayerVimeoActivity;
 import com.inspius.canyon.yo_video.activity.PlayerYoutubeActivity;
 import com.inspius.canyon.yo_video.activity.VitamioActivity;
@@ -402,19 +403,21 @@ public class VideoDetailFragment extends BaseMainFragment {
 //            return;
             intent = new Intent(getActivity(), PlayerVimeoActivity.class);
 
-        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.MP3) {
+        }else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.FACEBOOK) {
+                intent = new Intent(getActivity(), PlayerFacebookActivity.class);
+            } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.MP3) {
 //            startActivity(IntentUtils.openAudio(Uri.parse(videoModel.getVideoUrl())));
 //            return;
-            intent = new Intent(getActivity(), MusicPlayerActivity.class);
-        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.DAILY_MOTION) {
-            intent = new Intent(getActivity(), PlayerDailyMotionActivity.class);
-        }
-        if (intent == null)
-            return;
+                intent = new Intent(getActivity(), MusicPlayerActivity.class);
+            } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.DAILY_MOTION) {
+                intent = new Intent(getActivity(), PlayerDailyMotionActivity.class);
+            }
+            if (intent == null)
+                return;
 
-        intent.putExtra(AppConstant.KEY_BUNDLE_VIDEO, videoModel);
-        startActivity(intent);
-    }
+            intent.putExtra(AppConstant.KEY_BUNDLE_VIDEO, videoModel);
+            startActivity(intent);
+        }
 
     boolean isCustomerPlayOrDownloadVideo() {
         if (videoModel.isVipPlayer() && !mAccountDataManager.isVip()) {
