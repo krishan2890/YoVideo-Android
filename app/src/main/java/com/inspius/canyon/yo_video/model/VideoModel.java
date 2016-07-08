@@ -43,7 +43,7 @@ public class VideoModel implements Serializable {
         this.videoUrl = videoJSON.videoLinkJSON.url;
      //   this.videoType = videoJSON.videoLinkJSON.type;
         if (!TextUtils.isEmpty(videoJSON.videoLinkJSON.type))
-            videoType = AppEnum.VIDEO_TYPE.valueOf(videoJSON.videoLinkJSON.type);
+            videoType = AppEnum.VIDEO_TYPE.fromString(videoJSON.videoLinkJSON.type);
 
     }
 
@@ -113,10 +113,6 @@ public class VideoModel implements Serializable {
     public AppEnum.VIDEO_TYPE getVideoType() {
         return videoType;
     }
-
-//    public String getVideoType() {
-//        return videoType;
-//    }
 
     public int getVideoId() {
         return videoJSON.id;
