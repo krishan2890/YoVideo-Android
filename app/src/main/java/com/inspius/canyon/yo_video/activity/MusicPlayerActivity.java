@@ -43,7 +43,14 @@ public class MusicPlayerActivity extends Activity {
                 if (player == null) {
                     try {
                         playAudio(videoModel.getVideoUrl());
-                        mpv.setMax(player.getDuration()/1000);
+
+                        int duration = player.getDuration() / 1000;
+                        if (duration <= 0)
+                            duration = getDuration();
+
+                        if (duration > 0)
+                            mpv.setMax(duration);
+
                         mpv.start();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -65,13 +72,36 @@ public class MusicPlayerActivity extends Activity {
         if (player == null) {
             try {
                 playAudio(videoModel.getVideoUrl());
-                mpv.setMax(player.getDuration()/1000);
+                int duration = player.getDuration() / 1000;
+                if (duration <= 0)
+                    duration = getDuration();
+
+                if (duration > 0)
+                    mpv.setMax(duration);
+
                 mpv.start();
                 mpv.toggle();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    int getDuration() {
+        String[] timef = videoModel.getTimeRemain().split(":");
+        int temp = 0;
+        if (timef.length == 2) {
+            int minute = Integer.parseInt(timef[0]);
+            int second = Integer.parseInt(timef[1]);
+            temp = second + (60 * minute);
+        } else if (timef.length == 3) {
+            int hour = Integer.parseInt(timef[0]);
+            int minute = Integer.parseInt(timef[1]);
+            int second = Integer.parseInt(timef[2]);
+            temp = second + (60 * minute) + hour * 60 * 60;
+        }
+
+        return temp;
     }
 
     private void playAudio(String url) throws Exception {

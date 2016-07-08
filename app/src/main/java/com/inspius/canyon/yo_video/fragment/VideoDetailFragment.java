@@ -390,34 +390,27 @@ public class VideoDetailFragment extends BaseMainFragment {
 
         Intent intent = null;
         if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.UPLOAD) {
-            //intent = new Intent(getActivity(), PlayerUploadActivity.class);
-//            startActivity(IntentUtils.openVideo(Uri.parse(videoModel.getVideoUrl())));
-//            return;
             intent = new Intent(getActivity(), VitamioActivity.class);
         } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.YOUTUBE)
             intent = new Intent(getActivity(), PlayerYoutubeActivity.class);
         else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.VIMEO) {
-//            String urlVimeo = String.format("http://player.vimeo.com/video/%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
-//            String urlVimeo = String.format("%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
-//            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlVimeo)));
-//            return;
             intent = new Intent(getActivity(), PlayerVimeoActivity.class);
-
-        }else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.FACEBOOK) {
-                intent = new Intent(getActivity(), PlayerFacebookActivity.class);
-            } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.MP3) {
-//            startActivity(IntentUtils.openAudio(Uri.parse(videoModel.getVideoUrl())));
-//            return;
-                intent = new Intent(getActivity(), MusicPlayerActivity.class);
-            } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.DAILY_MOTION) {
-                intent = new Intent(getActivity(), PlayerDailyMotionActivity.class);
-            }
-            if (intent == null)
-                return;
-
-            intent.putExtra(AppConstant.KEY_BUNDLE_VIDEO, videoModel);
-            startActivity(intent);
+        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.FACEBOOK) {
+            intent = new Intent(getActivity(), PlayerFacebookActivity.class);
+        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.MP3) {
+            intent = new Intent(getActivity(), MusicPlayerActivity.class);
+        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.DAILY_MOTION) {
+            intent = new Intent(getActivity(), PlayerDailyMotionActivity.class);
+        }else {
+            intent = new Intent(getActivity(), VitamioActivity.class);
         }
+
+        if (intent == null)
+            return;
+
+        intent.putExtra(AppConstant.KEY_BUNDLE_VIDEO, videoModel);
+        startActivity(intent);
+    }
 
     boolean isCustomerPlayOrDownloadVideo() {
         if (videoModel.isVipPlayer() && !mAccountDataManager.isVip()) {

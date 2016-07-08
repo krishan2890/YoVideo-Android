@@ -91,7 +91,7 @@ public class WebViewFragment extends BaseMainFragment {
         super.onResume();
         mActivityInterface.updateHeaderTitle(headerName);
         mActivityInterface.setVisibleHeaderMenu(true);
-        webView.loadUrl(urlPage);
+        webView.onResume();
     }
 
     public void startWebView(String url) {
@@ -152,7 +152,7 @@ public class WebViewFragment extends BaseMainFragment {
 		 */
 
         // Load link in webview
-        //webView.loadUrl(url);
+        webView.loadUrl(url);
     }
 
     @Override
@@ -160,5 +160,12 @@ public class WebViewFragment extends BaseMainFragment {
         super.onPause();
         if (webView != null)
             webView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (webView != null)
+            webView.destroy();
     }
 }
