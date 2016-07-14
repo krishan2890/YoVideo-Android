@@ -23,7 +23,7 @@ public class AppConfig {
     /**
      * replace to your server
      */
-    public static final String BASE_URL = "http://test.inspius.com/yovideo/";
+    public static final String BASE_URL = "http://test.inspius.com/yovideo/index.php/";
 
     /**
      * Please replace this with a valid API key which is enabled for the
