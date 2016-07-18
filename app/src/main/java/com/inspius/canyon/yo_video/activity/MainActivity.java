@@ -30,7 +30,6 @@ import com.inspius.canyon.yo_video.listener.AccountDataListener;
 import com.inspius.canyon.yo_video.service.AccountDataManager;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.service.DownloadIntentService;
-import com.inspius.canyon.yo_video.service.IDatabaseManager;
 import com.inspius.coreapp.CoreAppActivity;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalService;
@@ -72,7 +71,6 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
     private SlideMenuFragment fragmentSlideMenu;
     private AccountDataManager accountDataManager;
     private InterstitialAd mInterstitialAd;
-    private IDatabaseManager databaseManager;
 
     @Override
     protected int getLayoutResourceId() {
@@ -89,46 +87,36 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
         fragmentSlideMenu = (SlideMenuFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentSlideMenu);
         setupActionBar();
 
-        if (AppConfig.SHOW_ADS) {
+        if (AppConfig.SHOW_ADS_INTERSTITIAL) {
             // Create the InterstitialAd and set the adUnitId.
             mInterstitialAd = new InterstitialAd(this);
             // Defined in res/values/strings.xml
             mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
 
             // Loading ads
-            startLoadInterstitialAds();
             mInterstitialAd.setAdListener(new AdListener() {
                 @Override
                 public void onAdClosed() {
-                    startLoadInterstitialAds();
+                    requestNewInterstitial();
                 }
             });
+            requestNewInterstitial();
         }
-        databaseManager = new DatabaseManager(this);
     }
+
     @Override
     protected void onRestart() {
-        if (databaseManager == null)
-            databaseManager = new DatabaseManager(this);
-
         super.onRestart();
     }
-
 
     @Override
     protected void onResume() {
         mSimpleFacebook = SimpleFacebook.getInstance(this);
-        databaseManager = DatabaseManager.getInstance(this);
         super.onResume();
-
-
     }
 
     @Override
     protected void onStop() {
-        if (databaseManager != null)
-            databaseManager.closeDbConnections();
-
         super.onStop();
     }
 
@@ -196,6 +184,9 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
 
         ButterKnife.unbind(this);
         VolleySingleton.getInstance().cancelAllRequest();
+
+        if (DatabaseManager.getInstance() != null)
+            DatabaseManager.getInstance().closeDbConnections();
     }
 
     /**
@@ -393,33 +384,30 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
 
     @Override
     public void showInterstitialAds() {
-        if (!AppConfig.SHOW_ADS)
+        if (!AppConfig.SHOW_ADS_INTERSTITIAL)
             return;
 
         // Show the ad if it's ready. Otherwise toast and restart the game.
         if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         } else {
-            startLoadInterstitialAds();
+            requestNewInterstitial();
         }
     }
 
-    private void startLoadInterstitialAds() {
-        if (!AppConfig.SHOW_ADS)
+    private void requestNewInterstitial() {
+        if (!AppConfig.SHOW_ADS_INTERSTITIAL)
             return;
 
         AdRequest adRequest;
-
-        if (!mInterstitialAd.isLoading() && !mInterstitialAd.isLoaded()) {
-            if (GlobalApplication.getInstance().isProductionEnvironment()) {
-                adRequest = new AdRequest.Builder().build();
-            } else {
-                adRequest = new AdRequest.Builder()
-                        .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                        .build();
-            }
-
-            mInterstitialAd.loadAd(adRequest);
+        if (GlobalApplication.getInstance().isProductionEnvironment()) {
+            adRequest = new AdRequest.Builder().build();
+        } else {
+            adRequest = new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .build();
         }
+
+        mInterstitialAd.loadAd(adRequest);
     }
 }

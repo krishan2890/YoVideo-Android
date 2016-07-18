@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.google-services'
+
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION as int
@@ -49,11 +51,20 @@ android {
 
 buildscript {
     repositories {
+        jcenter()
+
         maven { url 'https://maven.fabric.io/public' }
     }
 
     dependencies {
         classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'com.google.gms:google-services:3.0.0'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
     }
 }
 
@@ -149,17 +160,11 @@ dependencies {
     // Youtube SDK
     compile files('libs/YouTubeAndroidPlayerApi.jar')
 
-    // Google Play Service Ads
-    compile 'com.google.android.gms:play-services-ads:8.1.0'
 
     // Crashlytics
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
-
-//    // Parse.com
-//    compile 'com.parse.bolts:bolts-android:1.+'
-//    compile 'com.parse:parse-android:1.+'
 
     compile project(':fenster-library')
 
@@ -178,4 +183,10 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
     compile 'com.github.iammert:MusicPlayerView:e3b937c729'
     compile project(':vitamio')
+
+    // Google Play Service Ads
+    compile 'com.google.firebase:firebase-ads:9.2.1'
+
+    // Google Firebase
+    compile 'com.google.firebase:firebase-messaging:9.2.1'
 }

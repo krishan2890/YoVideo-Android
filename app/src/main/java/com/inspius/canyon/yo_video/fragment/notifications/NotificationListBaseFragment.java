@@ -1,4 +1,4 @@
-package com.inspius.canyon.yo_video.fragment;
+package com.inspius.canyon.yo_video.fragment.notifications;
 
 import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +8,8 @@ import android.widget.TextView;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.adapter.ListNotificationAdapter;
 import com.inspius.canyon.yo_video.base.BaseFragment;
+import com.inspius.canyon.yo_video.fragment.VideoDetailFragment;
+import com.inspius.canyon.yo_video.greendao.DBNotification;
 import com.inspius.canyon.yo_video.listener.AdapterActionListener;
 import com.inspius.canyon.yo_video.listener.NotificationListener;
 import com.inspius.canyon.yo_video.model.NotificationJSON;
@@ -16,6 +18,7 @@ import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.ui.divideritemdecoration.HorizontalDividerItemDecoration;
 import com.wang.avi.AVLoadingIndicatorView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -23,11 +26,11 @@ import butterknife.Bind;
 /**
  * Created by Billy on 1/14/16.
  */
-public class BaseNotificationFragment extends BaseFragment implements AdapterActionListener, NotificationListener {
-    public static final String TAG = BaseNotificationFragment.class.getSimpleName();
+public class NotificationListBaseFragment extends BaseFragment implements AdapterActionListener, NotificationListener {
+    public static final String TAG = NotificationListBaseFragment.class.getSimpleName();
 
-    public static BaseNotificationFragment newInstance() {
-        BaseNotificationFragment fragment = new BaseNotificationFragment();
+    public static NotificationListBaseFragment newInstance() {
+        NotificationListBaseFragment fragment = new NotificationListBaseFragment();
         return fragment;
     }
 
@@ -42,6 +45,7 @@ public class BaseNotificationFragment extends BaseFragment implements AdapterAct
 
     private LinearLayoutManager linearLayoutManager;
     private ListNotificationAdapter mAdapter = null;
+    private List<DBNotification> listNotification;
 
     @Override
     public int getLayout() {
@@ -65,7 +69,8 @@ public class BaseNotificationFragment extends BaseFragment implements AdapterAct
         ultimateRecyclerView.setAdapter(mAdapter);
 
         AppNotificationManager.getInstance().subscribeNotification(this);
-        mAdapter.add(AppNotificationManager.getInstance().getData());
+        List<DBNotification> listData = AppNotificationManager.getInstance().getListNotification(0);
+        updateListView(listData);
         stopAnimLoading();
     }
 
@@ -96,22 +101,50 @@ public class BaseNotificationFragment extends BaseFragment implements AdapterAct
 
     @Override
     public void onItemClickListener(int position, Object model) {
-        NotificationJSON notificationJSON = (NotificationJSON) model;
-        notificationJSON.status = 1;
-        mAdapter.notifyDataSetChanged();
-
-        AppNotificationManager.getInstance().changeStateNotification(position);
+        mAdapter.changeNotificationStatus(position, 1);
+        mHostActivityInterface.addFragment(NotificationDetailFragment.newInstance(listNotification.get(position)), true);
     }
 
     @Override
-    public void onNotificationChanged(List<NotificationJSON> newData, List<NotificationJSON> listNotification) {
-        mAdapter.clear();
-        mAdapter.add(listNotification);
-        stopAnimLoading();
+    public void onNotificationInserted(DBNotification notification) {
+        if (notification == null)
+            return;
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.clear();
+                listNotification.clear();
+                List<DBNotification> listData = AppNotificationManager.getInstance().getListNotification(0);
+                updateListView(listData);
+            }
+        });
     }
 
     @Override
-    public void onNotificationNotReadChanged(int number) {
+    public void onNotificationSizeNotViewChanged(int totalNotView) {
 
+    }
+
+    void updateListView(List<DBNotification> data) {
+        if (data == null || data.isEmpty())
+            return;
+
+        if (listNotification == null)
+            listNotification = new ArrayList<>();
+
+        listNotification.addAll(data);
+        List<NotificationJSON> listData = new ArrayList<>();
+        for (DBNotification model : data) {
+            NotificationJSON notificationJSON = new NotificationJSON();
+            notificationJSON.id = model.getId();
+            notificationJSON.title = model.getTitle();
+            notificationJSON.message = model.getMessage();
+            notificationJSON.content = model.getContent();
+            notificationJSON.status = model.getStatus();
+
+            listData.add(notificationJSON);
+        }
+        mAdapter.add(listData);
     }
 }

@@ -6,6 +6,7 @@ package com.inspius.canyon.yo_video.service;
 
 
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearch;
+import com.inspius.canyon.yo_video.greendao.DBNotification;
 import com.inspius.canyon.yo_video.greendao.NewWishList;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public interface IDatabaseManager {
      * @param keyword to be inserted
      */
     DBKeywordSearch insertKeyword(DBKeywordSearch keyword);
+
     DBKeywordSearch insertKeyword(String keyword);
 
     /**
@@ -56,6 +58,7 @@ public interface IDatabaseManager {
      * @param keyword of users to be deleted
      */
     List<DBKeywordSearch> getKeywordByName(String keyword);
+
     void deleteKeywordByName(String keyword);
 
     /**
@@ -81,4 +84,18 @@ public interface IDatabaseManager {
     NewWishList insertVideoToWishList(NewWishList course);
 
     boolean existVideoAtWithList(Long id);
+
+    /**
+     * Notifications
+     */
+
+    List<DBNotification> listNotification();
+
+    void updateNotification(DBNotification notification);
+
+    DBNotification insertNotification(DBNotification notification);
+
+    long getTotalNotificationNotView();
+
+    DBNotification getNotificationByID(long id);
 }

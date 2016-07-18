@@ -125,6 +125,7 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
             @Override
             public void onError(String message) {
                 stopAnimLoading();
+                ultimateRecyclerView.setRefreshing(false);
                 DialogUtil.showMessageBox(mContext, message);
             }
 

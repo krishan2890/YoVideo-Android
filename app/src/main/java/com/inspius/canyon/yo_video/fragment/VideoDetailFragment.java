@@ -220,7 +220,7 @@ public class VideoDetailFragment extends BaseMainFragment {
         if (recentListManager.exitWishList(videoModel.getVideoId()) == null) {
             recentListManager.addVideo(videoModel);
         }
-        boolean isWishList = DatabaseManager.getInstance(mContext).existVideoAtWithList((long) videoModel.getVideoId());
+        boolean isWishList = DatabaseManager.getInstance().existVideoAtWithList((long) videoModel.getVideoId());
         updateStateViewWishList(isWishList);
 
         ImageLoader.getInstance().displayImage(videoModel.getImage(), imvThumbnail, options);
@@ -231,7 +231,7 @@ public class VideoDetailFragment extends BaseMainFragment {
         else
             tvnVip.setVisibility(View.GONE);
 
-        if (AppConfig.SHOW_ADS) {
+        if (AppConfig.SHOW_ADS_BANNER) {
             /**
              * Show Banner Ads
              */
@@ -274,6 +274,7 @@ public class VideoDetailFragment extends BaseMainFragment {
 
         if (isAutoPlay)
             doPlayVideo();
+
         RPC.updateVideoStatic(videoModel.getVideoId(), "view", mAccountDataManager.getAccountID(), new APIResponseListener() {
             @Override
             public void onError(String message) {
@@ -355,7 +356,7 @@ public class VideoDetailFragment extends BaseMainFragment {
 
         boolean isWishList = imvAddToWishList.isSelected();
         if (isWishList) {
-            DatabaseManager.getInstance(mContext).deleteVideoAtWishListByVideoId((long) videoModel.getVideoId());
+            DatabaseManager.getInstance().deleteVideoAtWishListByVideoId((long) videoModel.getVideoId());
         } else {
             NewWishList dbWishList = new NewWishList();
             dbWishList.setVideoId(videoModel.getVideoId());
@@ -367,7 +368,7 @@ public class VideoDetailFragment extends BaseMainFragment {
             dbWishList.setView(videoModel.getViewNumber());
             dbWishList.setUserID(mAccountDataManager.getAccountID());
 
-            DatabaseManager.getInstance(mContext).insertVideoToWishList(dbWishList);
+            DatabaseManager.getInstance().insertVideoToWishList(dbWishList);
         }
 
         updateStateViewWishList(!isWishList);

@@ -5,10 +5,12 @@ import android.os.Bundle;
 
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.app.AppConstant;
-import com.inspius.canyon.yo_video.fragment.AppListNotificationFragment;
 import com.inspius.canyon.yo_video.fragment.SplashFragment;
+import com.inspius.canyon.yo_video.fragment.notifications.NotificationDetailAppFragment;
+import com.inspius.canyon.yo_video.greendao.DBNotification;
 import com.inspius.canyon.yo_video.helper.AppUtils;
 import com.inspius.canyon.yo_video.model.NotificationJSON;
+import com.inspius.canyon.yo_video.service.AppNotificationManager;
 import com.inspius.coreapp.CoreAppActivity;
 
 public class VideoActivity extends CoreAppActivity {
@@ -25,20 +27,13 @@ public class VideoActivity extends CoreAppActivity {
 
         AppUtils.printHashKey(getApplicationContext());
 
-//        // VerifyParseConfiguration
-//        boolean isVerify = ParseUtils.verifyParseConfiguration(this);
-//        if (!isVerify)
-//            Toast.makeText(this, "Please configure your Parse Application ID and Client Key in AppConfig.java", Toast.LENGTH_LONG).show();
-//
-//        Intent intent = getIntent();
-//        Bundle bundle = intent.getExtras();
-//        if (bundle != null && bundle.containsKey(AppConstant.KEY_BUNDLE_NOTIFICATION_CONTENT)) {
-//            NotificationJSON notificationJSON = (NotificationJSON) bundle.getSerializable(AppConstant.KEY_BUNDLE_NOTIFICATION_CONTENT);
-//            addFragment(AppListNotificationFragment.newInstance(), true);
-//        } else
-//            addFragment(SplashFragment.newInstance(), true);
-
-        if (savedInstanceState == null)
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if (bundle != null && bundle.containsKey(AppConstant.KEY_BUNDLE_NOTIFICATION_CONTENT)) {
+            NotificationJSON notification = (NotificationJSON) bundle.getSerializable(AppConstant.KEY_BUNDLE_NOTIFICATION_CONTENT);
+            DBNotification dbNotification = AppNotificationManager.getInstance().insertNotification(notification.title, notification.message, notification.content);
+            addFragment(NotificationDetailAppFragment.newInstance(dbNotification), true);
+        } else
             addFragment(SplashFragment.newInstance(), true);
     }
 
@@ -50,10 +45,9 @@ public class VideoActivity extends CoreAppActivity {
 
         Bundle bundle = intent.getExtras();
         if (bundle != null && bundle.containsKey(AppConstant.KEY_BUNDLE_NOTIFICATION_CONTENT)) {
-            NotificationJSON notificationJSON = (NotificationJSON) bundle.getSerializable(AppConstant.KEY_BUNDLE_NOTIFICATION_CONTENT);
-
-            // Add to notification report
-            addFragment(AppListNotificationFragment.newInstance(), true);
+            NotificationJSON notification = (NotificationJSON) bundle.getSerializable(AppConstant.KEY_BUNDLE_NOTIFICATION_CONTENT);
+            DBNotification dbNotification = AppNotificationManager.getInstance().insertNotification(notification.title, notification.message, notification.content);
+            addFragment(NotificationDetailAppFragment.newInstance(dbNotification), true);
         }
     }
 }

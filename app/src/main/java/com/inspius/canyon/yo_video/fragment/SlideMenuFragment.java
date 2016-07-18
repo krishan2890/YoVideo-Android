@@ -16,6 +16,8 @@ import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.fragment.account.AccountOptionFragment;
+import com.inspius.canyon.yo_video.fragment.notifications.NotificationListFragment;
+import com.inspius.canyon.yo_video.greendao.DBNotification;
 import com.inspius.canyon.yo_video.helper.AppUtils;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.helper.Logger;
@@ -25,7 +27,6 @@ import com.inspius.canyon.yo_video.listener.AdapterActionListener;
 import com.inspius.canyon.yo_video.listener.AnimateFirstDisplayListener;
 import com.inspius.canyon.yo_video.listener.NotificationListener;
 import com.inspius.canyon.yo_video.model.CustomerModel;
-import com.inspius.canyon.yo_video.model.NotificationJSON;
 import com.inspius.canyon.yo_video.model.SlideMenuModel;
 import com.inspius.canyon.yo_video.service.AppNotificationManager;
 import com.inspius.coreapp.CoreAppFragment;
@@ -112,7 +113,7 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
 
     @Override
     public void onInitView() {
-        tvnNumberNotification.setText("0");
+        tvnNumberNotification.setText(String.valueOf(AppNotificationManager.getInstance().loadTotalNotificationNotview()));
 
         initMenu();
         updateStateLogin();
@@ -196,7 +197,7 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
             tvnEmail.setText(mAccountDataManager.getCustomerModel().email);
             ImageLoader.getInstance().displayImage(mAccountDataManager.getCustomerModel().avatar, imvAvatar, options, animateFirstListener);
 
-            AppNotificationManager.getInstance().requestGetNotification();
+            tvnNumberNotification.setText(String.valueOf(AppNotificationManager.getInstance().getSizeNotView()));
         } else {
             linearNotLogin.setVisibility(View.VISIBLE);
             linearLogin.setVisibility(View.GONE);
@@ -286,7 +287,7 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
 
         mActivityInterface.toggleDrawer();
         mActivityInterface.clearBackStackFragment();
-        mHostActivityInterface.addFragment(MainListNotificationFragment.newInstance(), true);
+        mHostActivityInterface.addFragment(NotificationListFragment.newInstance(), true);
     }
 
     @OnClick(R.id.imvSetting)
@@ -335,12 +336,21 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
     }
 
     @Override
-    public void onNotificationNotReadChanged(int number) {
-        tvnNumberNotification.setText(String.valueOf(number));
+    public void onNotificationSizeNotViewChanged(final int totalNotView) {
+        if (tvnNumberNotification == null)
+            return;
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvnNumberNotification.setText(String.valueOf(totalNotView));
+            }
+        });
     }
 
+
     @Override
-    public void onNotificationChanged(List<NotificationJSON> newData, List<NotificationJSON> listNotification) {
+    public void onNotificationInserted(DBNotification notification) {
 
     }
 }

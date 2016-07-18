@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
+import com.inspius.canyon.yo_video.greendao.DBNotification;
 import com.inspius.canyon.yo_video.listener.AdapterActionListener;
 import com.inspius.canyon.yo_video.model.NotificationJSON;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
@@ -69,6 +70,11 @@ public class ListNotificationAdapter extends UltimateViewAdapter<ListNotificatio
 
     public void clear() {
         mItems.clear();
+        notifyDataSetChanged();
+    }
+
+    public void changeNotificationStatus(int index, int status) {
+        mItems.get(index).status = status;
         notifyDataSetChanged();
     }
 

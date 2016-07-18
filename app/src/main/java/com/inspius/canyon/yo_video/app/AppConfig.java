@@ -14,11 +14,12 @@ public class AppConfig {
     public static final CoreAppEnums.Environment ENVIRONMENT = CoreAppEnums.Environment.DEV;
 
     /**
-     * Change SHOW_ADS
+     * Change SHOW_ADS_INTERSTITIAL
      * true : show ads
      * false : hide ads
      */
-    public static final boolean SHOW_ADS = false;
+    public static final boolean SHOW_ADS_BANNER = true;
+    public static final boolean SHOW_ADS_INTERSTITIAL = false;
 
     /**
      * replace to your server

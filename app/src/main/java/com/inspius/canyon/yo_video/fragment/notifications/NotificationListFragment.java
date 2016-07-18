@@ -1,4 +1,4 @@
-package com.inspius.canyon.yo_video.fragment;
+package com.inspius.canyon.yo_video.fragment.notifications;
 
 import android.os.Bundle;
 
@@ -9,12 +9,12 @@ import com.inspius.canyon.yo_video.listener.AdapterActionListener;
 /**
  * Created by Billy on 1/14/16.
  */
-public class MainListNotificationFragment extends BaseNotificationFragment implements AdapterActionListener {
-    public static final String TAG = MainListNotificationFragment.class.getSimpleName();
+public class NotificationListFragment extends NotificationListBaseFragment implements AdapterActionListener {
+    public static final String TAG = NotificationListFragment.class.getSimpleName();
 
 
-    public static MainListNotificationFragment newInstance() {
-        MainListNotificationFragment fragment = new MainListNotificationFragment();
+    public static NotificationListFragment newInstance() {
+        NotificationListFragment fragment = new NotificationListFragment();
         return fragment;
     }
 
@@ -37,6 +37,6 @@ public class MainListNotificationFragment extends BaseNotificationFragment imple
 
         mActivityInterface.updateHeaderTitle(getString(R.string.menu_notifications));
         mActivityInterface.setVisibleHeaderMenu(true);
-        mActivityInterface.setVisibleHeaderSearch(true);
+        mActivityInterface.setVisibleHeaderSearch(false);
     }
 }

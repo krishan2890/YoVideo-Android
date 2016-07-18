@@ -55,6 +55,7 @@
     <string name="menu_wishlist">My Wishlist</string>
     <string name="menu_recent_video">Recent Videos</string>
     <string name="menu_notifications">Notifications</string>
+    <string name="menu_notification_detail">Notification Detail</string>
     <string name="menu_logout">Log out</string>
     <string name="menu_currency">Account Balance</string>
     <string name="menu_transfer">Transfer</string>

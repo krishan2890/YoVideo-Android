@@ -729,36 +729,6 @@ public class RPC {
     /* ======================================= OTHER =======================================*/
 
     /**
-     * List Notifications
-     *
-     * @param listener
-     */
-    public static void requestGetListNotifications(final APIResponseListener listener) {
-        final String tag = AppConstant.RELATIVE_URL_LIST_NOTIFICATIONS;
-        final String url = "http://demo.inspius.com/mobile/life-video/xml/" + tag;
-
-        StringRequest jsonObjReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Logger.d(tag, response);
-
-                Type type = new TypeToken<List<NotificationJSON>>() {
-                }.getType();
-                List<NotificationJSON> data = null;
-                data = new Gson().fromJson(response, type);
-                listener.onSuccess(data);
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        parseError(error, listener);
-                    }
-                });
-        VolleySingleton.getInstance().addToRequestQueue(jsonObjReq, tag);
-    }
-
-    /**
      * List videos
      *
      * @param listener

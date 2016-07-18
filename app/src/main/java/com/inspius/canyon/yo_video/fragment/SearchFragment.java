@@ -135,7 +135,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
                     callSearchData();
                     String keyword = edtKeyWord.getText().toString();
                     if (!TextUtils.isEmpty(keyword)) {
-                        DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance(mContext).insertKeyword(keyword);
+                        DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance().insertKeyword(keyword);
                         if (dbKeywordSearch != null)
                             prepareTags();
                     }
@@ -150,7 +150,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
                 callSearchData();
                 String keyword = edtKeyWord.getText().toString();
                 if (!TextUtils.isEmpty(keyword)) {
-                    DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance(mContext).insertKeyword(keyword);
+                    DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance().insertKeyword(keyword);
                     if (dbKeywordSearch != null)
                         prepareTags();
                 }
@@ -231,7 +231,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             @Override
             public void onTagDeleted(final TagView view, final Tag tag, final int position) {
                 view.remove(position);
-                DatabaseManager.getInstance(mContext).deleteKeywordByName(tag.text);
+                DatabaseManager.getInstance().deleteKeywordByName(tag.text);
                 prepareTags();
             }
         });
@@ -289,7 +289,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     }
 
     private void prepareTags() {
-        List<DBKeywordSearch> keywords = DatabaseManager.getInstance(mContext).listKeyword();
+        List<DBKeywordSearch> keywords = DatabaseManager.getInstance().listKeyword();
         tagList = new ArrayList<>();
         if (keywords != null) {
             for (DBKeywordSearch keyword : keywords) {

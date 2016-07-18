@@ -19,6 +19,8 @@ import com.sromku.simple.fb.Permission;
 import com.sromku.simple.fb.SimpleFacebook;
 import com.sromku.simple.fb.SimpleFacebookConfiguration;
 
+import io.vov.vitamio.Vitamio;
+
 /**
  * Created by Billy on 9/3/15.
  */
@@ -79,6 +81,9 @@ public class GlobalApplication extends Application {
                 .build();
 
         SimpleFacebook.setConfiguration(configuration);
+
+        // init Vitamio
+        Vitamio.isInitialized(this);
     }
 
     @Override

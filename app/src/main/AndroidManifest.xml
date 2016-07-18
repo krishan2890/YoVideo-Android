@@ -6,25 +6,14 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <!--&lt;!&ndash;-->
-    <!--IMPORTANT: Change "com.parse.starter.permission.C2D_MESSAGE" in the lines below-->
-    <!--to match your app's package name + ".permission.C2D_MESSAGE".-->
-    <!--&ndash;&gt;-->
-    <!--<permission-->
-        <!--android:name="com.inspius.canyon.yo_video.permission.C2D_MESSAGE"-->
-        <!--android:protectionLevel="signature" />-->
-    <!--<uses-permission android:name="com.inspius.canyon.yo_video.permission.C2D_MESSAGE" />-->
+    <!-- check app background -->
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
     <application
         android:name=".app.GlobalApplication"
@@ -137,35 +126,21 @@
             android:name="io.fabric.ApiKey"
             android:value="b582a4de8e8bb7f104a2fde4bbb1c31aaf09d449" />
 
-        <!--&lt;!&ndash; Added for Parse push notifications &ndash;&gt;-->
-        <!--<service android:name="com.parse.PushService" />-->
+        <!-- Defining Firebase Services -->
+        <service
+            android:name=".service.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
 
-        <!--<receiver-->
-            <!--android:name=".service.CustomPushReceiver"-->
-            <!--android:exported="false">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
-                <!--<action android:name="android.intent.action.USER_PRESENT" />-->
-                <!--<action android:name="com.parse.push.intent.RECEIVE" />-->
-                <!--<action android:name="com.parse.push.intent.DELETE" />-->
-                <!--<action android:name="com.parse.push.intent.OPEN" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
-        <!--<receiver-->
-            <!--android:name="com.parse.GcmBroadcastReceiver"-->
-            <!--android:permission="com.google.android.c2dm.permission.SEND">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="com.google.android.c2dm.intent.RECEIVE" />-->
-                <!--<action android:name="com.google.android.c2dm.intent.REGISTRATION" />-->
-
-                <!--&lt;!&ndash;-->
-                  <!--IMPORTANT: Change "com.parse.starter" to match your app's package name.-->
-                <!--&ndash;&gt;-->
-                <!--<category android:name="com.inspius.canyon.yo_video" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
-
-        <!--&lt;!&ndash; /Added for Parse push notifications &ndash;&gt;-->
+        <service
+            android:name=".service.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+        <!-- Defining End Firebase Services -->
 
         <service
             android:name=".service.DownloadIntentService"

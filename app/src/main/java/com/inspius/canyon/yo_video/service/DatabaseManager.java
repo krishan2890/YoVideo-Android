@@ -3,10 +3,13 @@ package com.inspius.canyon.yo_video.service;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.util.Log;
 
-
+import com.inspius.canyon.yo_video.app.GlobalApplication;
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearch;
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearchDao;
+import com.inspius.canyon.yo_video.greendao.DBNotification;
+import com.inspius.canyon.yo_video.greendao.DBNotificationDao;
 import com.inspius.canyon.yo_video.greendao.DaoMaster;
 import com.inspius.canyon.yo_video.greendao.DaoSession;
 import com.inspius.canyon.yo_video.greendao.NewWishList;
@@ -45,26 +48,15 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     private AsyncSession asyncSession;
     private List<AsyncOperation> completedOperations;
 
-    /**
-     * Constructs a new DatabaseManager with the specified arguments.
-     *
-     * @param context The Android {@link Context}.
-     */
-    public DatabaseManager(final Context context) {
-        this.context = context;
-        mHelper = new DaoMaster.DevOpenHelper(this.context, "-database", null);
+    public DatabaseManager() {
+        this.context = GlobalApplication.getAppContext();
+        mHelper = new DaoMaster.DevOpenHelper(this.context, "-yovideo", null);
         completedOperations = new CopyOnWriteArrayList<AsyncOperation>();
     }
 
-    /**
-     * @param context The Android {@link Context}.
-     * @return this.instance
-     */
-    public static DatabaseManager getInstance(Context context) {
-
-        if (instance == null) {
-            instance = new DatabaseManager(context);
-        }
+    public static DatabaseManager getInstance() {
+        if (instance == null)
+            instance = new DatabaseManager();
 
         return instance;
     }
@@ -126,8 +118,7 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
             DaoMaster.dropAllTables(database, true); // drops all tables
             mHelper.onCreate(database);              // creates the tables
             asyncSession.deleteAll(DBKeywordSearch.class);    // clear all elements from a table
-//            asyncSession.deleteAll(DBUserDetails.class);
-//            asyncSession.deleteAll(DBPhoneNumber.class);
+            asyncSession.deleteAll(DBNotification.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -343,5 +334,94 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
             return true;
         }
         return false;
+    }
+
+    /**
+     * Notifications
+     *
+     * @return
+     */
+
+    @Override
+    public List<DBNotification> listNotification() {
+        List<DBNotification> notifications = null;
+        try {
+            openReadableDb();
+            DBNotificationDao notificationDao = daoSession.getDBNotificationDao();
+
+            QueryBuilder<DBNotification> queryBuilder = notificationDao.queryBuilder().orderDesc(DBNotificationDao.Properties.Id).limit(20);
+            notifications = queryBuilder.list();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (notifications == null)
+            notifications = new ArrayList<>();
+        return notifications;
+    }
+
+    @Override
+    public void updateNotification(DBNotification notification) {
+        try {
+            if (notification != null) {
+                openWritableDb();
+                daoSession.update(notification);
+                Logger.d(TAG, "Updated Notification: " + notification.getTitle() + " from the schema.");
+                daoSession.clear();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public DBNotification insertNotification(DBNotification notification) {
+        try {
+            if (notification != null) {
+                openWritableDb();
+                DBNotificationDao userDao = daoSession.getDBNotificationDao();
+                long id = userDao.insert(notification);
+                notification.setId(id);
+                Log.d(TAG, "Inserted notification: " + notification.getTitle() + " to the schema.");
+                daoSession.clear();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return notification;
+    }
+
+    @Override
+    public long getTotalNotificationNotView() {
+        long total = 0;
+        try {
+            openReadableDb();
+            DBNotificationDao notificationDao = daoSession.getDBNotificationDao();
+
+            // QueryBuilder<DBNotification> queryBuilder = notificationDao.queryBuilder().where(DBNotificationDao.Properties.Status.eq(0));
+            total = notificationDao.count();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return total;
+    }
+
+    @Override
+    public DBNotification getNotificationByID(long id) {
+        DBNotification item = null;
+        try {
+            openReadableDb();
+            DBNotificationDao notificationDao = daoSession.getDBNotificationDao();
+            item = notificationDao.load(id);
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return item;
     }
 }

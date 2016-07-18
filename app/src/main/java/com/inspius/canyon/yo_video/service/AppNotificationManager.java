@@ -1,9 +1,9 @@
 package com.inspius.canyon.yo_video.service;
 
-import com.inspius.canyon.yo_video.api.APIResponseListener;
-import com.inspius.canyon.yo_video.api.RPC;
+import android.util.Log;
+
+import com.inspius.canyon.yo_video.greendao.DBNotification;
 import com.inspius.canyon.yo_video.listener.NotificationListener;
-import com.inspius.canyon.yo_video.model.NotificationJSON;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,6 @@ import java.util.List;
 public class AppNotificationManager {
     private static AppNotificationManager mInstance;
     private List<NotificationListener> listeners;
-    private List<NotificationJSON> data;
     private int sizeNotView;
 
     public static synchronized AppNotificationManager getInstance() {
@@ -26,7 +25,32 @@ public class AppNotificationManager {
 
     public AppNotificationManager() {
         this.listeners = new ArrayList<>();
-        data = new ArrayList<>();
+
+        loadTotalNotificationNotview();
+    }
+
+    public int loadTotalNotificationNotview(){
+        sizeNotView = (int) DatabaseManager.getInstance().getTotalNotificationNotView();
+        return sizeNotView;
+    }
+
+    public DBNotification insertNotification(String title, String message, String content) {
+        DBNotification notification = new DBNotification();
+        notification.setTitle(title);
+        notification.setMessage(message);
+        notification.setContent(content);
+        notification.setStatus(0);
+
+        notification = DatabaseManager.getInstance().insertNotification(notification);
+
+        Log.d("notification", notification.getId() + " : " + notification.getTitle());
+
+        sizeNotView++;
+        for (NotificationListener listener : listeners) {
+            listener.onNotificationInserted(notification);
+            listener.onNotificationSizeNotViewChanged(sizeNotView);
+        }
+        return notification;
     }
 
     /**
@@ -50,90 +74,37 @@ public class AppNotificationManager {
         listeners.clear();
     }
 
-    /**
-     * @param position
-     */
-    public void changeStateNotification(int position) {
-        if (data.get(position).status == 1)
+    public void changeStatusNotification(DBNotification notification) {
+        if (notification == null)
             return;
 
-        data.get(position).status = 1;
+        if (notification.getStatus() == 1)
+            return;
+
+        notification.setStatus(1);
+
+        DatabaseManager.getInstance().updateNotification(notification);
+
         sizeNotView--;
         if (sizeNotView < 0)
             sizeNotView = 0;
 
-
         for (NotificationListener listener : listeners)
-            listener.onNotificationNotReadChanged(sizeNotView);
+            listener.onNotificationSizeNotViewChanged(sizeNotView);
     }
 
-    /**
-     * @param notificationJSON
-     */
-    public void addNotification(NotificationJSON notificationJSON) {
-        data.add(0, notificationJSON);
-        if (notificationJSON.status == 0)
-            sizeNotView++;
-
-        List<NotificationJSON> newData = new ArrayList<>();
-        newData.add(notificationJSON);
-        for (NotificationListener listener : listeners) {
-            listener.onNotificationChanged(newData, data);
-            listener.onNotificationNotReadChanged(sizeNotView);
-        }
-    }
-
-    /**
-     * @param notifications
-     */
-    public void addNotification(List<NotificationJSON> notifications) {
-        for (NotificationJSON model : notifications) {
-            if (model.status == 0)
-                sizeNotView++;
-            data.add(model);
-        }
-        for (NotificationListener listener : listeners) {
-            listener.onNotificationChanged(notifications, data);
-            listener.onNotificationNotReadChanged(sizeNotView);
-        }
-    }
-
-    /**
-     * request get list notification
-     */
-    public void requestGetNotification() {
-        RPC.requestGetListNotifications(new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-
-            }
-
-            @Override
-            public void onSuccess(Object results) {
-                List<NotificationJSON> notifications = (List<NotificationJSON>) results;
-                if (notifications == null)
-                    return;
-
-                clearNotification();
-                addNotification(notifications);
-            }
-        });
-    }
-
-    /**
-     * Clear data
-     */
-    private void clearNotification() {
-        sizeNotView = 0;
-        data.clear();
-    }
-
-    /**
-     * Get list notification
-     *
-     * @return
-     */
-    public List<NotificationJSON> getData() {
+    public List<DBNotification> getListNotification(int page) {
+        List<DBNotification> data = DatabaseManager.getInstance().listNotification();
+        if (data == null)
+            return new ArrayList<>();
         return data;
+    }
+
+    public DBNotification getNotificationById(long id) {
+        return DatabaseManager.getInstance().getNotificationByID(id);
+    }
+
+    public int getSizeNotView() {
+        return sizeNotView;
     }
 }

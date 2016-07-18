@@ -21,30 +21,24 @@ import de.greenrobot.daogenerator.Schema;
 
 /**
  * Generates entities and DAOs for the example project DaoExample.
- * 
+ * <p/>
  * Run it as a Java application (not Android).
- * 
+ *
  * @author Markus
  */
 public class ExampleDaoGenerator {
 
     public static void main(String[] args) throws Exception {
-        Schema schema = new Schema(1, "com.inspius.canyon.yo_video.greendao");
+        Schema schema = new Schema(2, "com.inspius.canyon.yo_video.greendao");
 
         addWishList(schema);
         addRecentList(schema);
         addRecentSearch(schema);
+        addNotifications(schema);
         new DaoGenerator().generateAll(schema, "./app/src/main/java");
     }
 
-//    private static void addWishList(Schema schema) {
-//        Entity note = schema.addEntity("WishList");
-//        note.addIdProperty();
-//        note.addIntProperty("videoId").notNull();
-//        note.addStringProperty("name");
-//    }
-
-    private static void addWishList(Schema schema){
+    private static void addWishList(Schema schema) {
         Entity note = schema.addEntity("NewWishList");
         note.addIdProperty();
         note.addIntProperty("videoId").notNull();
@@ -63,9 +57,19 @@ public class ExampleDaoGenerator {
         note.addLongProperty("videoId").notNull();
         note.addStringProperty("name");
     }
+
     private static void addRecentSearch(Schema schema) {
         Entity note = schema.addEntity("DBKeywordSearch");
         note.addIdProperty();
         note.addStringProperty("keyword").notNull();
+    }
+
+    private static void addNotifications(Schema schema) {
+        Entity note = schema.addEntity("DBNotification");
+        note.addIdProperty();
+        note.addStringProperty("title").notNull();
+        note.addStringProperty("message").notNull();
+        note.addStringProperty("content").notNull();
+        note.addIntProperty("status").notNull();
     }
 }
