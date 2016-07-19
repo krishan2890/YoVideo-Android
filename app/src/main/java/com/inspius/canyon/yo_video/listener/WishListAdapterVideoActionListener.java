@@ -6,6 +6,6 @@ import com.inspius.canyon.yo_video.model.VideoModel;
 /**
  * Created by Billy on 1/6/16.
  */
-public interface WishLishAdapterVideoActionListener extends AdapterActionListener {
+public interface WishListAdapterVideoActionListener extends AdapterActionListener {
     void onPlayVideoListener(int position, NewWishList model);
 }

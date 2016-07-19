@@ -59,6 +59,7 @@ public class AccountDataManager {
         switch (stateLogin) {
             case NOT_LOGIN:
                 listener.onSuccess(true);
+                RecentListManager.removeInstance();
                 break;
 
             case SYSTEM:
@@ -67,6 +68,8 @@ public class AccountDataManager {
                 SharedPrefUtils.removeFromPrefs(AppConstant.KEY_SHARED_PREF_LOGIN_USERNAME);
                 SharedPrefUtils.removeFromPrefs(AppConstant.KEY_SHARED_PREF_LOGIN_PASSWORD);
                 listener.onSuccess(true);
+
+                RecentListManager.removeInstance();
                 break;
 
             case FACEBOOK:
@@ -179,6 +182,7 @@ public class AccountDataManager {
                 stateLogin = AppEnum.LOGIN_TYPE.NOT_LOGIN;
                 SharedPrefUtils.removeFromPrefs(AppConstant.KEY_SHARED_PREF_LOGIN_FACEBOOK);
                 listener.onSuccess(true);
+                RecentListManager.removeInstance();
             }
         };
 
@@ -267,6 +271,8 @@ public class AccountDataManager {
 
         if (listener != null)
             listener.onSuccess(customerModel);
+
+        RecentListManager.newInstance(customerModel.id);
     }
 
     private void parseLoginFacebookSuccess(String accessToken, Object results, AccountDataListener listener) {
@@ -275,6 +281,8 @@ public class AccountDataManager {
 
         if (listener != null)
             listener.onSuccess(customerModel);
+
+        RecentListManager.newInstance(customerModel.id);
     }
 
     public CustomerModel getCustomerModel() {

@@ -10,12 +10,12 @@ import de.greenrobot.dao.identityscope.IdentityScopeType;
 import de.greenrobot.dao.internal.DaoConfig;
 
 import com.inspius.canyon.yo_video.greendao.NewWishList;
-import com.inspius.canyon.yo_video.greendao.RecentVideos;
+import com.inspius.canyon.yo_video.greendao.DBRecentVideo;
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearch;
 import com.inspius.canyon.yo_video.greendao.DBNotification;
 
 import com.inspius.canyon.yo_video.greendao.NewWishListDao;
-import com.inspius.canyon.yo_video.greendao.RecentVideosDao;
+import com.inspius.canyon.yo_video.greendao.DBRecentVideoDao;
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearchDao;
 import com.inspius.canyon.yo_video.greendao.DBNotificationDao;
 
@@ -29,12 +29,12 @@ import com.inspius.canyon.yo_video.greendao.DBNotificationDao;
 public class DaoSession extends AbstractDaoSession {
 
     private final DaoConfig newWishListDaoConfig;
-    private final DaoConfig recentVideosDaoConfig;
+    private final DaoConfig dBRecentVideoDaoConfig;
     private final DaoConfig dBKeywordSearchDaoConfig;
     private final DaoConfig dBNotificationDaoConfig;
 
     private final NewWishListDao newWishListDao;
-    private final RecentVideosDao recentVideosDao;
+    private final DBRecentVideoDao dBRecentVideoDao;
     private final DBKeywordSearchDao dBKeywordSearchDao;
     private final DBNotificationDao dBNotificationDao;
 
@@ -45,8 +45,8 @@ public class DaoSession extends AbstractDaoSession {
         newWishListDaoConfig = daoConfigMap.get(NewWishListDao.class).clone();
         newWishListDaoConfig.initIdentityScope(type);
 
-        recentVideosDaoConfig = daoConfigMap.get(RecentVideosDao.class).clone();
-        recentVideosDaoConfig.initIdentityScope(type);
+        dBRecentVideoDaoConfig = daoConfigMap.get(DBRecentVideoDao.class).clone();
+        dBRecentVideoDaoConfig.initIdentityScope(type);
 
         dBKeywordSearchDaoConfig = daoConfigMap.get(DBKeywordSearchDao.class).clone();
         dBKeywordSearchDaoConfig.initIdentityScope(type);
@@ -55,19 +55,19 @@ public class DaoSession extends AbstractDaoSession {
         dBNotificationDaoConfig.initIdentityScope(type);
 
         newWishListDao = new NewWishListDao(newWishListDaoConfig, this);
-        recentVideosDao = new RecentVideosDao(recentVideosDaoConfig, this);
+        dBRecentVideoDao = new DBRecentVideoDao(dBRecentVideoDaoConfig, this);
         dBKeywordSearchDao = new DBKeywordSearchDao(dBKeywordSearchDaoConfig, this);
         dBNotificationDao = new DBNotificationDao(dBNotificationDaoConfig, this);
 
         registerDao(NewWishList.class, newWishListDao);
-        registerDao(RecentVideos.class, recentVideosDao);
+        registerDao(DBRecentVideo.class, dBRecentVideoDao);
         registerDao(DBKeywordSearch.class, dBKeywordSearchDao);
         registerDao(DBNotification.class, dBNotificationDao);
     }
     
     public void clear() {
         newWishListDaoConfig.getIdentityScope().clear();
-        recentVideosDaoConfig.getIdentityScope().clear();
+        dBRecentVideoDaoConfig.getIdentityScope().clear();
         dBKeywordSearchDaoConfig.getIdentityScope().clear();
         dBNotificationDaoConfig.getIdentityScope().clear();
     }
@@ -76,8 +76,8 @@ public class DaoSession extends AbstractDaoSession {
         return newWishListDao;
     }
 
-    public RecentVideosDao getRecentVideosDao() {
-        return recentVideosDao;
+    public DBRecentVideoDao getDBRecentVideoDao() {
+        return dBRecentVideoDao;
     }
 
     public DBKeywordSearchDao getDBKeywordSearchDao() {

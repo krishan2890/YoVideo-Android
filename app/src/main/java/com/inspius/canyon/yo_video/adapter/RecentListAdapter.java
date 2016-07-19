@@ -9,9 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
-import com.inspius.canyon.yo_video.greendao.NewWishList;
+import com.inspius.canyon.yo_video.greendao.DBRecentVideo;
 import com.inspius.canyon.yo_video.listener.AnimateFirstDisplayListener;
-import com.inspius.canyon.yo_video.listener.WishLishAdapterVideoActionListener;
+import com.inspius.canyon.yo_video.listener.RecentListAdapterVideoActionListener;
+import com.inspius.canyon.yo_video.listener.WishListAdapterVideoActionListener;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -25,14 +26,14 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class WishLishAdapter extends UltimateViewAdapter<WishLishAdapter.HolderGirdCell> {
-    private List<NewWishList> mItems;
-    WishLishAdapterVideoActionListener listener;
+public class RecentListAdapter extends UltimateViewAdapter<RecentListAdapter.HolderGirdCell> {
+    private List<DBRecentVideo> mItems;
+    RecentListAdapterVideoActionListener listener;
 
     private DisplayImageOptions options;
     private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
-    public WishLishAdapter() {
+    public RecentListAdapter() {
         this.mItems = new ArrayList<>();
 
         options = new DisplayImageOptions.Builder()
@@ -46,7 +47,7 @@ public class WishLishAdapter extends UltimateViewAdapter<WishLishAdapter.HolderG
                 .build();
     }
 
-    public void setAdapterActionListener(WishLishAdapterVideoActionListener listener) {
+    public void setAdapterActionListener(RecentListAdapterVideoActionListener listener) {
         this.listener = listener;
     }
 
@@ -60,11 +61,11 @@ public class WishLishAdapter extends UltimateViewAdapter<WishLishAdapter.HolderG
 
     @Override
     public void onBindViewHolder(final HolderGirdCell holder, final int position) {
-        final NewWishList model = getItem(position);
+        final DBRecentVideo model = getItem(position);
         if (model != null) {
             holder.tvnName.setText(model.getName());
             holder.tvnView.setText(model.getView());
-            holder.tvnCategory.setText(model.getCategoryname());
+            holder.tvnCategory.setText(model.getCategory());
             holder.tvnSeries.setText(model.getSeries());
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -89,7 +90,7 @@ public class WishLishAdapter extends UltimateViewAdapter<WishLishAdapter.HolderG
     }
 
 
-    public void add(List<NewWishList> listData) {
+    public void add(List<DBRecentVideo> listData) {
         mItems.addAll(listData);
         notifyDataSetChanged();
     }
@@ -177,7 +178,7 @@ public class WishLishAdapter extends UltimateViewAdapter<WishLishAdapter.HolderG
         }
     }
 
-    public NewWishList getItem(int position) {
+    public DBRecentVideo getItem(int position) {
         if (customHeaderView != null)
             position--;
         if (position < mItems.size())

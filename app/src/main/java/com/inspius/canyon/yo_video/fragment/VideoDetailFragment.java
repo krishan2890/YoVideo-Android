@@ -216,10 +216,6 @@ public class VideoDetailFragment extends BaseMainFragment {
                 imvAddToWishList.setSelected(true);
         }
 
-        RecentListManager recentListManager = RecentListManager.getInstance();
-        if (recentListManager.exitWishList(videoModel.getVideoId()) == null) {
-            recentListManager.addVideo(videoModel);
-        }
         boolean isWishList = DatabaseManager.getInstance().existVideoAtWithList((long) videoModel.getVideoId());
         updateStateViewWishList(isWishList);
 
@@ -402,12 +398,16 @@ public class VideoDetailFragment extends BaseMainFragment {
             intent = new Intent(getActivity(), MusicPlayerActivity.class);
         } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.DAILY_MOTION) {
             intent = new Intent(getActivity(), PlayerDailyMotionActivity.class);
-        }else {
+        } else {
             intent = new Intent(getActivity(), VitamioActivity.class);
         }
 
         if (intent == null)
             return;
+
+        RecentListManager recentListManager = RecentListManager.getInstance();
+        if (recentListManager != null)
+            recentListManager.addVideo(videoModel);
 
         intent.putExtra(AppConstant.KEY_BUNDLE_VIDEO, videoModel);
         startActivity(intent);

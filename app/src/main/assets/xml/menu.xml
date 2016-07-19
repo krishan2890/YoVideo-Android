@@ -22,7 +22,7 @@
         <status>1</status>
     </element>
     <element>
-        <icon>icon_menu_categories.png</icon>
+        <icon>ic_menu_recent.png</icon>
         <id>2</id>
         <name>Recent Videos</name>
         <type>recent_videos</type>

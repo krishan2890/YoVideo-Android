@@ -52,10 +52,16 @@ public class ExampleDaoGenerator {
     }
 
     private static void addRecentList(Schema schema) {
-        Entity note = schema.addEntity("RecentVideos");
+        Entity note = schema.addEntity("DBRecentVideo");
         note.addIdProperty();
-        note.addLongProperty("videoId").notNull();
-        note.addStringProperty("name");
+        note.addIntProperty("videoId").notNull();
+        note.addStringProperty("category").notNull();
+        note.addStringProperty("series").notNull();
+        note.addStringProperty("view").notNull();
+        note.addStringProperty("image").notNull();
+        note.addStringProperty("link").notNull();
+        note.addStringProperty("name").notNull();
+        note.addIntProperty("userID").notNull();
     }
 
     private static void addRecentSearch(Schema schema) {

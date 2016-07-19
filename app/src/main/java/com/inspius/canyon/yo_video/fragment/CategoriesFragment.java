@@ -7,12 +7,14 @@ import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.adapter.GridAllCategoryAdapter;
 import com.inspius.canyon.yo_video.adapter.ListTopCategoryAdapter;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.AppRestClient;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.listener.AdapterActionListener;
 import com.inspius.canyon.yo_video.model.CategoryJSON;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
+import com.inspius.canyon.yo_video.service.AppSession;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
@@ -122,39 +124,34 @@ public class CategoriesFragment extends BaseMainFragment implements AdapterActio
 
     void requestGetData() {
         startAnimLoading();
-        RPC.requestGetCategories(new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                stopAnimLoading();
-            }
+        DataCategoryJSON dataCats = AppSession.getInstance().getCategoryData();
+        parseCategories(dataCats);
+    }
 
-            @Override
-            public void onSuccess(Object results) {
-                stopAnimLoading();
-                DataCategoryJSON data = (DataCategoryJSON) results;
-                if (data == null || data.listCategory == null)
-                    return;
-                for (CategoryJSON model : data.listCategory) {
-                    if (model.enable == 1)
-                        mAdapterAllCategory.insert(model);
-                }
-                if (data.listIdTopCategory != null) {
-                    for (long id : data.listIdTopCategory)
-                        for (CategoryJSON model : data.listCategory)
-                            if (model.id == id) {
-                                if (model.enable == 1)
-                                    mAdapterTopCategory.insert(model);
-                                break;
-                            }
-                }
-            }
-        });
+    void parseCategories(DataCategoryJSON data) {
+        stopAnimLoading();
+
+        if (data == null || data.listCategory == null)
+            return;
+        for (CategoryJSON model : data.listCategory) {
+            if (model.enable == 1)
+                mAdapterAllCategory.insert(model);
+        }
+        if (data.listIdTopCategory != null) {
+            for (long id : data.listIdTopCategory)
+                for (CategoryJSON model : data.listCategory)
+                    if (model.id == id) {
+                        if (model.enable == 1)
+                            mAdapterTopCategory.insert(model);
+                        break;
+                    }
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        RPC.cancelRequestByTag(AppConstant.RELATIVE_URL_CATEGORIES);
+        AppRestClient.cancelRequestsByTAG(AppConstant.RELATIVE_URL_CATEGORIES);
     }
 }

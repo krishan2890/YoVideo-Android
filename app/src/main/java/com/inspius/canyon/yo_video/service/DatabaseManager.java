@@ -10,6 +10,8 @@ import com.inspius.canyon.yo_video.greendao.DBKeywordSearch;
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearchDao;
 import com.inspius.canyon.yo_video.greendao.DBNotification;
 import com.inspius.canyon.yo_video.greendao.DBNotificationDao;
+import com.inspius.canyon.yo_video.greendao.DBRecentVideo;
+import com.inspius.canyon.yo_video.greendao.DBRecentVideoDao;
 import com.inspius.canyon.yo_video.greendao.DaoMaster;
 import com.inspius.canyon.yo_video.greendao.DaoSession;
 import com.inspius.canyon.yo_video.greendao.NewWishList;
@@ -159,7 +161,7 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
         try {
             openReadableDb();
             DBKeywordSearchDao userDao = daoSession.getDBKeywordSearchDao();
-            if (userDao.loadAll().size() > 1000)
+            if (userDao.loadAll().size() > 100)
                 clearKeyword();
 
             QueryBuilder<DBKeywordSearch> queryBuilder = userDao.queryBuilder().orderDesc(DBKeywordSearchDao.Properties.Id).limit(20);
@@ -423,5 +425,73 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
             e.printStackTrace();
         }
         return item;
+    }
+
+    /**
+     * Recent videos
+     */
+
+    @Override
+    public void deleteVideoAtRecentListByVideoId(int id) {
+        try {
+            openWritableDb();
+            DBRecentVideoDao userDao = daoSession.getDBRecentVideoDao();
+            QueryBuilder<DBRecentVideo> queryBuilder = userDao.queryBuilder().where(DBRecentVideoDao.Properties.VideoId.eq(id));
+            queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public DBRecentVideo insertVideoToRecentList(DBRecentVideo video) {
+        try {
+            if (video != null) {
+                openWritableDb();
+                DBRecentVideoDao dbDao = daoSession.getDBRecentVideoDao();
+                video.setId(dbDao.insert(video));
+                Logger.d(TAG, "Inserted DBRecentVideo: " + video.getName() + " to the schema.");
+                daoSession.clear();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return video;
+    }
+
+    @Override
+    public List<DBRecentVideo> listVideoAtRecent(int userID) {
+        List<DBRecentVideo> data = null;
+        try {
+            openReadableDb();
+            DBRecentVideoDao dbDao = daoSession.getDBRecentVideoDao();
+
+            QueryBuilder<DBRecentVideo> queryBuilder = dbDao.queryBuilder().where(DBRecentVideoDao.Properties.UserID.eq(userID)).orderDesc(DBRecentVideoDao.Properties.Id);
+            data = queryBuilder.list();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (data != null) {
+            return new ArrayList<>(data);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean deleteVideoAtRecentList(Long id) {
+        try {
+            openWritableDb();
+            DBRecentVideoDao userDao = daoSession.getDBRecentVideoDao();
+            userDao.deleteByKey(id);
+            daoSession.clear();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

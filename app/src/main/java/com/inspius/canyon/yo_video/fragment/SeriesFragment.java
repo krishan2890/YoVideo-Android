@@ -9,6 +9,7 @@ import android.view.View;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.adapter.ListVideoAdapter;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.AppRestClient;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
@@ -117,19 +118,10 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
         ultimateRecyclerView.setAdapter(mAdapter);
 
 
-        startAnimLoading();
-        AppSession.getCategoryData(new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                stopAnimLoading();
-            }
+        dataCategory = AppSession.getInstance().getCategoryData();
 
-            @Override
-            public void onSuccess(Object results) {
-                dataCategory = (DataCategoryJSON) results;
-                requestGetDataProduct();
-            }
-        });
+        startAnimLoading();
+        requestGetDataProduct();
     }
 
     private void requestGetDataProduct() {
@@ -194,7 +186,6 @@ public class SeriesFragment extends BaseMainFragment implements AdapterVideoActi
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RPC.cancelRequestByTag(AppConstant.RELATIVE_URL_SERIES);
-
+        AppRestClient.cancelRequestsByTAG(AppConstant.RELATIVE_URL_SERIES);
     }
 }

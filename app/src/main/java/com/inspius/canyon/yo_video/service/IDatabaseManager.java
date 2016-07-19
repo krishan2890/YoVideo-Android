@@ -7,6 +7,7 @@ package com.inspius.canyon.yo_video.service;
 
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearch;
 import com.inspius.canyon.yo_video.greendao.DBNotification;
+import com.inspius.canyon.yo_video.greendao.DBRecentVideo;
 import com.inspius.canyon.yo_video.greendao.NewWishList;
 
 import java.util.ArrayList;
@@ -30,49 +31,33 @@ public interface IDatabaseManager {
     void dropDatabase();
 
     /**
-     * Insert a user into the DB
+     * Keyword
      *
-     * @param keyword to be inserted
+     * @param keyword
+     * @return
      */
     DBKeywordSearch insertKeyword(DBKeywordSearch keyword);
 
     DBKeywordSearch insertKeyword(String keyword);
 
-    /**
-     * List all the users from the DB
-     *
-     * @return list of keywords
-     */
     ArrayList<DBKeywordSearch> listKeyword();
 
-    /**
-     * Update a keyword from the DB
-     *
-     * @param keyword to be updated
-     */
     void updateKeyword(DBKeywordSearch keyword);
 
-    /**
-     * Delete all Keywords with a certain email from the DB
-     *
-     * @param keyword of users to be deleted
-     */
     List<DBKeywordSearch> getKeywordByName(String keyword);
 
     void deleteKeywordByName(String keyword);
 
-    /**
-     * Delete a Keyword with a certain id from the DB
-     *
-     * @param keywordId of users to be deleted
-     */
     boolean deleteKeywordById(Long keywordId);
 
-    /**
-     * Delete all the keyword from the DB
-     */
     void clearKeyword();
 
+    /**
+     * WishList
+     *
+     * @param userID
+     * @return
+     */
     List<NewWishList> listVideoAtWishList(int userID);
 
     boolean deleteVideoAtWishList(Long id);
@@ -98,4 +83,12 @@ public interface IDatabaseManager {
     long getTotalNotificationNotView();
 
     DBNotification getNotificationByID(long id);
+
+    /**
+     * Recent Videos
+     */
+    void deleteVideoAtRecentListByVideoId(int id);
+    DBRecentVideo insertVideoToRecentList(DBRecentVideo video);
+    List<DBRecentVideo> listVideoAtRecent(int userID);
+    boolean deleteVideoAtRecentList(Long id);
 }

@@ -116,12 +116,9 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
         tvnNumberNotification.setText(String.valueOf(AppNotificationManager.getInstance().loadTotalNotificationNotview()));
 
         initMenu();
-        updateStateLogin();
 
         slideMenuModelSelected = slideMenuList.get(0);
         switchScreen();
-
-        requestAutoAuthentic();
 
         getView().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,6 +126,13 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
 
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        updateStateLogin();
     }
 
     void initMenu() {
@@ -167,19 +171,6 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         ultimateRecyclerView.setLayoutManager(linearLayoutManager);
         ultimateRecyclerView.setAdapter(menuAdapter);
-    }
-
-    void requestAutoAuthentic() {
-        mAccountDataManager.callAutoLoginRequest(getActivity(), new AccountDataListener() {
-            @Override
-            public void onError(String message) {
-            }
-
-            @Override
-            public void onSuccess(CustomerModel results) {
-                updateStateLogin();
-            }
-        });
     }
 
     @Override
@@ -251,7 +242,6 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
         } else if (type.equalsIgnoreCase("download")) {
         } else if (type.equalsIgnoreCase("about_us")) {
             fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_ABOUT_US, slideMenuModelSelected.title);
-//            fragment = WebViewFragment.newInstance("https://player.vimeo.com/video/7980975", slideMenuModelSelected.title);
         } else if (type.equalsIgnoreCase("term_condition")) {
             fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_TERM_CONDITION, slideMenuModelSelected.title);
         }

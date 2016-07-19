@@ -19,7 +19,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
-import com.inspius.canyon.yo_video.api.VolleySingleton;
+import com.inspius.canyon.yo_video.api.AppRestClient;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.app.GlobalApplication;
@@ -183,7 +183,7 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
         super.onDestroy();
 
         ButterKnife.unbind(this);
-        VolleySingleton.getInstance().cancelAllRequest();
+        AppRestClient.cancelAllRequests();
 
         if (DatabaseManager.getInstance() != null)
             DatabaseManager.getInstance().closeDbConnections();
