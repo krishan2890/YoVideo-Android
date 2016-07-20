@@ -236,7 +236,7 @@ public class RPC {
         }
 
 
-        AppRestClient.post(AppConstant.RELATIVE_URL_CHANGEAVATAR, params, new BaseJsonHttpResponseHandler<String>() {
+        AppRestClient.post(AppConstant.RELATIVE_URL_CHANGE_AVATAR, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
 
@@ -272,7 +272,7 @@ public class RPC {
         params.put(AppConstant.KEY_USER_ID, String.valueOf(accountID));
         params.put(AppConstant.KEY_OLD_PASS, currentPass);
         params.put(AppConstant.KEY_NEW_PASS, newPass);
-        AppRestClient.post(AppConstant.RELATIVE_URL_CHANGEPASS, params, new BaseJsonHttpResponseHandler<String>() {
+        AppRestClient.post(AppConstant.RELATIVE_URL_CHANGE_PASS, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
 
@@ -578,7 +578,7 @@ public class RPC {
      */
 
     public static void requestGetVideoRecent(final int userID, int pageNumber, final APIResponseListener listener) {
-        final String tag = AppConstant.RELATIVE_URL_RENCENT;
+        final String tag = AppConstant.RELATIVE_URL_RECENT;
         final String url = String.format(tag, userID, pageNumber, AppConstant.LIMIT_PAGE_HOMES);
         RequestParams params = new RequestParams();
         params.put(AppConstant.KEY_USER_ID, String.valueOf(userID));
