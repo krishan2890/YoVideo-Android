@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
-import com.inspius.canyon.yo_video.greendao.NewWishList;
+import com.inspius.canyon.yo_video.greendao.DBWishListVideo;
 import com.inspius.canyon.yo_video.listener.AnimateFirstDisplayListener;
 import com.inspius.canyon.yo_video.listener.WishListAdapterVideoActionListener;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
@@ -26,7 +26,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class WishListAdapter extends UltimateViewAdapter<WishListAdapter.HolderGirdCell> {
-    private List<NewWishList> mItems;
+    private List<DBWishListVideo> mItems;
     WishListAdapterVideoActionListener listener;
 
     private DisplayImageOptions options;
@@ -60,11 +60,11 @@ public class WishListAdapter extends UltimateViewAdapter<WishListAdapter.HolderG
 
     @Override
     public void onBindViewHolder(final HolderGirdCell holder, final int position) {
-        final NewWishList model = getItem(position);
+        final DBWishListVideo model = getItem(position);
         if (model != null) {
             holder.tvnName.setText(model.getName());
             holder.tvnView.setText(model.getView());
-            holder.tvnCategory.setText(model.getCategoryname());
+            holder.tvnCategory.setText(model.getCategory());
             holder.tvnSeries.setText(model.getSeries());
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -89,7 +89,7 @@ public class WishListAdapter extends UltimateViewAdapter<WishListAdapter.HolderG
     }
 
 
-    public void add(List<NewWishList> listData) {
+    public void add(List<DBWishListVideo> listData) {
         mItems.addAll(listData);
         notifyDataSetChanged();
     }
@@ -177,7 +177,7 @@ public class WishListAdapter extends UltimateViewAdapter<WishListAdapter.HolderG
         }
     }
 
-    public NewWishList getItem(int position) {
+    public DBWishListVideo getItem(int position) {
         if (customHeaderView != null)
             position--;
         if (position < mItems.size())

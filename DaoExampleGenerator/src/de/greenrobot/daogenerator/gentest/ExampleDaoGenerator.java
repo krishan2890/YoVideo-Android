@@ -39,10 +39,10 @@ public class ExampleDaoGenerator {
     }
 
     private static void addWishList(Schema schema) {
-        Entity note = schema.addEntity("NewWishList");
+        Entity note = schema.addEntity("DBWishListVideo");
         note.addIdProperty();
         note.addIntProperty("videoId").notNull();
-        note.addStringProperty("categoryname").notNull();
+        note.addStringProperty("category").notNull();
         note.addStringProperty("series").notNull();
         note.addStringProperty("view").notNull();
         note.addStringProperty("image").notNull();

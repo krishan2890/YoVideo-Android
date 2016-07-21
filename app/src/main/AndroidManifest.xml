@@ -56,32 +56,13 @@
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".activity.PlayerUploadActivity"
-            android:clearTaskOnLaunch="true"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppTheme" />
-
-        <activity
-            android:name=".activity.PlayerYoutubeActivity"
+            android:name=".activity.YoutubePlayerActivity"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppTheme" />
         <activity
-            android:name=".activity.PlayerVimeoActivity"
-            android:clearTaskOnLaunch="true"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppTheme" />
-        <activity
-            android:name=".activity.PlayerFacebookActivity"
-            android:clearTaskOnLaunch="true"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppTheme" />
-        <activity
-            android:name=".activity.VitamioActivity"
+            android:name=".activity.VitamioPlayerActivity"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
@@ -100,11 +81,20 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
-            android:name=".activity.PlayerDailyMotionActivity"
+            android:name=".activity.DailyMotionPlayerActivity"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppTheme" />
+
+        <activity
+            android:name=".activity.WebViewPlayerActivity"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppTheme" />
+
+
         <!--Include the AdActivity configChanges and theme. -->
         <activity
             android:name="com.google.android.gms.ads.AdActivity"

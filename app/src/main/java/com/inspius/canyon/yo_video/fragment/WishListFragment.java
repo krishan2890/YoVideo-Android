@@ -12,13 +12,12 @@ import com.inspius.canyon.yo_video.api.AppRestClient;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
-import com.inspius.canyon.yo_video.greendao.NewWishList;
+import com.inspius.canyon.yo_video.greendao.DBWishListVideo;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.listener.WishListAdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
-import com.inspius.canyon.yo_video.service.RecentListManager;
 import com.inspius.canyon.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
@@ -115,7 +114,7 @@ public class WishListFragment extends BaseMainFragment implements WishListAdapte
 
     @Override
     public void onItemClickListener(int position, Object model) {
-        NewWishList wishlish = (NewWishList) model;
+        DBWishListVideo wishlish = (DBWishListVideo) model;
         requestGetVideo(wishlish, false);
     }
 
@@ -132,7 +131,7 @@ public class WishListFragment extends BaseMainFragment implements WishListAdapte
 
     void requestGetDataProduct() {
         startAnimLoading();
-        List<NewWishList> data = DatabaseManager.getInstance().listVideoAtWishList(mAccountDataManager.getAccountID());
+        List<DBWishListVideo> data = DatabaseManager.getInstance().listVideoAtWishList(mAccountDataManager.getAccountID());
         stopAnimLoading();
 
         if (data == null || data.isEmpty() || mAdapter == null)
@@ -143,14 +142,14 @@ public class WishListFragment extends BaseMainFragment implements WishListAdapte
     }
 
     @Override
-    public void onPlayVideoListener(int position, final NewWishList wishList) {
+    public void onPlayVideoListener(int position, final DBWishListVideo wishList) {
         if (wishList == null || wishList.getVideoId() <= 0)
             return;
 
         requestGetVideo(wishList, true);
     }
 
-    void requestGetVideo(final NewWishList wishList, final boolean isAutoPlay) {
+    void requestGetVideo(final DBWishListVideo wishList, final boolean isAutoPlay) {
         if (wishList == null || wishList.getId() <= 0)
             return;
 
@@ -168,7 +167,7 @@ public class WishListFragment extends BaseMainFragment implements WishListAdapte
                 DialogUtil.hideLoading(loadingDialog);
 
                 VideoModel videoModel = new VideoModel((VideoJSON) results);
-                videoModel.setCategoryName(wishList.getCategoryname());
+                videoModel.setCategoryName(wishList.getCategory());
                 mHostActivityInterface.addFragment(VideoDetailFragment.newInstance(videoModel, isAutoPlay), true);
             }
         });

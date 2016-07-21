@@ -12,10 +12,10 @@ import com.inspius.canyon.yo_video.greendao.DBNotification;
 import com.inspius.canyon.yo_video.greendao.DBNotificationDao;
 import com.inspius.canyon.yo_video.greendao.DBRecentVideo;
 import com.inspius.canyon.yo_video.greendao.DBRecentVideoDao;
+import com.inspius.canyon.yo_video.greendao.DBWishListVideo;
 import com.inspius.canyon.yo_video.greendao.DaoMaster;
 import com.inspius.canyon.yo_video.greendao.DaoSession;
-import com.inspius.canyon.yo_video.greendao.NewWishList;
-import com.inspius.canyon.yo_video.greendao.NewWishListDao;
+import com.inspius.canyon.yo_video.greendao.DBWishListVideoDao;
 import com.inspius.canyon.yo_video.helper.Logger;
 
 import java.util.ArrayList;
@@ -121,6 +121,8 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
             mHelper.onCreate(database);              // creates the tables
             asyncSession.deleteAll(DBKeywordSearch.class);    // clear all elements from a table
             asyncSession.deleteAll(DBNotification.class);
+            asyncSession.deleteAll(DBRecentVideo.class);
+            asyncSession.deleteAll(DBWishListVideo.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -244,13 +246,13 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     }
 
     @Override
-    public List<NewWishList> listVideoAtWishList(int userID) {
-        List<NewWishList> data = null;
+    public List<DBWishListVideo> listVideoAtWishList(int userID) {
+        List<DBWishListVideo> data = null;
         try {
             openReadableDb();
-            NewWishListDao userDao = daoSession.getNewWishListDao();
+            DBWishListVideoDao userDao = daoSession.getDBWishListVideoDao();
 
-            QueryBuilder<NewWishList> queryBuilder = userDao.queryBuilder().where(NewWishListDao.Properties.UserID.eq(userID)).orderDesc(NewWishListDao.Properties.Id);
+            QueryBuilder<DBWishListVideo> queryBuilder = userDao.queryBuilder().where(DBWishListVideoDao.Properties.UserID.eq(userID)).orderDesc(DBWishListVideoDao.Properties.Id);
             data = queryBuilder.list();
 
             daoSession.clear();
@@ -267,7 +269,7 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     public boolean deleteVideoAtWishList(Long id) {
         try {
             openWritableDb();
-            NewWishListDao userDao = daoSession.getNewWishListDao();
+            DBWishListVideoDao userDao = daoSession.getDBWishListVideoDao();
             userDao.deleteByKey(id);
             daoSession.clear();
             return true;
@@ -281,8 +283,8 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     public void deleteVideoAtWishListByVideoId(Long id) {
         try {
             openWritableDb();
-            NewWishListDao userDao = daoSession.getNewWishListDao();
-            QueryBuilder<NewWishList> queryBuilder = userDao.queryBuilder().where(NewWishListDao.Properties.VideoId.eq(id));
+            DBWishListVideoDao userDao = daoSession.getDBWishListVideoDao();
+            QueryBuilder<DBWishListVideo> queryBuilder = userDao.queryBuilder().where(DBWishListVideoDao.Properties.VideoId.eq(id));
             queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
 
             daoSession.clear();
@@ -292,10 +294,10 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     }
 
     @Override
-    public void deleteVideoAtWishList(NewWishList video) {
+    public void deleteVideoAtWishList(DBWishListVideo video) {
         try {
             openWritableDb();
-            NewWishListDao userDao = daoSession.getNewWishListDao();
+            DBWishListVideoDao userDao = daoSession.getDBWishListVideoDao();
             userDao.delete(video);
             daoSession.clear();
         } catch (Exception e) {
@@ -304,11 +306,11 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     }
 
     @Override
-    public NewWishList insertVideoToWishList(NewWishList video) {
+    public DBWishListVideo insertVideoToWishList(DBWishListVideo video) {
         try {
             if (video != null) {
                 openWritableDb();
-                NewWishListDao userDao = daoSession.getNewWishListDao();
+                DBWishListVideoDao userDao = daoSession.getDBWishListVideoDao();
                 video.setId(userDao.insert(video));
                 Logger.d(TAG, "Inserted keyword: " + video.getName() + " to the schema.");
                 daoSession.clear();
@@ -324,17 +326,17 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
         long count = 0;
         try {
             openReadableDb();
-            NewWishListDao userDao = daoSession.getNewWishListDao();
-            QueryBuilder<NewWishList> queryBuilder = userDao.queryBuilder().where(NewWishListDao.Properties.VideoId.eq(id));
+            DBWishListVideoDao userDao = daoSession.getDBWishListVideoDao();
+            QueryBuilder<DBWishListVideo> queryBuilder = userDao.queryBuilder().where(DBWishListVideoDao.Properties.VideoId.eq(id));
             count = queryBuilder.count();
 
             daoSession.clear();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (count > 0) {
+        if (count > 0)
             return true;
-        }
+
         return false;
     }
 

@@ -1,4 +1,4 @@
-package com.inspius.canyon.yo_video.helper;
+package com.inspius.canyon.yo_video.widget;
 
 import android.app.Activity;
 import android.content.Context;

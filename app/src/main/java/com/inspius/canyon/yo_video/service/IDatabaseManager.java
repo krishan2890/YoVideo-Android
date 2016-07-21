@@ -8,7 +8,7 @@ package com.inspius.canyon.yo_video.service;
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearch;
 import com.inspius.canyon.yo_video.greendao.DBNotification;
 import com.inspius.canyon.yo_video.greendao.DBRecentVideo;
-import com.inspius.canyon.yo_video.greendao.NewWishList;
+import com.inspius.canyon.yo_video.greendao.DBWishListVideo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,15 +58,15 @@ public interface IDatabaseManager {
      * @param userID
      * @return
      */
-    List<NewWishList> listVideoAtWishList(int userID);
+    List<DBWishListVideo> listVideoAtWishList(int userID);
 
     boolean deleteVideoAtWishList(Long id);
 
     void deleteVideoAtWishListByVideoId(Long id);
 
-    void deleteVideoAtWishList(NewWishList course);
+    void deleteVideoAtWishList(DBWishListVideo course);
 
-    NewWishList insertVideoToWishList(NewWishList course);
+    DBWishListVideo insertVideoToWishList(DBWishListVideo course);
 
     boolean existVideoAtWithList(Long id);
 

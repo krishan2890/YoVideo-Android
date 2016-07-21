@@ -470,7 +470,8 @@ public class RPC {
                     boolean checkData = parseResponseData(response, listener);
 
                     if (checkData) {
-                        listener.onSuccess(response.getString("message"));
+                        if (listener != null)
+                            listener.onSuccess(response.getString("message"));
                     }
 
                 } catch (Exception e) {

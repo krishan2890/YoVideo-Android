@@ -24,20 +24,18 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.inspius.canyon.yo_video.R;
+import com.inspius.canyon.yo_video.activity.DailyMotionPlayerActivity;
 import com.inspius.canyon.yo_video.activity.MainActivity;
 import com.inspius.canyon.yo_video.activity.MusicPlayerActivity;
-import com.inspius.canyon.yo_video.activity.PlayerDailyMotionActivity;
-import com.inspius.canyon.yo_video.activity.PlayerFacebookActivity;
-import com.inspius.canyon.yo_video.activity.PlayerVimeoActivity;
-import com.inspius.canyon.yo_video.activity.PlayerYoutubeActivity;
-import com.inspius.canyon.yo_video.activity.VitamioActivity;
+import com.inspius.canyon.yo_video.activity.VitamioPlayerActivity;
+import com.inspius.canyon.yo_video.activity.WebViewPlayerActivity;
+import com.inspius.canyon.yo_video.activity.YoutubePlayerActivity;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.AppConstant;
-import com.inspius.canyon.yo_video.app.AppEnum;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
-import com.inspius.canyon.yo_video.greendao.NewWishList;
+import com.inspius.canyon.yo_video.greendao.DBWishListVideo;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.model.VideoModel;
@@ -83,7 +81,6 @@ public class VideoDetailFragment extends BaseMainFragment {
     @Bind(R.id.tvnDescription)
     TextView tvnDescription;
 
-
     @Bind(R.id.tvnViewNumber)
     TextView tvnViewNumber;
 
@@ -111,7 +108,7 @@ public class VideoDetailFragment extends BaseMainFragment {
     VideoModel videoModel;
     boolean isAutoPlay;
 
-    NewWishList wishList;
+    DBWishListVideo wishList;
     Fragment videoFragment;
     private DisplayImageOptions options;
 
@@ -321,23 +318,26 @@ public class VideoDetailFragment extends BaseMainFragment {
 
     @OnClick(R.id.imvShare)
     void doShare() {
-        if (videoModel == null) {
-            Intent intent = IntentUtils.shareText(getString(R.string.app_name), videoModel.getSocialLink());
-            startActivity(intent);
-        } else {
-            Intent intent = IntentUtils.shareText(getString(R.string.app_name), videoModel.getVideoUrl());
-            startActivity(intent);
-        }
+        if (videoModel == null)
+            return;
+
+        String urlShare = videoModel.getSocialLink();
+        if (TextUtils.isEmpty(urlShare))
+            urlShare = videoModel.getVideoUrl();
+
+        if (TextUtils.isEmpty(urlShare))
+            return;
+
+        Intent intent = IntentUtils.shareText(getString(R.string.app_name), urlShare);
+        startActivity(intent);
 
         RPC.updateVideoStatic(mAccountDataManager.getAccountID(), "share", videoModel.getVideoId(), new APIResponseListener() {
             @Override
             public void onError(String message) {
-                Logger.d("fail", "fail");
             }
 
             @Override
             public void onSuccess(Object results) {
-                Logger.d("success", "success");
             }
         });
     }
@@ -354,9 +354,9 @@ public class VideoDetailFragment extends BaseMainFragment {
         if (isWishList) {
             DatabaseManager.getInstance().deleteVideoAtWishListByVideoId((long) videoModel.getVideoId());
         } else {
-            NewWishList dbWishList = new NewWishList();
+            DBWishListVideo dbWishList = new DBWishListVideo();
             dbWishList.setVideoId(videoModel.getVideoId());
-            dbWishList.setCategoryname(videoModel.getCategoryName());
+            dbWishList.setCategory(videoModel.getCategoryName());
             dbWishList.setName(videoModel.getTitle());
             dbWishList.setImage(videoModel.getImage());
             dbWishList.setLink(videoModel.getVideoUrl());
@@ -385,25 +385,32 @@ public class VideoDetailFragment extends BaseMainFragment {
         if (!isCustomerPlayOrDownloadVideo())
             return;
 
-        Intent intent = null;
-        if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.UPLOAD) {
-            intent = new Intent(getActivity(), VitamioActivity.class);
-        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.YOUTUBE)
-            intent = new Intent(getActivity(), PlayerYoutubeActivity.class);
-        else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.VIMEO) {
-            intent = new Intent(getActivity(), PlayerVimeoActivity.class);
-        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.FACEBOOK) {
-            intent = new Intent(getActivity(), PlayerFacebookActivity.class);
-        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.MP3) {
-            intent = new Intent(getActivity(), MusicPlayerActivity.class);
-        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.DAILY_MOTION) {
-            intent = new Intent(getActivity(), PlayerDailyMotionActivity.class);
-        } else {
-            intent = new Intent(getActivity(), VitamioActivity.class);
-        }
+        Intent intent;
+        switch (videoModel.getVideoType()) {
+            case YOUTUBE:
+                intent = new Intent(getActivity(), YoutubePlayerActivity.class);
+                break;
 
-        if (intent == null)
-            return;
+            case VIMEO:
+                intent = new Intent(getActivity(), WebViewPlayerActivity.class);
+                break;
+
+            case FACEBOOK:
+                intent = new Intent(getActivity(), WebViewPlayerActivity.class);
+                break;
+
+            case DAILY_MOTION:
+                intent = new Intent(getActivity(), DailyMotionPlayerActivity.class);
+                break;
+
+            case MP3:
+                intent = new Intent(getActivity(), MusicPlayerActivity.class);
+                break;
+
+            default:
+                intent = new Intent(getActivity(), VitamioPlayerActivity.class);
+                break;
+        }
 
         RecentListManager recentListManager = RecentListManager.getInstance();
         if (recentListManager != null)
@@ -439,6 +446,9 @@ public class VideoDetailFragment extends BaseMainFragment {
     @OnClick(R.id.tvnSeries)
     void doClickSeries() {
         String series = tvnSeries.getText().toString();
+        if (series.equalsIgnoreCase("No Series"))
+            return;
+
         mHostActivityInterface.addFragment(SeriesFragment.getInstance(videoModel), false);
     }
 

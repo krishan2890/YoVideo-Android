@@ -160,13 +160,10 @@ dependencies {
     // Youtube SDK
     compile files('libs/YouTubeAndroidPlayerApi.jar')
 
-
     // Crashlytics
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
-
-    compile project(':fenster-library')
 
     // Http service
     compile 'com.loopj.android:android-async-http:1.4.9'

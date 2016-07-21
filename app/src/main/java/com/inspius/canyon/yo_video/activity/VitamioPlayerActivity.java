@@ -1,9 +1,11 @@
 package com.inspius.canyon.yo_video.activity;
 
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.webkit.WebView;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
@@ -14,16 +16,20 @@ import com.inspius.coreapp.CoreAppActivity;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.widget.MediaController;
+import io.vov.vitamio.widget.VideoView;
 
-public class PlayerFacebookActivity extends CoreAppActivity {
+public class VitamioPlayerActivity extends CoreAppActivity {
     private VideoModel videoModel;
-
     @Bind(R.id.tvnHeaderTitle)
     TextView tvnHeaderTitle;
+    @Bind(R.id.videoView)
+    VideoView videoView;
+    @Bind(R.id.progressBar)
+    ProgressBar progressBar;
 
-    @Bind(R.id.webView)
-    WebView webView;
-
+    // private Uri uri;
     @Override
     protected int getLayoutResourceId() {
         return R.id.container;
@@ -32,7 +38,7 @@ public class PlayerFacebookActivity extends CoreAppActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player_facebook);
+        setContentView(R.layout.activity_vitamio);
         ButterKnife.bind(this);
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
@@ -48,45 +54,29 @@ public class PlayerFacebookActivity extends CoreAppActivity {
         if (!getIntent().getExtras().containsKey(AppConstant.KEY_BUNDLE_VIDEO))
             return;
 
+
         videoModel = (VideoModel) getIntent().getExtras().getSerializable(AppConstant.KEY_BUNDLE_VIDEO);
         if (videoModel == null)
-            finish();
+            return;
 
         tvnHeaderTitle.setText(videoModel.getTitle());
-        String urlFacebook = String.format("http://test.inspius.com/yovideo/api/playFacebookVideo?video_url=%s", videoModel.getVideoUrl());
-        startWebView(urlFacebook);
-    }
-
-    @Override
-    public void onBackPressed() {
-        finish();
-    }
-
-    public void startWebView(String url) {
-
-        // Create new webview Client to show progress dialog
-        // When opening a link or click on link
-
-        // Javascript inabled on webview
-        webView.getSettings().setJavaScriptEnabled(true);
-
-        // Other webview options
-        /*
-         * webView.getSettings().setLoadWithOverviewMode(true);
-		 * webView.getSettings().setUseWideViewPort(true);
-		 * webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-		 * webView.setScrollbarFadingEnabled(false);
-		 * webView.getSettings().setBuiltInZoomControls(true);
-		 */
-
-		/*
-         * String summary =
-		 * "<html><body>You scored <b>192</b> points.</body></html>";
-		 * webview.loadData(summary, "text/html", null);
-		 */
-
-        // Load link in webview
-        webView.loadUrl(url);
+        if (videoModel.getVideoUrl() == "") {
+            return;
+        } else {
+           // videoView.setVideoPath(path);
+            videoView.setVideoURI(Uri.parse(videoModel.getVideoUrl()));
+            videoView.setMediaController(new MediaController(this));
+            videoView.requestFocus();
+            videoView.start();
+            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+                    // optional need Vitamio 4.0
+                    mediaPlayer.setPlaybackSpeed(1.0f);
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
+        }
     }
 
     @Override
@@ -94,6 +84,7 @@ public class PlayerFacebookActivity extends CoreAppActivity {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             getSupportActionBar().hide();
+            videoView.setVideoLayout(VideoView.VIDEO_LAYOUT_STRETCH, 0);
         } else
             getSupportActionBar().show();
     }
@@ -101,30 +92,11 @@ public class PlayerFacebookActivity extends CoreAppActivity {
 
     @OnClick(R.id.imvHeaderBack)
     void doBack() {
-        onBackPressed();
+        finish();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (webView != null)
-            webView.onPause();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-
-        if (webView != null)
-            webView.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (webView != null)
-            webView.destroy();
+    public void onBackPressed() {
+        finish();
     }
 }

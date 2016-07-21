@@ -8,7 +8,7 @@ import android.util.Log;
 import de.greenrobot.dao.AbstractDaoMaster;
 import de.greenrobot.dao.identityscope.IdentityScopeType;
 
-import com.inspius.canyon.yo_video.greendao.NewWishListDao;
+import com.inspius.canyon.yo_video.greendao.DBWishListVideoDao;
 import com.inspius.canyon.yo_video.greendao.DBRecentVideoDao;
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearchDao;
 import com.inspius.canyon.yo_video.greendao.DBNotificationDao;
@@ -22,7 +22,7 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
-        NewWishListDao.createTable(db, ifNotExists);
+        DBWishListVideoDao.createTable(db, ifNotExists);
         DBRecentVideoDao.createTable(db, ifNotExists);
         DBKeywordSearchDao.createTable(db, ifNotExists);
         DBNotificationDao.createTable(db, ifNotExists);
@@ -30,7 +30,7 @@ public class DaoMaster extends AbstractDaoMaster {
     
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(SQLiteDatabase db, boolean ifExists) {
-        NewWishListDao.dropTable(db, ifExists);
+        DBWishListVideoDao.dropTable(db, ifExists);
         DBRecentVideoDao.dropTable(db, ifExists);
         DBKeywordSearchDao.dropTable(db, ifExists);
         DBNotificationDao.dropTable(db, ifExists);
@@ -65,7 +65,7 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(SQLiteDatabase db) {
         super(db, SCHEMA_VERSION);
-        registerDaoClass(NewWishListDao.class);
+        registerDaoClass(DBWishListVideoDao.class);
         registerDaoClass(DBRecentVideoDao.class);
         registerDaoClass(DBKeywordSearchDao.class);
         registerDaoClass(DBNotificationDao.class);
