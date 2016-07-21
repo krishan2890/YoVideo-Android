@@ -74,7 +74,7 @@ public interface IDatabaseManager {
      * Notifications
      */
 
-    List<DBNotification> listNotification();
+    List<DBNotification> listNotification(int page);
 
     void updateNotification(DBNotification notification);
 

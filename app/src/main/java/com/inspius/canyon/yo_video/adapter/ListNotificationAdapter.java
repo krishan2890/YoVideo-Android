@@ -21,7 +21,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ListNotificationAdapter extends UltimateViewAdapter<ListNotificationAdapter.HolderListCell> {
-    private List<NotificationJSON> mItems;
+    private List<DBNotification> mItems;
     AdapterActionListener listener;
 
     public ListNotificationAdapter() {
@@ -42,15 +42,10 @@ public class ListNotificationAdapter extends UltimateViewAdapter<ListNotificatio
 
     @Override
     public void onBindViewHolder(final HolderListCell holder, final int position) {
-        final NotificationJSON model = getItem(position);
+        final DBNotification model = getItem(position);
         if (model != null) {
-            holder.tvnTitle.setText(model.title);
-            holder.tvnDescription.setText(model.message);
-
-            if (model.status == 1)
-                holder.tvnTitle.setTypeface(null, Typeface.NORMAL);
-            else
-                holder.tvnTitle.setTypeface(null, Typeface.BOLD);
+            holder.tvnTitle.setText(model.getTitle());
+            holder.tvnDescription.setText(model.getMessage());
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -63,18 +58,13 @@ public class ListNotificationAdapter extends UltimateViewAdapter<ListNotificatio
     }
 
 
-    public void add(List<NotificationJSON> listData) {
+    public void add(List<DBNotification> listData) {
         mItems.addAll(listData);
         notifyDataSetChanged();
     }
 
     public void clear() {
         mItems.clear();
-        notifyDataSetChanged();
-    }
-
-    public void changeNotificationStatus(int index, int status) {
-        mItems.get(index).status = status;
         notifyDataSetChanged();
     }
 
@@ -125,7 +115,7 @@ public class ListNotificationAdapter extends UltimateViewAdapter<ListNotificatio
         }
     }
 
-    public NotificationJSON getItem(int position) {
+    public DBNotification getItem(int position) {
         if (customHeaderView != null)
             position--;
         if (position < mItems.size())

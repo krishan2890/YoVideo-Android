@@ -55,6 +55,5 @@ public class NotificationDetailAppFragment extends BaseFragment {
             return;
 
         tvnContent.setText(dbNotification.getContent());
-        AppNotificationManager.getInstance().changeStatusNotification(dbNotification);
     }
 }

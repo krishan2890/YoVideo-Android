@@ -345,13 +345,14 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
      */
 
     @Override
-    public List<DBNotification> listNotification() {
+    public List<DBNotification> listNotification(int page) {
         List<DBNotification> notifications = null;
+        int limit = 20;
+        int offset = limit*page;
         try {
             openReadableDb();
             DBNotificationDao notificationDao = daoSession.getDBNotificationDao();
-
-            QueryBuilder<DBNotification> queryBuilder = notificationDao.queryBuilder().orderDesc(DBNotificationDao.Properties.Id).limit(20);
+            QueryBuilder<DBNotification> queryBuilder = notificationDao.queryBuilder().orderDesc(DBNotificationDao.Properties.Id).limit(limit).offset(offset);
             notifications = queryBuilder.list();
 
             daoSession.clear();

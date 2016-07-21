@@ -22,11 +22,9 @@ import com.inspius.canyon.yo_video.helper.AppUtils;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.helper.XMLParser;
-import com.inspius.canyon.yo_video.listener.AccountDataListener;
 import com.inspius.canyon.yo_video.listener.AdapterActionListener;
 import com.inspius.canyon.yo_video.listener.AnimateFirstDisplayListener;
 import com.inspius.canyon.yo_video.listener.NotificationListener;
-import com.inspius.canyon.yo_video.model.CustomerModel;
 import com.inspius.canyon.yo_video.model.SlideMenuModel;
 import com.inspius.canyon.yo_video.service.AppNotificationManager;
 import com.inspius.coreapp.CoreAppFragment;
@@ -113,7 +111,7 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
 
     @Override
     public void onInitView() {
-        tvnNumberNotification.setText(String.valueOf(AppNotificationManager.getInstance().loadTotalNotificationNotview()));
+        tvnNumberNotification.setText(String.valueOf(AppNotificationManager.getInstance().loadTotalNotification()));
 
         initMenu();
 
@@ -188,7 +186,7 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
             tvnEmail.setText(mAccountDataManager.getCustomerModel().email);
             ImageLoader.getInstance().displayImage(mAccountDataManager.getCustomerModel().avatar, imvAvatar, options, animateFirstListener);
 
-            tvnNumberNotification.setText(String.valueOf(AppNotificationManager.getInstance().getSizeNotView()));
+            tvnNumberNotification.setText(String.valueOf(AppNotificationManager.getInstance().getTotalNotification()));
         } else {
             linearNotLogin.setVisibility(View.VISIBLE);
             linearLogin.setVisibility(View.GONE);
@@ -326,7 +324,7 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
     }
 
     @Override
-    public void onNotificationSizeNotViewChanged(final int totalNotView) {
+    public void onNotificationSizeChanged(final int totalNotView) {
         if (tvnNumberNotification == null)
             return;
 

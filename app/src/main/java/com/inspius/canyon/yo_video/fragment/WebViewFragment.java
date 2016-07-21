@@ -91,14 +91,16 @@ public class WebViewFragment extends BaseMainFragment {
         super.onResume();
         mActivityInterface.updateHeaderTitle(headerName);
         mActivityInterface.setVisibleHeaderMenu(true);
-        webView.onResume();
+
+        if (webView != null)
+            webView.onResume();
     }
 
     public void startWebView(String url) {
         Logger.d("startWebView", url);
         // Create new webview Client to show progress dialog
         // When opening a link or click on link
-        startAnimLoading();
+        startAnimLoading(); 
         webView.setVisibility(View.INVISIBLE);
         webView.setWebViewClient(new WebViewClient() {
             //ProgressDialog progressDialog;
@@ -114,6 +116,7 @@ public class WebViewFragment extends BaseMainFragment {
             // Show loader on link load
             public void onLoadResource(WebView view, String url) {
                 // show Loading
+
             }
 
             public void onPageFinished(WebView view, String url) {

@@ -8,5 +8,5 @@ import com.inspius.canyon.yo_video.greendao.DBNotification;
 public interface NotificationListener {
     void onNotificationInserted(DBNotification notification);
 
-    void onNotificationSizeNotViewChanged(int totalNotView);
+    void onNotificationSizeChanged(int totalNotView);
 }

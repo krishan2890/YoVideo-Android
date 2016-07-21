@@ -14,7 +14,7 @@ import java.util.List;
 public class AppNotificationManager {
     private static AppNotificationManager mInstance;
     private List<NotificationListener> listeners;
-    private int sizeNotView;
+    private int totalNotification;
 
     public static synchronized AppNotificationManager getInstance() {
         if (mInstance == null)
@@ -26,12 +26,12 @@ public class AppNotificationManager {
     public AppNotificationManager() {
         this.listeners = new ArrayList<>();
 
-        loadTotalNotificationNotview();
+        loadTotalNotification();
     }
 
-    public int loadTotalNotificationNotview(){
-        sizeNotView = (int) DatabaseManager.getInstance().getTotalNotificationNotView();
-        return sizeNotView;
+    public int loadTotalNotification(){
+        totalNotification = (int) DatabaseManager.getInstance().getTotalNotificationNotView();
+        return totalNotification;
     }
 
     public DBNotification insertNotification(String title, String message, String content) {
@@ -39,16 +39,16 @@ public class AppNotificationManager {
         notification.setTitle(title);
         notification.setMessage(message);
         notification.setContent(content);
-        notification.setStatus(0);
+        notification.setStatus(1);
 
         notification = DatabaseManager.getInstance().insertNotification(notification);
 
         Log.d("notification", notification.getId() + " : " + notification.getTitle());
 
-        sizeNotView++;
+        totalNotification++;
         for (NotificationListener listener : listeners) {
             listener.onNotificationInserted(notification);
-            listener.onNotificationSizeNotViewChanged(sizeNotView);
+            listener.onNotificationSizeChanged(totalNotification);
         }
         return notification;
     }
@@ -74,37 +74,37 @@ public class AppNotificationManager {
         listeners.clear();
     }
 
-    public void changeStatusNotification(DBNotification notification) {
-        if (notification == null)
-            return;
-
-        if (notification.getStatus() == 1)
-            return;
-
-        notification.setStatus(1);
-
-        DatabaseManager.getInstance().updateNotification(notification);
-
-        sizeNotView--;
-        if (sizeNotView < 0)
-            sizeNotView = 0;
-
-        for (NotificationListener listener : listeners)
-            listener.onNotificationSizeNotViewChanged(sizeNotView);
-    }
+//    public void changeStatusNotification(DBNotification notification) {
+//        if (notification == null)
+//            return;
+//
+//        if (notification.getStatus() == 1)
+//            return;
+//
+//        notification.setStatus(1);
+//
+//        DatabaseManager.getInstance().updateNotification(notification);
+//
+//        totalNotification--;
+//        if (totalNotification < 0)
+//            totalNotification = 0;
+//
+//        for (NotificationListener listener : listeners)
+//            listener.onNotificationSizeChanged(totalNotification);
+//    }
 
     public List<DBNotification> getListNotification(int page) {
-        List<DBNotification> data = DatabaseManager.getInstance().listNotification();
+        List<DBNotification> data = DatabaseManager.getInstance().listNotification(page);
         if (data == null)
             return new ArrayList<>();
         return data;
     }
 
-    public DBNotification getNotificationById(long id) {
-        return DatabaseManager.getInstance().getNotificationByID(id);
-    }
+//    public DBNotification getNotificationById(long id) {
+//        return DatabaseManager.getInstance().getNotificationByID(id);
+//    }
 
-    public int getSizeNotView() {
-        return sizeNotView;
+    public int getTotalNotification() {
+        return totalNotification;
     }
 }

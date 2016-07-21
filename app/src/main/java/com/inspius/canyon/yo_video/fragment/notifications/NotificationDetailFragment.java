@@ -35,7 +35,6 @@ public class NotificationDetailFragment extends BaseMainFragment {
     @Override
     public void onInitView() {
         tvnContent.setText(notificationJSON.getContent());
-        AppNotificationManager.getInstance().changeStatusNotification(notificationJSON);
     }
 
     @Override
