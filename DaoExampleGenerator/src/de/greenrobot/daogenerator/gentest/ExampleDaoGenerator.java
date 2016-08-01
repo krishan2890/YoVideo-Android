@@ -35,6 +35,8 @@ public class ExampleDaoGenerator {
         addRecentList(schema);
         addRecentSearch(schema);
         addNotifications(schema);
+        addDownloadList(schema);
+
         new DaoGenerator().generateAll(schema, "./app/src/main/java");
     }
 
@@ -49,6 +51,13 @@ public class ExampleDaoGenerator {
         note.addStringProperty("link").notNull();
         note.addStringProperty("name").notNull();
         note.addIntProperty("userID").notNull();
+    }
+
+    private static void addDownloadList(Schema schema) {
+        Entity note = schema.addEntity("DBVideoDownload");
+        note.addIdProperty();
+        note.addStringProperty("path").notNull();
+        note.addStringProperty("title").notNull();
     }
 
     private static void addRecentList(Schema schema) {

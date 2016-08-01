@@ -2,6 +2,7 @@ package com.inspius.canyon.yo_video.fragment;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,6 +32,7 @@ import com.inspius.canyon.yo_video.activity.VitamioPlayerActivity;
 import com.inspius.canyon.yo_video.activity.WebViewPlayerActivity;
 import com.inspius.canyon.yo_video.activity.YoutubePlayerActivity;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.AppRestClient;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.AppConstant;
@@ -40,6 +42,7 @@ import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
+import com.inspius.canyon.yo_video.service.DownloadIntentService;
 import com.inspius.canyon.yo_video.service.RecentListManager;
 import com.inspius.coreapp.helper.IntentUtils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -163,6 +166,8 @@ public class VideoDetailFragment extends BaseMainFragment {
         if (mAdView != null) {
             mAdView.destroy();
         }
+
+        AppRestClient.cancelRequestsByTAG(AppConstant.RELATIVE_URL_UPDATE_STATIC);
     }
 
     @Override
@@ -454,6 +459,12 @@ public class VideoDetailFragment extends BaseMainFragment {
 
     @OnClick(R.id.imvDownload)
     void doDownload() {
+        if (!mAccountDataManager.isLogin()) {
+            DialogUtil.showMessageBox(mContext, getString(R.string.msg_request_login));
+
+            return;
+        }
+
         if (!isCustomerPlayOrDownloadVideo())
             return;
 
@@ -466,29 +477,29 @@ public class VideoDetailFragment extends BaseMainFragment {
                 /**
                  * Download default Os
                  */
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(videoModel.getVideoUrl()));
-                request.setTitle(videoModel.getTitle());
-                request.setDescription("File is being downloaded...");
-                request.allowScanningByMediaScanner();
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-                String nameOfFile = URLUtil.guessFileName(videoModel.getVideoUrl(), null, MimeTypeMap.getFileExtensionFromUrl(videoModel.getVideoUrl()));
-
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, nameOfFile);
-
-                DownloadManager manager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-                manager.enqueue(request);
+//                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(videoModel.getVideoUrl()));
+//                request.setTitle(videoModel.getTitle());
+//                request.setDescription("File is being downloaded...");
+//                request.allowScanningByMediaScanner();
+//                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+//
+//                String nameOfFile = URLUtil.guessFileName(videoModel.getVideoUrl(), null, MimeTypeMap.getFileExtensionFromUrl(videoModel.getVideoUrl()));
+//
+//                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, nameOfFile);
+//
+//                DownloadManager manager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+//                manager.enqueue(request);
 
                 /**
                  * Custom Download Manager
                  */
 
-//                PendingIntent pendingResult = getActivity().createPendingResult(
-//                        AppConstant.REQUEST_CODE_DOWNLOAD, new Intent(), 0);
-//                Intent intent = new Intent(getActivity(), DownloadIntentService.class);
-//                intent.putExtra(DownloadIntentService.URL_EXTRA, videoModel.getVideoUrl());
-//                intent.putExtra(DownloadIntentService.PENDING_RESULT_EXTRA, pendingResult);
-//                getActivity().startService(intent);
+                PendingIntent pendingResult = getActivity().createPendingResult(
+                        AppConstant.REQUEST_CODE_DOWNLOAD, new Intent(), 0);
+                Intent intent = new Intent(getActivity(), DownloadIntentService.class);
+                intent.putExtra(DownloadIntentService.URL_VIDEO_EXTRA, videoModel);
+                intent.putExtra(DownloadIntentService.PENDING_RESULT_EXTRA, pendingResult);
+                getActivity().startService(intent);
                 break;
 
             case YOUTUBE:

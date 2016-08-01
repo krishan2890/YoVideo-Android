@@ -8,6 +8,7 @@ package com.inspius.canyon.yo_video.service;
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearch;
 import com.inspius.canyon.yo_video.greendao.DBNotification;
 import com.inspius.canyon.yo_video.greendao.DBRecentVideo;
+import com.inspius.canyon.yo_video.greendao.DBVideoDownload;
 import com.inspius.canyon.yo_video.greendao.DBWishListVideo;
 
 import java.util.ArrayList;
@@ -88,7 +89,18 @@ public interface IDatabaseManager {
      * Recent Videos
      */
     void deleteVideoAtRecentListByVideoId(int id);
+
     DBRecentVideo insertVideoToRecentList(DBRecentVideo video);
+
     List<DBRecentVideo> listVideoAtRecent(int userID);
+
     boolean deleteVideoAtRecentList(Long id);
+
+    /**
+     * Download Videos
+     */
+
+    DBVideoDownload insertVideoToRecentList(String path, String name);
+
+    List<DBVideoDownload> listVideoDownload(int page);
 }

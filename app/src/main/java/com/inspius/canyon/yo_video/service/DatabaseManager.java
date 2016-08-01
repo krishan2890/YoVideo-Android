@@ -12,6 +12,8 @@ import com.inspius.canyon.yo_video.greendao.DBNotification;
 import com.inspius.canyon.yo_video.greendao.DBNotificationDao;
 import com.inspius.canyon.yo_video.greendao.DBRecentVideo;
 import com.inspius.canyon.yo_video.greendao.DBRecentVideoDao;
+import com.inspius.canyon.yo_video.greendao.DBVideoDownload;
+import com.inspius.canyon.yo_video.greendao.DBVideoDownloadDao;
 import com.inspius.canyon.yo_video.greendao.DBWishListVideo;
 import com.inspius.canyon.yo_video.greendao.DaoMaster;
 import com.inspius.canyon.yo_video.greendao.DaoSession;
@@ -496,5 +498,34 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Download Videos
+     */
+
+    @Override
+    public DBVideoDownload insertVideoToRecentList(String path, String name) {
+        DBVideoDownload video = new DBVideoDownload();
+        video.setTitle(name);
+        video.setPath(path);
+
+        try {
+            if (video != null) {
+                openWritableDb();
+                DBVideoDownloadDao dbDao = daoSession.getDBVideoDownloadDao();
+                video.setId(dbDao.insert(video));
+                Logger.d(TAG, "Inserted DBVideoDownload: " + video.getTitle() + " to the schema.");
+                daoSession.clear();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return video;
+    }
+
+    @Override
+    public List<DBVideoDownload> listVideoDownload(int page) {
+        return null;
     }
 }

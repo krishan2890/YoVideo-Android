@@ -50,7 +50,7 @@ public class ImageUtil {
         return new ImageObj(name, mimeType, file);
     }
 
-    private static String getContentTypeFromFileString(File file) {
+    public static String getContentTypeFromFileString(File file) {
         String type = null;
         if (file != null) {
             type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(

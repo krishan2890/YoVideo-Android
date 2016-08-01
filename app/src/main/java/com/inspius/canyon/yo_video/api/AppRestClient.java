@@ -6,6 +6,7 @@ import com.inspius.canyon.yo_video.app.GlobalApplication;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.ResponseHandlerInterface;
 
@@ -26,7 +27,6 @@ public class AppRestClient {
 
     public static void initAsyncHttpClient() {
 //        client.setBasicAuth("username","password/token");
-
     }
 
     public static void cancelAllRequests() {
@@ -42,8 +42,12 @@ public class AppRestClient {
         client.get(GlobalApplication.getAppContext(), getAbsoluteUrl(url), params, responseHandler).setTag(url);
     }
 
+    public static void download(String url, FileAsyncHttpResponseHandler responseHandler) {
+        client.get(GlobalApplication.getAppContext(), url, responseHandler).setTag(url);
+    }
+
     public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        client.post(GlobalApplication.getAppContext(), getAbsoluteUrl(url), params,responseHandler).setTag(url);
+        client.post(GlobalApplication.getAppContext(), getAbsoluteUrl(url), params, responseHandler).setTag(url);
     }
 
     public static void put(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {

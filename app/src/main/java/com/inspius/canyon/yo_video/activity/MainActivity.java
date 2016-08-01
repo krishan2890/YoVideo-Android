@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
@@ -26,15 +27,18 @@ import com.inspius.canyon.yo_video.app.GlobalApplication;
 import com.inspius.canyon.yo_video.base.BaseMainActivityInterface;
 import com.inspius.canyon.yo_video.fragment.SearchFragment;
 import com.inspius.canyon.yo_video.fragment.SlideMenuFragment;
+import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.listener.AccountDataListener;
 import com.inspius.canyon.yo_video.service.AccountDataManager;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.service.DownloadIntentService;
 import com.inspius.coreapp.CoreAppActivity;
+import com.inspius.coreapp.helper.IntentUtils;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.sromku.simple.fb.SimpleFacebook;
 
+import java.io.File;
 import java.util.Locale;
 
 import butterknife.Bind;
@@ -151,7 +155,6 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
                     handleDownload(data);
                     break;
             }
-            handleDownload(data);
         }
     }
 
@@ -159,8 +162,14 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
      * @param data
      */
     private void handleDownload(Intent data) {
+        String path = data.getStringExtra(DownloadIntentService.URL_EXTRA_PATH);
+        Logger.d("handleDownload", path);
 
+        Intent intent = IntentUtils.openVideo(path);
+        startActivity(intent);
     }
+
+
 
     /**
      * @param data

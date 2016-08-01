@@ -459,7 +459,6 @@ public class RPC {
         params.put(AppConstant.KEY_FIELD, field);
         params.put(AppConstant.KEY_USER_ID, String.valueOf(userID));
 
-
         AppRestClient.post(AppConstant.RELATIVE_URL_UPDATE_STATIC, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
