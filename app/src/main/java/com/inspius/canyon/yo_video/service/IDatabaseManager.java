@@ -100,7 +100,7 @@ public interface IDatabaseManager {
      * Download Videos
      */
 
-    DBVideoDownload insertVideoToDownloadList(String path, String name);
+    DBVideoDownload insertVideoToDownloadList(String path, String name, int videoID);
 
     List<DBVideoDownload> listVideoDownload(int page);
 

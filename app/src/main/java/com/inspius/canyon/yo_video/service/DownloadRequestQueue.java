@@ -83,8 +83,9 @@ public class DownloadRequestQueue {
         VideoModel model = mapVideosDownload.get(queueId);
 
         String title = model.getTitle();
+        int videoID = model.getVideoId();
 
-        DatabaseManager.getInstance().insertVideoToDownloadList(path, title);
+        DatabaseManager.getInstance().insertVideoToDownloadList(path, title, videoID);
 
         mapVideosDownload.remove(queueId);
     }

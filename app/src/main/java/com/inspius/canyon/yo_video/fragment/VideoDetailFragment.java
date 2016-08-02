@@ -205,7 +205,7 @@ public class VideoDetailFragment extends BaseMainFragment {
         tvnSeries.setText(videoModel.getSeries());
         tvnAuthor.setText(videoModel.getAuthor());
         tvnDescription.setText(Html.fromHtml(videoModel.getDescription()));
-        tvnViewNumber.setText(videoModel.getViewNumber());
+        tvnViewNumber.setText(videoModel.getViewNumber() + " views");
 
         if (mAccountDataManager.isLogin()) {
             if (wishList != null)

@@ -188,10 +188,10 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
     private void handleDownload(Intent data) {
         String path = data.getStringExtra(DownloadVideoService.PATH_RESULT_EXTRA);
         String title = data.getStringExtra(DownloadVideoService.TITLE_RESULT_EXTRA);
-
+        int videoID = 0;
         Logger.d("MainActivity", "handleDownload : " + path);
 
-        DatabaseManager.getInstance().insertVideoToDownloadList(path, title);
+        DatabaseManager.getInstance().insertVideoToDownloadList(path, title, videoID);
     }
 
 

@@ -505,10 +505,11 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
      */
 
     @Override
-    public DBVideoDownload insertVideoToDownloadList(String path, String name) {
+    public DBVideoDownload insertVideoToDownloadList(String path, String name, int videoID) {
         DBVideoDownload video = new DBVideoDownload();
         video.setTitle(name);
         video.setPath(path);
+        video.setVideoId(videoID);
 
         try {
             if (video != null) {
