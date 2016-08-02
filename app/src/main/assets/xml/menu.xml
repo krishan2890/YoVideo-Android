@@ -14,6 +14,7 @@
         <type>categories</type>
         <status>1</status>
     </element>
+
     <element>
         <icon>icon_menu_wishlist.png</icon>
         <id>3</id>
@@ -21,6 +22,15 @@
         <type>wishlist</type>
         <status>1</status>
     </element>
+
+    <element>
+        <icon>icon_menu_download.png</icon>
+        <id>3</id>
+        <name>My Download</name>
+        <type>download</type>
+        <status>1</status>
+    </element>
+
     <element>
         <icon>ic_menu_recent.png</icon>
         <id>2</id>

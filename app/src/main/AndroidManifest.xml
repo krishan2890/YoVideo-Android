@@ -132,8 +132,16 @@
         <!-- Defining End Firebase Services -->
 
         <service
-            android:name=".service.DownloadIntentService"
+            android:name=".service.DownloadVideoService"
             android:exported="false"/>
+
+        <receiver
+            android:name=".service.DownloadReceiver"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

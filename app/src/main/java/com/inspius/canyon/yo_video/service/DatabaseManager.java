@@ -58,7 +58,7 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
         completedOperations = new CopyOnWriteArrayList<AsyncOperation>();
     }
 
-    public static DatabaseManager getInstance() {
+    public static IDatabaseManager getInstance() {
         if (instance == null)
             instance = new DatabaseManager();
 
@@ -352,7 +352,7 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     public List<DBNotification> listNotification(int page) {
         List<DBNotification> notifications = null;
         int limit = 20;
-        int offset = limit*page;
+        int offset = limit * page;
         try {
             openReadableDb();
             DBNotificationDao notificationDao = daoSession.getDBNotificationDao();
@@ -505,7 +505,7 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
      */
 
     @Override
-    public DBVideoDownload insertVideoToRecentList(String path, String name) {
+    public DBVideoDownload insertVideoToDownloadList(String path, String name) {
         DBVideoDownload video = new DBVideoDownload();
         video.setTitle(name);
         video.setPath(path);
@@ -526,6 +526,41 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
 
     @Override
     public List<DBVideoDownload> listVideoDownload(int page) {
-        return null;
+        List<DBVideoDownload> notifications = null;
+        int limit = 10;
+
+        if (page < 1)
+            page = 1;
+        int offset = (page - 1) * limit;
+
+        try {
+            openReadableDb();
+            DBVideoDownloadDao dbDao = daoSession.getDBVideoDownloadDao();
+            QueryBuilder<DBVideoDownload> queryBuilder = dbDao.queryBuilder().orderDesc(DBVideoDownloadDao.Properties.Id).limit(limit).offset(offset);
+            notifications = queryBuilder.list();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (notifications == null)
+            notifications = new ArrayList<>();
+        return notifications;
+    }
+
+    @Override
+    public DBVideoDownload getVideoDownloadByVideoID(int videoID) {
+        DBVideoDownload mVideo = null;
+        try {
+            openReadableDb();
+            DBVideoDownloadDao dbDao = daoSession.getDBVideoDownloadDao();
+            QueryBuilder<DBVideoDownload> queryBuilder = dbDao.queryBuilder().where(DBVideoDownloadDao.Properties.VideoId.eq(videoID)).limit(1);
+            mVideo = queryBuilder.unique();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mVideo;
     }
 }

@@ -56,6 +56,7 @@ public class ExampleDaoGenerator {
     private static void addDownloadList(Schema schema) {
         Entity note = schema.addEntity("DBVideoDownload");
         note.addIdProperty();
+        note.addIntProperty("videoId").notNull();
         note.addStringProperty("path").notNull();
         note.addStringProperty("title").notNull();
     }

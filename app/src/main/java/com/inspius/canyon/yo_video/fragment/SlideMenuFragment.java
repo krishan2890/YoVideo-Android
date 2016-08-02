@@ -235,7 +235,9 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
             fragment = CategoriesFragment.newInstance();
         } else if (type.equalsIgnoreCase("wishlist")) {
             fragment = WishListFragment.newInstance();
-        } else if (type.equalsIgnoreCase("recent_videos")) {
+        }  else if (type.equalsIgnoreCase("download")) {
+            fragment = DownloadListFragment.newInstance();
+        }else if (type.equalsIgnoreCase("recent_videos")) {
             fragment = RecentVideosFragment.newInstance();
         } else if (type.equalsIgnoreCase("download")) {
         } else if (type.equalsIgnoreCase("about_us")) {

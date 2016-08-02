@@ -24,8 +24,9 @@ public class DBVideoDownloadDao extends AbstractDao<DBVideoDownload, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Path = new Property(1, String.class, "path", false, "PATH");
-        public final static Property Title = new Property(2, String.class, "title", false, "TITLE");
+        public final static Property VideoId = new Property(1, int.class, "videoId", false, "VIDEO_ID");
+        public final static Property Path = new Property(2, String.class, "path", false, "PATH");
+        public final static Property Title = new Property(3, String.class, "title", false, "TITLE");
     };
 
 
@@ -42,8 +43,9 @@ public class DBVideoDownloadDao extends AbstractDao<DBVideoDownload, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"DBVIDEO_DOWNLOAD\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
-                "\"PATH\" TEXT NOT NULL ," + // 1: path
-                "\"TITLE\" TEXT NOT NULL );"); // 2: title
+                "\"VIDEO_ID\" INTEGER NOT NULL ," + // 1: videoId
+                "\"PATH\" TEXT NOT NULL ," + // 2: path
+                "\"TITLE\" TEXT NOT NULL );"); // 3: title
     }
 
     /** Drops the underlying database table. */
@@ -61,8 +63,9 @@ public class DBVideoDownloadDao extends AbstractDao<DBVideoDownload, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
-        stmt.bindString(2, entity.getPath());
-        stmt.bindString(3, entity.getTitle());
+        stmt.bindLong(2, entity.getVideoId());
+        stmt.bindString(3, entity.getPath());
+        stmt.bindString(4, entity.getTitle());
     }
 
     /** @inheritdoc */
@@ -76,8 +79,9 @@ public class DBVideoDownloadDao extends AbstractDao<DBVideoDownload, Long> {
     public DBVideoDownload readEntity(Cursor cursor, int offset) {
         DBVideoDownload entity = new DBVideoDownload( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.getString(offset + 1), // path
-            cursor.getString(offset + 2) // title
+            cursor.getInt(offset + 1), // videoId
+            cursor.getString(offset + 2), // path
+            cursor.getString(offset + 3) // title
         );
         return entity;
     }
@@ -86,8 +90,9 @@ public class DBVideoDownloadDao extends AbstractDao<DBVideoDownload, Long> {
     @Override
     public void readEntity(Cursor cursor, DBVideoDownload entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setPath(cursor.getString(offset + 1));
-        entity.setTitle(cursor.getString(offset + 2));
+        entity.setVideoId(cursor.getInt(offset + 1));
+        entity.setPath(cursor.getString(offset + 2));
+        entity.setTitle(cursor.getString(offset + 3));
      }
     
     /** @inheritdoc */

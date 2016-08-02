@@ -1,22 +1,15 @@
 package com.inspius.canyon.yo_video.fragment;
 
 import android.app.Activity;
-import android.app.DownloadManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
-import android.webkit.MimeTypeMap;
-import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,12 +30,13 @@ import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
+import com.inspius.canyon.yo_video.greendao.DBVideoDownload;
 import com.inspius.canyon.yo_video.greendao.DBWishListVideo;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
-import com.inspius.canyon.yo_video.service.DownloadIntentService;
+import com.inspius.canyon.yo_video.service.DownloadRequestQueue;
 import com.inspius.canyon.yo_video.service.RecentListManager;
 import com.inspius.coreapp.helper.IntentUtils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -221,6 +215,12 @@ public class VideoDetailFragment extends BaseMainFragment {
         boolean isWishList = DatabaseManager.getInstance().existVideoAtWithList((long) videoModel.getVideoId());
         updateStateViewWishList(isWishList);
 
+        DBVideoDownload dbVideoDownload = DatabaseManager.getInstance().getVideoDownloadByVideoID(videoModel.getVideoId());
+        if (dbVideoDownload != null)
+            updateStateDownloadButton(true);
+        else
+            updateStateDownloadButton(false);
+
         ImageLoader.getInstance().displayImage(videoModel.getImage(), imvThumbnail, options);
         tvnTime.setText(videoModel.getTimeRemain());
 
@@ -382,6 +382,10 @@ public class VideoDetailFragment extends BaseMainFragment {
             imvAddToWishList.setSelected(isWishList);
     }
 
+    void updateStateDownloadButton(boolean isDownload) {
+        imvDownload.setSelected(isDownload);
+    }
+
     @OnClick(R.id.relativePlay)
     void doPlayVideo() {
         if (videoModel == null)
@@ -471,35 +475,21 @@ public class VideoDetailFragment extends BaseMainFragment {
         if (imvDownload.isSelected())
             return;
 
-        imvDownload.setSelected(true);
+        updateStateDownloadButton(true);
         switch (videoModel.getVideoType()) {
             case UPLOAD:
                 /**
                  * Download default Os
                  */
-//                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(videoModel.getVideoUrl()));
-//                request.setTitle(videoModel.getTitle());
-//                request.setDescription("File is being downloaded...");
-//                request.allowScanningByMediaScanner();
-//                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-//
-//                String nameOfFile = URLUtil.guessFileName(videoModel.getVideoUrl(), null, MimeTypeMap.getFileExtensionFromUrl(videoModel.getVideoUrl()));
-//
-//                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, nameOfFile);
-//
-//                DownloadManager manager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-//                manager.enqueue(request);
+
+                DownloadRequestQueue.getInstance().downloadVideo(videoModel);
 
                 /**
                  * Custom Download Manager
                  */
 
-                PendingIntent pendingResult = getActivity().createPendingResult(
-                        AppConstant.REQUEST_CODE_DOWNLOAD, new Intent(), 0);
-                Intent intent = new Intent(getActivity(), DownloadIntentService.class);
-                intent.putExtra(DownloadIntentService.URL_VIDEO_EXTRA, videoModel);
-                intent.putExtra(DownloadIntentService.PENDING_RESULT_EXTRA, pendingResult);
-                getActivity().startService(intent);
+//                mActivityInterface.downloadVideo(videoModel);
+
                 break;
 
             case YOUTUBE:
@@ -507,7 +497,6 @@ public class VideoDetailFragment extends BaseMainFragment {
                 break;
         }
     }
-
 
     void onPaypalProfileSharing() {
         Intent intent = new Intent(mContext, PayPalProfileSharingActivity.class);

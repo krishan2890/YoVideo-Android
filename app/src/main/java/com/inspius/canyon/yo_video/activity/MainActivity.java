@@ -1,12 +1,12 @@
 package com.inspius.canyon.yo_video.activity;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
@@ -29,16 +29,16 @@ import com.inspius.canyon.yo_video.fragment.SearchFragment;
 import com.inspius.canyon.yo_video.fragment.SlideMenuFragment;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.listener.AccountDataListener;
+import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.AccountDataManager;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
-import com.inspius.canyon.yo_video.service.DownloadIntentService;
+import com.inspius.canyon.yo_video.service.DownloadRequestQueue;
+import com.inspius.canyon.yo_video.service.DownloadVideoService;
 import com.inspius.coreapp.CoreAppActivity;
-import com.inspius.coreapp.helper.IntentUtils;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.sromku.simple.fb.SimpleFacebook;
 
-import java.io.File;
 import java.util.Locale;
 
 import butterknife.Bind;
@@ -125,6 +125,20 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
     }
 
     @Override
+    protected void onDestroy() {
+        stopService(new Intent(this, PayPalService.class));
+        DownloadRequestQueue.getInstance().cancelAllDownload();
+
+        super.onDestroy();
+
+        ButterKnife.unbind(this);
+        AppRestClient.cancelAllRequests();
+
+        if (DatabaseManager.getInstance() != null)
+            DatabaseManager.getInstance().closeDbConnections();
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (mSimpleFacebook != null)
             mSimpleFacebook.onActivityResult(requestCode, resultCode, data);
@@ -145,30 +159,40 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
              * Custom Download Video
              */
             switch (resultCode) {
-                case DownloadIntentService.INVALID_URL_CODE:
+                case DownloadVideoService.INVALID_URL_CODE:
                     handleInvalidURL();
                     break;
-                case DownloadIntentService.ERROR_CODE:
+                case DownloadVideoService.ERROR_CODE:
                     handleError(data);
                     break;
-                case DownloadIntentService.RESULT_CODE:
+                case DownloadVideoService.RESULT_CODE:
                     handleDownload(data);
                     break;
             }
         }
     }
 
+    @Override
+    public void downloadVideo(VideoModel videoModel) {
+        PendingIntent pendingResult = createPendingResult(
+                AppConstant.REQUEST_CODE_DOWNLOAD, new Intent(), 0);
+        Intent downloadService = new Intent(this, DownloadVideoService.class);
+        downloadService.putExtra(DownloadVideoService.VIDEO_EXTRA, videoModel);
+        downloadService.putExtra(DownloadVideoService.PENDING_RESULT_EXTRA, pendingResult);
+        startService(downloadService);
+    }
+
     /**
      * @param data
      */
     private void handleDownload(Intent data) {
-        String path = data.getStringExtra(DownloadIntentService.URL_EXTRA_PATH);
-        Logger.d("handleDownload", path);
+        String path = data.getStringExtra(DownloadVideoService.PATH_RESULT_EXTRA);
+        String title = data.getStringExtra(DownloadVideoService.TITLE_RESULT_EXTRA);
 
-        Intent intent = IntentUtils.openVideo(path);
-        startActivity(intent);
+        Logger.d("MainActivity", "handleDownload : " + path);
+
+        DatabaseManager.getInstance().insertVideoToDownloadList(path, title);
     }
-
 
 
     /**
@@ -183,19 +207,6 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
      */
     private void handleInvalidURL() {
         // whatever you want
-    }
-
-    @Override
-    protected void onDestroy() {
-        stopService(new Intent(this, PayPalService.class));
-
-        super.onDestroy();
-
-        ButterKnife.unbind(this);
-        AppRestClient.cancelAllRequests();
-
-        if (DatabaseManager.getInstance() != null)
-            DatabaseManager.getInstance().closeDbConnections();
     }
 
     /**

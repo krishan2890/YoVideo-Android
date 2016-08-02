@@ -7,6 +7,7 @@ package com.inspius.canyon.yo_video.greendao;
 public class DBVideoDownload {
 
     private Long id;
+    private int videoId;
     /** Not-null value. */
     private String path;
     /** Not-null value. */
@@ -19,8 +20,9 @@ public class DBVideoDownload {
         this.id = id;
     }
 
-    public DBVideoDownload(Long id, String path, String title) {
+    public DBVideoDownload(Long id, int videoId, String path, String title) {
         this.id = id;
+        this.videoId = videoId;
         this.path = path;
         this.title = title;
     }
@@ -31,6 +33,14 @@ public class DBVideoDownload {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getVideoId() {
+        return videoId;
+    }
+
+    public void setVideoId(int videoId) {
+        this.videoId = videoId;
     }
 
     /** Not-null value. */
