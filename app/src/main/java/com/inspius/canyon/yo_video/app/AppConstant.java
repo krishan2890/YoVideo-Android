@@ -96,5 +96,6 @@ public class AppConstant {
     public static final String KEY_PAGENUMBER= "page";
     public static final String KEY_BUNDLE_SERIES= "series";
 
-
+    public static final String KEY_AUTHOR = "Authorization";
+    public static final String VALUE_HEADER_AUTHOR = "Basic ZGluaHR1YW46ZGluaHR1YW4lMjAxNQ==";
 }
