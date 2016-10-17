@@ -1,5 +1,7 @@
 package com.inspius.canyon.yo_video.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**
@@ -9,4 +11,5 @@ public class VideoLinkJSON implements Serializable {
     public String url;
     public String type;
     public String length;
+    public String subtitle;
 }

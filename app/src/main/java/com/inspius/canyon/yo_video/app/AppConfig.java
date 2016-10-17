@@ -12,7 +12,7 @@ public class AppConfig {
      * Change ENVIRONMENT to PRODUCTION for release app
      */
     public static final CoreAppEnums.Environment ENVIRONMENT = CoreAppEnums.Environment.DEV;
-
+    public static final String GENERATE_KEY = "aebf9853eee1e9cde59c6f34cdbc90c5";
     /**
      * Change SHOW_ADS_INTERSTITIAL
      * true : show ads
@@ -43,8 +43,7 @@ public class AppConfig {
     /**
      * Parse
      */
-    public static final String PARSE_APPLICATION_ID = "0QLX1Otjgf0Tbqie0Ur7P3w2ZPlRkybuPXVPeb3v";
-    public static final String PARSE_CLIENT_KEY = "ZzJDCXI7ducISZgs8QBwJUiIJsCr8LfJb1OsdRVS";
+
     public static final int NOTIFICATION_ID = 100;
 
     /**

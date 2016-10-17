@@ -40,7 +40,6 @@ public class RPC {
         params.put(AppConstant.KEY_USERNAME, username);
         params.put(AppConstant.KEY_PASSWORD, password);
 
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.post(AppConstant.RELATIVE_URL_LOGIN, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
@@ -76,7 +75,6 @@ public class RPC {
         RequestParams params = new RequestParams();
         params.put(AppConstant.KEY_ACCESST_TOKEN, accessToken);
 
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.post(AppConstant.RELATIVE_URL_LOGIN_FACE_BOOK, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
@@ -112,7 +110,6 @@ public class RPC {
         RequestParams params = new RequestParams();
         params.put(AppConstant.KEY_EMAIL, email);
 
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.post(AppConstant.RELATIVE_URL_FORGOT_PASSWORD, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
@@ -149,7 +146,6 @@ public class RPC {
         params.put(AppConstant.KEY_EMAIL, email);
         params.put(AppConstant.KEY_PASSWORD, password);
 
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.post(AppConstant.RELATIVE_URL_REGISTER, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
@@ -193,7 +189,6 @@ public class RPC {
         params.put(AppConstant.KEY_COUNTRY, customerModel.country);
         params.put(AppConstant.KEY_ZIP, customerModel.zip);
 
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.post(AppConstant.RELATIVE_URL_CHANGEPROFILE, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
@@ -240,7 +235,6 @@ public class RPC {
         }
 
 
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.post(AppConstant.RELATIVE_URL_CHANGE_AVATAR, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
@@ -278,7 +272,6 @@ public class RPC {
         params.put(AppConstant.KEY_OLD_PASS, currentPass);
         params.put(AppConstant.KEY_NEW_PASS, newPass);
 
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.post(AppConstant.RELATIVE_URL_CHANGE_PASS, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
@@ -322,7 +315,6 @@ public class RPC {
      */
 
     public static void requestGetCategories(final APIResponseListener listener) {
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.get(AppConstant.RELATIVE_URL_CATEGORIES, null, new BaseJsonHttpResponseHandler<JSONObject>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, JSONObject response) {
@@ -381,7 +373,6 @@ public class RPC {
                 break;
         }
         final String url = String.format(tag, pageNumber, AppConstant.LIMIT_PAGE_HOMES);
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.get(url, null, new BaseJsonHttpResponseHandler<JSONObject>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, JSONObject response) {
@@ -430,7 +421,6 @@ public class RPC {
         final String tag = AppConstant.RELATIVE_URL_VIDEO_CATEGORY;
         final String url = String.format(tag, categoryId, pageNumber, AppConstant.LIMIT_PAGE_HOMES);
 
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.get(url, null, new BaseJsonHttpResponseHandler<JSONObject>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, JSONObject response) {
@@ -470,7 +460,6 @@ public class RPC {
         params.put(AppConstant.KEY_FIELD, field);
         params.put(AppConstant.KEY_USER_ID, String.valueOf(userID));
 
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.post(AppConstant.RELATIVE_URL_UPDATE_STATIC, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
@@ -509,7 +498,6 @@ public class RPC {
         params.put(AppConstant.KEY_PAGENUMBER, String.valueOf(pageNumber));
         params.put(AppConstant.KEY_LIMIT, String.valueOf(limit));
 
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.post(AppConstant.RELATIVE_URL_SEARCH_BY_KEYWORD, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
@@ -551,7 +539,6 @@ public class RPC {
         params.put(AppConstant.KEY_PAGENUMBER, String.valueOf(pageNumber));
         params.put(AppConstant.KEY_LIMIT, String.valueOf(limit));
 
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.post(AppConstant.RELATIVE_URL_SERIES, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {
@@ -595,7 +582,6 @@ public class RPC {
         final String url = String.format(tag, userID, pageNumber, AppConstant.LIMIT_PAGE_HOMES);
         RequestParams params = new RequestParams();
         params.put(AppConstant.KEY_USER_ID, String.valueOf(userID));
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.get(url, params, new BaseJsonHttpResponseHandler<JSONObject>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, JSONObject response) {
@@ -633,7 +619,6 @@ public class RPC {
     /* ======================================= OTHER =======================================*/
 
     public static void requestGetVideoById(String currentUrl, final APIResponseListener listener) {
-        AppRestClient.addHeader(AppConstant.KEY_AUTHOR,AppConstant.VALUE_HEADER_AUTHOR);
         AppRestClient.get(currentUrl, null, new BaseJsonHttpResponseHandler<JSONObject>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, JSONObject response) {

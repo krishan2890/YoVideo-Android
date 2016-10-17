@@ -27,9 +27,6 @@ public class AppRestClient {
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String HEADER_APP_ID = "AppId";
     private static final String HEADER_BASIC = "basic";
-    public static void addHeader(String key,String value){
-        client.addHeader(key,value);
-    }
 
     public static void initAsyncHttpClient() {
 //        client.setBasicAuth("username","password/token");

@@ -35,6 +35,7 @@ import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.service.DownloadRequestQueue;
 import com.inspius.canyon.yo_video.service.DownloadVideoService;
 import com.inspius.coreapp.CoreAppActivity;
+import com.inspius.coreapp.config.CoreAppConfig;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.sromku.simple.fb.SimpleFacebook;
@@ -200,6 +201,7 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
      */
     private void handleError(Intent data) {
         // whatever you want
+
     }
 
     /**

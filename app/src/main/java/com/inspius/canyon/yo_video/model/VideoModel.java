@@ -24,7 +24,8 @@ public class VideoModel implements Serializable {
     private String socialLink;
     private String videoUrl;
     private AppEnum.VIDEO_TYPE videoType = AppEnum.VIDEO_TYPE.UPLOAD;
-   // private String videoType;
+
+    // private String videoType;
     public VideoModel(VideoJSON videoJSON) {
         this.videoJSON = videoJSON;
         this.title = videoJSON.title;
@@ -41,7 +42,7 @@ public class VideoModel implements Serializable {
         this.socialLink = videoJSON.urlSocial;
 
         this.videoUrl = videoJSON.videoLinkJSON.url;
-     //   this.videoType = videoJSON.videoLinkJSON.type;
+        //   this.videoType = videoJSON.videoLinkJSON.type;
         if (!TextUtils.isEmpty(videoJSON.videoLinkJSON.type))
             videoType = AppEnum.VIDEO_TYPE.fromString(videoJSON.videoLinkJSON.type);
 
@@ -67,7 +68,7 @@ public class VideoModel implements Serializable {
         return AppUtils.getStatsFormat(String.valueOf(viewNumber));
     }
 
-    public Long getView(){
+    public Long getView() {
         return viewNumber;
     }
 
@@ -109,6 +110,11 @@ public class VideoModel implements Serializable {
     public String getVideoUrl() {
         return videoUrl;
     }
+
+    public String getVideoSub() {
+        return videoJSON.videoLinkJSON.subtitle;
+    }
+
 
     public AppEnum.VIDEO_TYPE getVideoType() {
         return videoType;
