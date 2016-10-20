@@ -87,6 +87,12 @@
             android:theme="@style/Theme.AppTheme" />
 
         <activity
+            android:name=".activity.JWPlayerActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppTheme" />
+
+        <activity
             android:name=".activity.WebViewPlayerActivity"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|screenSize"
@@ -113,6 +119,11 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="b582a4de8e8bb7f104a2fde4bbb1c31aaf09d449" />
+
+        <!-- IMPORTANT: jwplayer-->
+        <meta-data
+            android:name="JW_LICENSE_KEY"
+            android:value="VhdGGWw+4IX/o0y9QxdrKIS6R/CddyhGD1i2UA==" />
 
         <!-- Defining Firebase Services -->
         <service android:name=".service.MyFirebaseMessagingService">

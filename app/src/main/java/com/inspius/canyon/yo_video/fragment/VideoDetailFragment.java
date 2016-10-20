@@ -19,6 +19,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.activity.DailyMotionPlayerActivity;
+import com.inspius.canyon.yo_video.activity.JWPlayerActivity;
 import com.inspius.canyon.yo_video.activity.MainActivity;
 import com.inspius.canyon.yo_video.activity.MusicPlayerActivity;
 import com.inspius.canyon.yo_video.activity.VitamioPlayerActivity;
@@ -414,6 +415,10 @@ public class VideoDetailFragment extends BaseMainFragment {
 
             case MP3:
                 intent = new Intent(getActivity(), MusicPlayerActivity.class);
+                break;
+
+            case JW_PLAYER:
+                intent = new Intent(getActivity(), JWPlayerActivity.class);
                 break;
 
             default:
