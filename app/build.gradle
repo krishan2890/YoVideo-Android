@@ -41,10 +41,11 @@ android {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
+        exclude 'jsr305_annotations/Jsr305_annotations.gwt.xml'
+
     }
 
     dexOptions {
-        incremental true
         javaMaxHeapSize "4g"
     }
 }
@@ -86,9 +87,8 @@ repositories {
     maven { url "http://jzaccone.github.io/SlidingMenu-aar" }
     maven { url 'https://maven.fabric.io/public' }
     maven { url "http://dl.bintray.com/jjhesk/maven" }
-    maven {
-        url "https://jitpack.io"
-    }
+    maven { url "https://jitpack.io" }
+    maven { url 'https://mvn.jwplayer.com/content/repositories/releases/' }
 }
 
 dependencies {
@@ -186,4 +186,7 @@ dependencies {
 
     // Google Firebase
     compile 'com.google.firebase:firebase-messaging:9.2.1'
+
+    // JWPlayer
+    compile 'com.longtailvideo.jwplayer:jwplayer-android-sdk:+'
 }
