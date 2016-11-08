@@ -9,7 +9,7 @@ public class AppEnum {
      */
 
     public enum VIDEO_TYPE {
-        UPLOAD("UPLOAD"), YOUTUBE("YOUTUBE"), VIMEO("VIMEO"),MP3("MP3");
+        NONE("NONE"), UPLOAD("UPLOAD"), YOUTUBE("YOUTUBE"), VIMEO("VIMEO"), MP3("MP3"), FACEBOOK("FACEBOOK"), DAILY_MOTION("DAILY_MOTION"), JW_PLAYER("JW_PLAYER");
 
         private final String text;
 
@@ -20,6 +20,17 @@ public class AppEnum {
         @Override
         public String toString() {
             return text;
+        }
+
+        public static VIDEO_TYPE fromString(String text) {
+            if (text != null) {
+                for (VIDEO_TYPE b : VIDEO_TYPE.values()) {
+                    if (text.equalsIgnoreCase(b.text)) {
+                        return b;
+                    }
+                }
+            }
+            return NONE;
         }
     }
 

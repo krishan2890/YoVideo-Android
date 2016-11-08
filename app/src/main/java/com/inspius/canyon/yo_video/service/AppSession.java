@@ -1,8 +1,10 @@
 package com.inspius.canyon.yo_video.service;
 
-import com.inspius.canyon.yo_video.api.APIResponseListener;
-import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
+import com.inspius.canyon.yo_video.model.VideoJSON;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Billy on 1/11/16.
@@ -18,27 +20,36 @@ public class AppSession {
     }
 
     private static DataCategoryJSON categoryData;
+    private List<VideoJSON> listVideoMostView;
+    private List<VideoJSON> listVideoLatest;
 
-    public static void getCategoryData(final APIResponseListener listener) {
-        if (categoryData != null)
-            listener.onSuccess(categoryData);
-        else
-            RPC.requestGetCategories(new APIResponseListener() {
-                @Override
-                public void onError(String message) {
-                    listener.onError(message);
-                }
+    public DataCategoryJSON getCategoryData() {
+        if (categoryData == null) {
+            categoryData = new DataCategoryJSON();
+            categoryData.listCategory = new ArrayList<>();
+            categoryData.listIdTopCategory = new ArrayList<>();
+        }
 
-                @Override
-                public void onSuccess(Object results) {
-                    categoryData = (DataCategoryJSON) results;
-                    updateDataCategoryJSON(categoryData);
-                    listener.onSuccess(categoryData);
-                }
-            });
+        return categoryData;
     }
 
-    public static void updateDataCategoryJSON(DataCategoryJSON data) {
-        categoryData = data;
+    public void setCategoryData(DataCategoryJSON categoryData) {
+        this.categoryData = categoryData;
+    }
+
+    public void setListVideoLatest(List<VideoJSON> listVideoLatest) {
+        this.listVideoLatest = listVideoLatest;
+    }
+
+    public List<VideoJSON> getListVideoLatest() {
+        return listVideoLatest;
+    }
+
+    public void setListVideoMostView(List<VideoJSON> listVideoMostView) {
+        this.listVideoMostView = listVideoMostView;
+    }
+
+    public List<VideoJSON> getListVideoMostView() {
+        return listVideoMostView;
     }
 }

@@ -1,10 +1,10 @@
 package com.inspius.canyon.yo_video.activity;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,21 +19,21 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
-import com.inspius.canyon.yo_video.api.VolleySingleton;
+import com.inspius.canyon.yo_video.api.AppRestClient;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.app.GlobalApplication;
 import com.inspius.canyon.yo_video.base.BaseMainActivityInterface;
 import com.inspius.canyon.yo_video.fragment.SearchFragment;
 import com.inspius.canyon.yo_video.fragment.SlideMenuFragment;
+import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.listener.AccountDataListener;
+import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.AccountDataManager;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
-import com.inspius.canyon.yo_video.service.DownloadIntentService;
-import com.inspius.canyon.yo_video.service.IDatabaseManager;
+import com.inspius.canyon.yo_video.service.DownloadRequestQueue;
+import com.inspius.canyon.yo_video.service.DownloadVideoService;
 import com.inspius.coreapp.CoreAppActivity;
-import com.paypal.android.sdk.payments.PayPalConfiguration;
-import com.paypal.android.sdk.payments.PayPalService;
 import com.sromku.simple.fb.SimpleFacebook;
 
 import java.util.Locale;
@@ -45,13 +45,6 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class MainActivity extends CoreAppActivity implements BaseMainActivityInterface {
-    public static PayPalConfiguration paypalConfig = new PayPalConfiguration()
-            .environment(AppConfig.CONFIG_ENVIRONMENT)
-            .clientId(AppConfig.CONFIG_CLIENT_ID)
-            .merchantName(AppConfig.PAYPAL_CONFIG_MERCHANT_NAME)
-            .merchantPrivacyPolicyUri(Uri.parse(AppConfig.PAYPAL_CONFIG_PRIVACY_POLICY))
-            .merchantUserAgreementUri(Uri.parse(AppConfig.PAYPAL_CONFIG_USER_AGREEMENT));
-
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
 
@@ -72,7 +65,6 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
     private SlideMenuFragment fragmentSlideMenu;
     private AccountDataManager accountDataManager;
     private InterstitialAd mInterstitialAd;
-    private IDatabaseManager databaseManager;
 
     @Override
     protected int getLayoutResourceId() {
@@ -89,47 +81,50 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
         fragmentSlideMenu = (SlideMenuFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentSlideMenu);
         setupActionBar();
 
-        if (AppConfig.SHOW_ADS) {
+        if (AppConfig.SHOW_ADS_INTERSTITIAL) {
             // Create the InterstitialAd and set the adUnitId.
             mInterstitialAd = new InterstitialAd(this);
             // Defined in res/values/strings.xml
             mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
 
             // Loading ads
-            startLoadInterstitialAds();
             mInterstitialAd.setAdListener(new AdListener() {
                 @Override
                 public void onAdClosed() {
-                    startLoadInterstitialAds();
+                    requestNewInterstitial();
                 }
             });
+            requestNewInterstitial();
         }
-        databaseManager = new DatabaseManager(this);
     }
+
     @Override
     protected void onRestart() {
-        if (databaseManager == null)
-            databaseManager = new DatabaseManager(this);
-
         super.onRestart();
     }
-
 
     @Override
     protected void onResume() {
         mSimpleFacebook = SimpleFacebook.getInstance(this);
-        databaseManager = DatabaseManager.getInstance(this);
         super.onResume();
-
-
     }
 
     @Override
     protected void onStop() {
-        if (databaseManager != null)
-            databaseManager.closeDbConnections();
-
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        DownloadRequestQueue.getInstance().cancelAllDownload();
+
+        super.onDestroy();
+
+        ButterKnife.unbind(this);
+        AppRestClient.cancelAllRequests();
+
+        if (DatabaseManager.getInstance() != null)
+            DatabaseManager.getInstance().closeDbConnections();
     }
 
     @Override
@@ -153,32 +148,48 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
              * Custom Download Video
              */
             switch (resultCode) {
-                case DownloadIntentService.INVALID_URL_CODE:
+                case DownloadVideoService.INVALID_URL_CODE:
                     handleInvalidURL();
                     break;
-                case DownloadIntentService.ERROR_CODE:
+                case DownloadVideoService.ERROR_CODE:
                     handleError(data);
                     break;
-                case DownloadIntentService.RESULT_CODE:
+                case DownloadVideoService.RESULT_CODE:
                     handleDownload(data);
                     break;
             }
-            handleDownload(data);
         }
+    }
+
+    @Override
+    public void downloadVideo(VideoModel videoModel) {
+        PendingIntent pendingResult = createPendingResult(
+                AppConstant.REQUEST_CODE_DOWNLOAD, new Intent(), 0);
+        Intent downloadService = new Intent(this, DownloadVideoService.class);
+        downloadService.putExtra(DownloadVideoService.VIDEO_EXTRA, videoModel);
+        downloadService.putExtra(DownloadVideoService.PENDING_RESULT_EXTRA, pendingResult);
+        startService(downloadService);
     }
 
     /**
      * @param data
      */
     private void handleDownload(Intent data) {
+        String path = data.getStringExtra(DownloadVideoService.PATH_RESULT_EXTRA);
+        String title = data.getStringExtra(DownloadVideoService.TITLE_RESULT_EXTRA);
+        int videoID = 0;
+        Logger.d("MainActivity", "handleDownload : " + path);
 
+        DatabaseManager.getInstance().insertVideoToDownloadList(path, title, videoID);
     }
+
 
     /**
      * @param data
      */
     private void handleError(Intent data) {
         // whatever you want
+
     }
 
     /**
@@ -186,16 +197,6 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
      */
     private void handleInvalidURL() {
         // whatever you want
-    }
-
-    @Override
-    protected void onDestroy() {
-        stopService(new Intent(this, PayPalService.class));
-
-        super.onDestroy();
-
-        ButterKnife.unbind(this);
-        VolleySingleton.getInstance().cancelAllRequest();
     }
 
     /**
@@ -393,33 +394,30 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
 
     @Override
     public void showInterstitialAds() {
-        if (!AppConfig.SHOW_ADS)
+        if (!AppConfig.SHOW_ADS_INTERSTITIAL)
             return;
 
         // Show the ad if it's ready. Otherwise toast and restart the game.
         if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         } else {
-            startLoadInterstitialAds();
+            requestNewInterstitial();
         }
     }
 
-    private void startLoadInterstitialAds() {
-        if (!AppConfig.SHOW_ADS)
+    private void requestNewInterstitial() {
+        if (!AppConfig.SHOW_ADS_INTERSTITIAL)
             return;
 
         AdRequest adRequest;
-
-        if (!mInterstitialAd.isLoading() && !mInterstitialAd.isLoaded()) {
-            if (GlobalApplication.getInstance().isProductionEnvironment()) {
-                adRequest = new AdRequest.Builder().build();
-            } else {
-                adRequest = new AdRequest.Builder()
-                        .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                        .build();
-            }
-
-            mInterstitialAd.loadAd(adRequest);
+        if (GlobalApplication.getInstance().isProductionEnvironment()) {
+            adRequest = new AdRequest.Builder().build();
+        } else {
+            adRequest = new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .build();
         }
+
+        mInterstitialAd.loadAd(adRequest);
     }
 }

@@ -16,15 +16,15 @@ import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.fragment.account.AccountOptionFragment;
+import com.inspius.canyon.yo_video.fragment.notifications.NotificationListFragment;
+import com.inspius.canyon.yo_video.greendao.DBNotification;
+import com.inspius.canyon.yo_video.helper.AppUtils;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.helper.XMLParser;
-import com.inspius.canyon.yo_video.listener.AccountDataListener;
 import com.inspius.canyon.yo_video.listener.AdapterActionListener;
 import com.inspius.canyon.yo_video.listener.AnimateFirstDisplayListener;
 import com.inspius.canyon.yo_video.listener.NotificationListener;
-import com.inspius.canyon.yo_video.model.CustomerModel;
-import com.inspius.canyon.yo_video.model.NotificationJSON;
 import com.inspius.canyon.yo_video.model.SlideMenuModel;
 import com.inspius.canyon.yo_video.service.AppNotificationManager;
 import com.inspius.coreapp.CoreAppFragment;
@@ -111,15 +111,12 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
 
     @Override
     public void onInitView() {
-        tvnNumberNotification.setText("0");
+        tvnNumberNotification.setText(String.valueOf(AppNotificationManager.getInstance().loadTotalNotification()));
 
         initMenu();
-        updateStateLogin();
 
         slideMenuModelSelected = slideMenuList.get(0);
         switchScreen();
-
-        requestAutoAuthentic();
 
         getView().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,6 +124,13 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
 
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        updateStateLogin();
     }
 
     void initMenu() {
@@ -167,19 +171,6 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
         ultimateRecyclerView.setAdapter(menuAdapter);
     }
 
-    void requestAutoAuthentic() {
-        mAccountDataManager.callAutoLoginRequest(getActivity(), new AccountDataListener() {
-            @Override
-            public void onError(String message) {
-            }
-
-            @Override
-            public void onSuccess(CustomerModel results) {
-                updateStateLogin();
-            }
-        });
-    }
-
     @Override
     public String getTagText() {
         return TAG;
@@ -195,7 +186,7 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
             tvnEmail.setText(mAccountDataManager.getCustomerModel().email);
             ImageLoader.getInstance().displayImage(mAccountDataManager.getCustomerModel().avatar, imvAvatar, options, animateFirstListener);
 
-            AppNotificationManager.getInstance().requestGetNotification();
+            tvnNumberNotification.setText(String.valueOf(AppNotificationManager.getInstance().getTotalNotification()));
         } else {
             linearNotLogin.setVisibility(View.VISIBLE);
             linearLogin.setVisibility(View.GONE);
@@ -244,12 +235,13 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
             fragment = CategoriesFragment.newInstance();
         } else if (type.equalsIgnoreCase("wishlist")) {
             fragment = WishListFragment.newInstance();
-        } else if (type.equalsIgnoreCase("recent_videos")) {
+        }  else if (type.equalsIgnoreCase("download")) {
+            fragment = DownloadListFragment.newInstance();
+        }else if (type.equalsIgnoreCase("recent_videos")) {
             fragment = RecentVideosFragment.newInstance();
         } else if (type.equalsIgnoreCase("download")) {
         } else if (type.equalsIgnoreCase("about_us")) {
             fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_ABOUT_US, slideMenuModelSelected.title);
-//            fragment = WebViewFragment.newInstance("https://player.vimeo.com/video/7980975", slideMenuModelSelected.title);
         } else if (type.equalsIgnoreCase("term_condition")) {
             fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_TERM_CONDITION, slideMenuModelSelected.title);
         }
@@ -285,7 +277,7 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
 
         mActivityInterface.toggleDrawer();
         mActivityInterface.clearBackStackFragment();
-        mHostActivityInterface.addFragment(MainListNotificationFragment.newInstance(), true);
+        mHostActivityInterface.addFragment(NotificationListFragment.newInstance(), true);
     }
 
     @OnClick(R.id.imvSetting)
@@ -303,6 +295,8 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
 
     @OnClick(R.id.imvAvatar)
     void doChangeAvatar() {
+        if (!AppUtils.verifyStoragePermissions(getActivity()))
+            return;
         Intent intent = IntentUtils.pickImage();
         startActivityForResult(intent, AppConstant.REQUEST_ALBUM_PIC);
     }
@@ -310,8 +304,6 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        Logger.d(TAG, "onActivityResult = " + String.valueOf(resultCode));
 
         if (requestCode == AppConstant.REQUEST_ALBUM_PIC) {
             if (resultCode == Activity.RESULT_OK) {
@@ -334,12 +326,21 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
     }
 
     @Override
-    public void onNotificationNotReadChanged(int number) {
-        tvnNumberNotification.setText(String.valueOf(number));
+    public void onNotificationSizeChanged(final int totalNotView) {
+        if (tvnNumberNotification == null)
+            return;
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvnNumberNotification.setText(String.valueOf(totalNotView));
+            }
+        });
     }
 
+
     @Override
-    public void onNotificationChanged(List<NotificationJSON> newData, List<NotificationJSON> listNotification) {
+    public void onNotificationInserted(DBNotification notification) {
 
     }
 }

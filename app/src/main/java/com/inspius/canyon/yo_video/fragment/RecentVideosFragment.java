@@ -1,17 +1,20 @@
 package com.inspius.canyon.yo_video.fragment;
 
+import android.app.ProgressDialog;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
-import com.inspius.canyon.yo_video.adapter.GridVideoAdapter;
+import com.inspius.canyon.yo_video.adapter.RecentListAdapter;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.AppRestClient;
 import com.inspius.canyon.yo_video.api.RPC;
+import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
-import com.inspius.canyon.yo_video.helper.AppUtils;
-import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
-import com.inspius.canyon.yo_video.model.DataCategoryJSON;
+import com.inspius.canyon.yo_video.greendao.DBRecentVideo;
+import com.inspius.canyon.yo_video.helper.DialogUtil;
+import com.inspius.canyon.yo_video.listener.RecentListAdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.VideoJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.AppSession;
@@ -21,7 +24,6 @@ import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
 import com.wang.avi.AVLoadingIndicatorView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -29,7 +31,7 @@ import butterknife.Bind;
 /**
  * Created by Billy on 12/1/15.
  */
-public class RecentVideosFragment extends BaseMainFragment implements AdapterVideoActionListener {
+public class RecentVideosFragment extends BaseMainFragment implements RecentListAdapterVideoActionListener {
     public static final String TAG = RecentVideosFragment.class.getSimpleName();
 
     @Bind(R.id.ultimate_recycler_view)
@@ -42,10 +44,9 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
     TextView tvnError;
 
     BasicGridLayoutManager mGridLayoutManager;
-    GridVideoAdapter mAdapter = null;
+    RecentListAdapter mAdapter = null;
     private int columns = 2;
-    DataCategoryJSON dataCategory;
-    int pageNumber;
+    String currentUrlGetVideoDetail = "";
 
     public static RecentVideosFragment newInstance() {
         RecentVideosFragment fragment = new RecentVideosFragment();
@@ -64,6 +65,8 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
             tvnError.setVisibility(View.VISIBLE);
             tvnError.setText(getString(R.string.msg_request_login));
             return;
+        } else {
+            requestGetDataProduct();
         }
     }
 
@@ -79,7 +82,7 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_recent_list_video;
+        return R.layout.fragment_grid_video;
     }
 
     @Override
@@ -90,7 +93,7 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
         ultimateRecyclerView.addItemDecoration(
                 new GridDividerDecoration(columns, spacing, includeEdge));
 
-        mAdapter = new GridVideoAdapter(new ArrayList<VideoModel>());
+        mAdapter = new RecentListAdapter();
         mAdapter.setAdapterActionListener(this);
 
         mGridLayoutManager = new BasicGridLayoutManager(getContext(), columns, mAdapter);
@@ -100,41 +103,21 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
         ultimateRecyclerView.setSaveEnabled(true);
         ultimateRecyclerView.setClipToPadding(false);
 
+        ultimateRecyclerView.setAdapter(mAdapter);
+
         ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                pageNumber = 1;
-                requestGetDataProduct();
-            }
-        });
-        // setting load more Recycler View
-        ultimateRecyclerView.reenableLoadmore();
-        ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
-            @Override
-            public void loadMore(int itemsCount, int maxLastVisiblePosition) {
-                requestGetDataProduct();
-            }
-        });
-        ultimateRecyclerView.setAdapter(mAdapter);
-
-        startAnimLoading();
-        AppSession.getCategoryData(new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                stopAnimLoading();
-            }
-
-            @Override
-            public void onSuccess(Object results) {
-                dataCategory = (DataCategoryJSON) results;
+                RecentListManager.getInstance().loadData();
                 requestGetDataProduct();
             }
         });
     }
 
     @Override
-    public void onPlayVideoListener(int position, VideoModel model) {
-        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance(model, true), true);
+    public void onItemClickListener(int position, Object model) {
+        DBRecentVideo video = (DBRecentVideo) model;
+        requestGetVideo(video, false);
     }
 
     void startAnimLoading() {
@@ -149,59 +132,53 @@ public class RecentVideosFragment extends BaseMainFragment implements AdapterVid
     }
 
     void requestGetDataProduct() {
-        if (pageNumber < 1)
-            pageNumber = 1;
-        RPC.requestGetVideoRencent(mAccountDataManager.getAccountID(), pageNumber, new APIResponseListener() {
+
+        startAnimLoading();
+        mAdapter.clear();
+        List<DBRecentVideo> data = RecentListManager.getInstance().getRecentVideo();
+        stopAnimLoading();
+
+        if (data == null || data.isEmpty() || mAdapter == null)
+            return;
+
+        mAdapter.add(data);
+    }
+
+    @Override
+    public void onPlayVideoListener(int position, final DBRecentVideo wishList) {
+        if (wishList == null || wishList.getVideoId() <= 0)
+            return;
+
+        requestGetVideo(wishList, true);
+    }
+
+    void requestGetVideo(final DBRecentVideo video, final boolean isAutoPlay) {
+        if (video == null || video.getId() <= 0)
+            return;
+
+        currentUrlGetVideoDetail = String.format(AppConstant.RELATIVE_URL_VIDEO_BY_ID, video.getVideoId());
+
+        final ProgressDialog loadingDialog = DialogUtil.showLoading(mContext, getString(R.string.msg_loading_common));
+        RPC.requestGetVideoById(currentUrlGetVideoDetail, new APIResponseListener() {
             @Override
             public void onError(String message) {
-                stopAnimLoading();
-
+                DialogUtil.hideLoading(loadingDialog);
             }
 
             @Override
             public void onSuccess(Object results) {
-                stopAnimLoading();
+                DialogUtil.hideLoading(loadingDialog);
 
-                if (ultimateRecyclerView == null)
-                    return;
-                ultimateRecyclerView.setRefreshing(false);
-
-                List<VideoJSON> data = (List<VideoJSON>) results;
-                // check end data
-                if (data == null || data.isEmpty())
-                    return;
-
-                // check first get data
-                if (pageNumber == 1)
-                    mAdapter.clear();
-
-                // update data to view
-                pageNumber++;
-
-                updateGridVideo(data);
+                VideoModel videoModel = new VideoModel((VideoJSON) results);
+                videoModel.setCategoryName(video.getCategory());
+                mHostActivityInterface.addFragment(VideoDetailFragment.newInstance(videoModel, isAutoPlay), true);
             }
         });
-    }
-
-    void updateGridVideo(List<VideoJSON> data) {
-        List<VideoModel> listVideo = new ArrayList<>();
-        for (VideoJSON productModel : data) {
-            VideoModel vModel = new VideoModel(productModel);
-            vModel.setCategoryName(AppUtils.getCategoryName(dataCategory, productModel.categoryId));
-            listVideo.add(vModel);
-        }
-        mAdapter.insert(listVideo);
-    }
-
-    @Override
-    public void onItemClickListener(int position, Object model) {
-        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        RecentListManager.getInstance().cancelRequestRecentVideos();
+        AppRestClient.cancelRequestsByTAG(currentUrlGetVideoDetail);
     }
 }

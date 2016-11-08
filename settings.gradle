@@ -1,1 +1,1 @@
-include ':app', ':CountryCodePicker', ':TagViewLib', ':DaoExampleGenerator', ':fenster-library'
+include ':app', ':CountryCodePicker', ':TagViewLib', ':DaoExampleGenerator', ':vitamio'

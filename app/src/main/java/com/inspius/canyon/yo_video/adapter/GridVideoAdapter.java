@@ -1,30 +1,21 @@
 package com.inspius.canyon.yo_video.adapter;
 
 import android.graphics.Bitmap;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
-import com.inspius.canyon.yo_video.greendao.NewWishList;
-import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.listener.AnimateFirstDisplayListener;
-import com.inspius.canyon.yo_video.model.CategoryJSON;
 import com.inspius.canyon.yo_video.model.VideoModel;
 import com.marshalchen.ultimaterecyclerview.UltimateGridLayoutAdapter;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
-import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -78,7 +69,7 @@ public class GridVideoAdapter extends UltimateGridLayoutAdapter<VideoModel, Grid
         final VideoModel model = getItem(position);
         if (model != null) {
             holder.tvnName.setText(model.getTitle());
-            holder.tvnView.setText(model.getViewNumber());
+            holder.tvnView.setText(model.getViewNumber()+ " views");
             holder.tvnCategory.setText(model.getCategoryName());
             holder.tvnSeries.setText(model.getSeries());
 

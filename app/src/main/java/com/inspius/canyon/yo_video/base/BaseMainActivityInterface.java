@@ -2,6 +2,7 @@ package com.inspius.canyon.yo_video.base;
 
 import com.inspius.canyon.yo_video.api.APIResponseListener;
 import com.inspius.canyon.yo_video.listener.AccountDataListener;
+import com.inspius.canyon.yo_video.model.VideoModel;
 
 /**
  * Created by Billy on 12/9/15.
@@ -26,4 +27,6 @@ public interface BaseMainActivityInterface extends ToolbarDefaultInterface {
     void logout(APIResponseListener listener);
 
     void showInterstitialAds();
+
+    void downloadVideo(VideoModel videoModel);
 }

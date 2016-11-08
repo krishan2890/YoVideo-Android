@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.google-services'
+
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION as int
@@ -39,21 +41,31 @@ android {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
+        exclude 'jsr305_annotations/Jsr305_annotations.gwt.xml'
+
     }
 
     dexOptions {
-        incremental true
         javaMaxHeapSize "4g"
     }
 }
 
 buildscript {
     repositories {
+        jcenter()
+
         maven { url 'https://maven.fabric.io/public' }
     }
 
     dependencies {
         classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'com.google.gms:google-services:3.0.0'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
     }
 }
 
@@ -75,6 +87,8 @@ repositories {
     maven { url "http://jzaccone.github.io/SlidingMenu-aar" }
     maven { url 'https://maven.fabric.io/public' }
     maven { url "http://dl.bintray.com/jjhesk/maven" }
+    maven { url "https://jitpack.io" }
+    maven { url 'https://mvn.jwplayer.com/content/repositories/releases/' }
 }
 
 dependencies {
@@ -146,25 +160,13 @@ dependencies {
     // Youtube SDK
     compile files('libs/YouTubeAndroidPlayerApi.jar')
 
-    // Google Play Service Ads
-    compile 'com.google.android.gms:play-services-ads:8.1.0'
-
     // Crashlytics
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
 
-    // Parse.com
-    compile 'com.parse.bolts:bolts-android:1.+'
-    compile 'com.parse:parse-android:1.+'
-
-    compile project(':fenster-library')
-
     // Http service
     compile 'com.loopj.android:android-async-http:1.4.9'
-
-    // Paypal
-    compile 'com.paypal.sdk:paypal-android-sdk:2.12.4'
 
     compile 'com.squareup.okio:okio:1.1.0'
     compile 'com.squareup.okhttp:okhttp:2.2.0'
@@ -173,4 +175,17 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
+    compile 'com.github.iammert:MusicPlayerView:e3b937c729'
+    compile project(':vitamio')
+
+    // Google Play Service Ads
+    compile 'com.google.firebase:firebase-ads:9.2.1'
+
+    // Google Firebase
+    compile 'com.google.firebase:firebase-messaging:9.2.1'
+
+    // JWPlayer
+    compile 'com.longtailvideo.jwplayer:jwplayer-android-sdk:+'
+
+    compile 'joda-time:joda-time:2.9.2'
 }

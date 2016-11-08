@@ -9,7 +9,6 @@ import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.login.DefaultAudience;
-import com.inspius.canyon.yo_video.helper.ParseUtils;
 import com.inspius.coreapp.config.CoreAppEnums;
 import com.norbsoft.typefacehelper.TypefaceCollection;
 import com.norbsoft.typefacehelper.TypefaceHelper;
@@ -22,6 +21,7 @@ import com.sromku.simple.fb.SimpleFacebook;
 import com.sromku.simple.fb.SimpleFacebookConfiguration;
 
 import io.fabric.sdk.android.Fabric;
+import io.vov.vitamio.Vitamio;
 
 /**
  * Created by Billy on 9/3/15.
@@ -44,8 +44,8 @@ public class GlobalApplication extends Application {
         this.mAppContext = getApplicationContext();
 
         // Initialize Fabric
-//        if (isProductionEnvironment())
-//            Fabric.with(this, new Crashlytics());
+        if (isProductionEnvironment())
+            Fabric.with(this, new Crashlytics());
 
         // Initialize typeface helper
         TypefaceCollection typeface = new TypefaceCollection.Builder()
@@ -62,9 +62,6 @@ public class GlobalApplication extends Application {
 
         // init image loader
         initImageLoader(mAppContext);
-
-        // register with parse
-        ParseUtils.registerParse(this);
 
         MultiDex.install(getBaseContext());
 
@@ -83,6 +80,9 @@ public class GlobalApplication extends Application {
                 .build();
 
         SimpleFacebook.setConfiguration(configuration);
+
+        // init Vitamio
+        Vitamio.isInitialized(this);
     }
 
     @Override

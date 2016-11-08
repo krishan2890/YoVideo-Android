@@ -4,13 +4,10 @@ package com.inspius.canyon.yo_video.app;
  * Created by Billy on 12/1/15.
  */
 public class AppConstant {
-
-    public static int RESPONSE_OK = 1;
-    public static int RESULT_OK = -1;
-    public static int PICK_IMAGE_REQUEST = 1;
     public static int RESPONSE_CODE_SUCCESS = 1;
     public static int REQUEST_ALBUM_PIC = 1;
     public static int LIMIT_PAGE_HOMES = 10;
+    public static int LIMIT_GET_COMMENTS = 10;
 
     /**
      * Static Page
@@ -22,30 +19,28 @@ public class AppConstant {
     /**
      * ID SERVICE
      */
-    public static final String RELATIVE_URL_CUSTOMER = "api/login";
     public static final String RELATIVE_URL_LOGIN = "api/login";
     public static final String RELATIVE_URL_LOGIN_FACE_BOOK = "api/loginFacebook";
     public static final String RELATIVE_URL_REGISTER = "api/register";
     public static final String RELATIVE_URL_FORGOT_PASSWORD = "api/forgot_password";
-    public static final String RELATIVE_URL_CHANGEPASS = "api/change_password";
+    public static final String RELATIVE_URL_CHANGE_PASS = "api/change_password";
     public static final String RELATIVE_URL_UPDATE_STATIC = "api/updateStatistics";
-    public static final String RELATIVE_URL_ADD_WISHLISH = "api/addToWishlist";
-    public static final String RELATIVE_URL_RENCENT = "api/getListRecentVideo/%s/%s/%s";
+
+    public static final String RELATIVE_URL_RECENT = "api/getListRecentVideo/%s/%s/%s";
     public static final String RELATIVE_URL_SEARCH_BY_KEYWORD = "api/getListVideoByKeyword";
     public static final String RELATIVE_URL_CHANGEPROFILE = "api/change_profile";
-    public static final String RELATIVE_URL_CHANGEAVATAR = "api/change_avatar";
-    public static final String RELATIVE_URL_DATA_HOME = "api/getListVideoForHomepage";
+    public static final String RELATIVE_URL_CHANGE_AVATAR = "api/change_avatar";
 
     public static final String RELATIVE_URL_CATEGORIES = "api/categories";
-    public static final String RELATIVE_URL_LIST_VIDEOS = "list-video.json";
-    public static final String RELATIVE_URL_LIST_VIDEOS_VIMEO = "list-video-vimeo.json";
-    public static final String RELATIVE_URL_MORE_VIDEOS = "more-videos.json";
-    public static final String RELATIVE_URL_LIST_NOTIFICATIONS = "list-notifications.json";
     public static final String RELATIVE_URL_VIDEO_CATEGORY = "api/getListVideoByCategory/%s/%s/%s";
     public static final String RELATIVE_URL_VIDEO_BY_ID = "api/getVideoById/%s";
     public static final String RELATIVE_URL_VIDEO_MOST_VIEW= "api/getListVideoMostView/%s/%s";
     public static final String RELATIVE_URL_VIDEO_LATEST= "api/getListVideoLasted/%s/%s";
     public static final String RELATIVE_URL_SERIES = "api/getVideosBySeries";
+    public static final String RELATIVE_URL_GET_COMMENTS = "api/getListCommentVideo/%s/%s/%s";
+    public static final String RELATIVE_URL_INSERT_COMMENT = "api/insertCommentVideo";
+    public static final String RELATIVE_URL_LIKE_VIDEO = "api/likevideo";
+    public static final String RELATIVE_URL_GET_LIKE_STATUS = "api/getLikeVideoStatus/%s";
 
     /**
      * Key Bundle
@@ -80,6 +75,7 @@ public class AppConstant {
      */
     public static final String KEY_ITEM = "element"; // parent node
     public static final String KEY_ID = "id";
+    public static final String HEADER_CUSTOMER_ID = "customer_id";
     public static final String KEY_NAME = "name";
     public static final String KEY_TYPE = "type";
     public static final String KEY_ICON = "icon";
@@ -100,11 +96,16 @@ public class AppConstant {
     public static final String KEY_OLD_PASS= "old_password";
     public static final String KEY_NEW_PASS= "new_password";
     public static final String KEY_VIDEO_ID= "video_id";
+    public static final String KEY_COMMENT_TEXT= "comment_text";
     public static final String KEY_FIELD= "field";
     public static final String KEY_KEYWORD= "keyword";
     public static final String KEY_LIMIT= "limit";
     public static final String KEY_PAGENUMBER= "page";
     public static final String KEY_BUNDLE_SERIES= "series";
 
-
+    /**
+     * Date, Time format
+     */
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd hh:mm:ss";
 }

@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.adapter.GridVideoAdapter;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.AppRestClient;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
@@ -87,18 +88,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        AppSession.getCategoryData(new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                stopAnimLoading();
-            }
-
-            @Override
-            public void onSuccess(Object results) {
-                dataCategory = (DataCategoryJSON) results;
-            }
-        });
+        dataCategory = AppSession.getInstance().getCategoryData();
     }
 
     @Override
@@ -135,7 +125,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
                     callSearchData();
                     String keyword = edtKeyWord.getText().toString();
                     if (!TextUtils.isEmpty(keyword)) {
-                        DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance(mContext).insertKeyword(keyword);
+                        DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance().insertKeyword(keyword);
                         if (dbKeywordSearch != null)
                             prepareTags();
                     }
@@ -150,7 +140,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
                 callSearchData();
                 String keyword = edtKeyWord.getText().toString();
                 if (!TextUtils.isEmpty(keyword)) {
-                    DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance(mContext).insertKeyword(keyword);
+                    DBKeywordSearch dbKeywordSearch = DatabaseManager.getInstance().insertKeyword(keyword);
                     if (dbKeywordSearch != null)
                         prepareTags();
                 }
@@ -231,7 +221,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
             @Override
             public void onTagDeleted(final TagView view, final Tag tag, final int position) {
                 view.remove(position);
-                DatabaseManager.getInstance(mContext).deleteKeywordByName(tag.text);
+                DatabaseManager.getInstance().deleteKeywordByName(tag.text);
                 prepareTags();
             }
         });
@@ -289,7 +279,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     }
 
     private void prepareTags() {
-        List<DBKeywordSearch> keywords = DatabaseManager.getInstance(mContext).listKeyword();
+        List<DBKeywordSearch> keywords = DatabaseManager.getInstance().listKeyword();
         tagList = new ArrayList<>();
         if (keywords != null) {
             for (DBKeywordSearch keyword : keywords) {
@@ -330,7 +320,7 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
         if (avloadingIndicatorView != null)
             avloadingIndicatorView.setVisibility(View.GONE);
     }
-    
+
     void updateDataProduct(List<VideoJSON> data) {
         List<VideoModel> listVideo = new ArrayList<>();
         for (VideoJSON productModel : data) {
@@ -356,7 +346,6 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
     public void onDestroy() {
         super.onDestroy();
 
-        RPC.cancelRequestByTag(AppConstant.RELATIVE_URL_LIST_VIDEOS);
-        RPC.cancelRequestByTag(AppConstant.RELATIVE_URL_MORE_VIDEOS);
+        AppRestClient.cancelRequestsByTAG(AppConstant.RELATIVE_URL_SEARCH_BY_KEYWORD);
     }
 }

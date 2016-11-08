@@ -7,13 +7,13 @@ import android.view.View;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.adapter.GridVideoAdapter;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.AppRestClient;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.app.AppEnum;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
 import com.inspius.canyon.yo_video.helper.AppUtils;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
-import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.listener.AdapterVideoActionListener;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.VideoJSON;
@@ -84,6 +84,15 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
         ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                switch (type) {
+                    case LATEST:
+                        AppSession.getInstance().getListVideoLatest().clear();
+                        break;
+                    case MOST_VIEW:
+                        AppSession.getInstance().getListVideoMostView().clear();
+                        break;
+                }
+
                 pageNumber = 1;
                 requestGetData();
             }
@@ -101,19 +110,15 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
 
         startAnimLoading();
 
-        AppSession.getCategoryData(new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                stopAnimLoading();
-            }
+        dataCategory = AppSession.getInstance().getCategoryData();
+    }
 
-            @Override
-            public void onSuccess(Object results) {
-                dataCategory = (DataCategoryJSON) results;
-                pageNumber = 1;
-                requestGetData();
-            }
-        });
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        pageNumber = 1;
+        requestGetData();
     }
 
     void requestGetData() {
@@ -170,15 +175,6 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
     @Override
     public void onPlayVideoListener(int position, VideoModel model) {
         mHostActivityInterface.addFragment(VideoDetailFragment.newInstance(model, true), true);
-//        Intent intent;
-//        if (model.getVideoType() == AppEnum.VIDEO_TYPE.UPLOAD) {
-//            intent = new Intent(getActivity(), PlayerUploadActivity.class);
-//        } else {
-//            intent = new Intent(getActivity(), PlayerYoutubeActivity.class);
-//        }
-//        intent.putExtra(AppConstant.KEY_BUNDLE_VIDEO, model);
-//
-//        startActivity(intent);
     }
 
     void startAnimLoading() {
@@ -194,6 +190,19 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
     @Override
     public void onItemClickListener(int position, Object model) {
         mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
-        Logger.d("aaaa", String.valueOf(((VideoModel) model).getVideoId()));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        switch (type) {
+            case LATEST:
+                AppRestClient.cancelRequestsByTAG(AppConstant.RELATIVE_URL_VIDEO_LATEST);
+                break;
+            case MOST_VIEW:
+                AppRestClient.cancelRequestsByTAG(AppConstant.RELATIVE_URL_VIDEO_MOST_VIEW);
+                break;
+        }
     }
 }

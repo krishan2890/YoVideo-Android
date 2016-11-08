@@ -91,15 +91,16 @@ public class WebViewPlayVimeoFragment extends BaseFragment {
 //        mActivityInterface.setVisibleHeaderMenu(true);
         webView.loadUrl(urlPage);
 
+        if (webView != null)
+            webView.onResume();
     }
-
 
 
     public void startWebView(String url) {
 
         // Create new webview Client to show progress dialog
         // When opening a link or click on link
-        startAnimLoading();
+
         webView.setVisibility(View.INVISIBLE);
         webView.setWebViewClient(new WebViewClient() {
             //ProgressDialog progressDialog;
@@ -115,6 +116,7 @@ public class WebViewPlayVimeoFragment extends BaseFragment {
             // Show loader on link load
             public void onLoadResource(WebView view, String url) {
                 // show Loading
+                startAnimLoading();
             }
 
             public void onPageFinished(WebView view, String url) {
@@ -163,6 +165,11 @@ public class WebViewPlayVimeoFragment extends BaseFragment {
             webView.onPause();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
-
+        if (webView != null)
+            webView.destroy();
+    }
 }

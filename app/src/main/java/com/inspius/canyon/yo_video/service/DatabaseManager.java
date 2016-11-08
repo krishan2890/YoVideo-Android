@@ -3,14 +3,21 @@ package com.inspius.canyon.yo_video.service;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.util.Log;
 
-
+import com.inspius.canyon.yo_video.app.GlobalApplication;
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearch;
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearchDao;
+import com.inspius.canyon.yo_video.greendao.DBNotification;
+import com.inspius.canyon.yo_video.greendao.DBNotificationDao;
+import com.inspius.canyon.yo_video.greendao.DBRecentVideo;
+import com.inspius.canyon.yo_video.greendao.DBRecentVideoDao;
+import com.inspius.canyon.yo_video.greendao.DBVideoDownload;
+import com.inspius.canyon.yo_video.greendao.DBVideoDownloadDao;
+import com.inspius.canyon.yo_video.greendao.DBWishListVideo;
 import com.inspius.canyon.yo_video.greendao.DaoMaster;
 import com.inspius.canyon.yo_video.greendao.DaoSession;
-import com.inspius.canyon.yo_video.greendao.NewWishList;
-import com.inspius.canyon.yo_video.greendao.NewWishListDao;
+import com.inspius.canyon.yo_video.greendao.DBWishListVideoDao;
 import com.inspius.canyon.yo_video.helper.Logger;
 
 import java.util.ArrayList;
@@ -45,26 +52,15 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     private AsyncSession asyncSession;
     private List<AsyncOperation> completedOperations;
 
-    /**
-     * Constructs a new DatabaseManager with the specified arguments.
-     *
-     * @param context The Android {@link Context}.
-     */
-    public DatabaseManager(final Context context) {
-        this.context = context;
-        mHelper = new DaoMaster.DevOpenHelper(this.context, "-database", null);
+    public DatabaseManager() {
+        this.context = GlobalApplication.getAppContext();
+        mHelper = new DaoMaster.DevOpenHelper(this.context, "-yovideo", null);
         completedOperations = new CopyOnWriteArrayList<AsyncOperation>();
     }
 
-    /**
-     * @param context The Android {@link Context}.
-     * @return this.instance
-     */
-    public static DatabaseManager getInstance(Context context) {
-
-        if (instance == null) {
-            instance = new DatabaseManager(context);
-        }
+    public static IDatabaseManager getInstance() {
+        if (instance == null)
+            instance = new DatabaseManager();
 
         return instance;
     }
@@ -126,8 +122,9 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
             DaoMaster.dropAllTables(database, true); // drops all tables
             mHelper.onCreate(database);              // creates the tables
             asyncSession.deleteAll(DBKeywordSearch.class);    // clear all elements from a table
-//            asyncSession.deleteAll(DBUserDetails.class);
-//            asyncSession.deleteAll(DBPhoneNumber.class);
+            asyncSession.deleteAll(DBNotification.class);
+            asyncSession.deleteAll(DBRecentVideo.class);
+            asyncSession.deleteAll(DBWishListVideo.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -168,7 +165,7 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
         try {
             openReadableDb();
             DBKeywordSearchDao userDao = daoSession.getDBKeywordSearchDao();
-            if (userDao.loadAll().size() > 1000)
+            if (userDao.loadAll().size() > 100)
                 clearKeyword();
 
             QueryBuilder<DBKeywordSearch> queryBuilder = userDao.queryBuilder().orderDesc(DBKeywordSearchDao.Properties.Id).limit(20);
@@ -251,13 +248,13 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     }
 
     @Override
-    public List<NewWishList> listVideoAtWishList(int userID) {
-        List<NewWishList> data = null;
+    public List<DBWishListVideo> listVideoAtWishList(int userID) {
+        List<DBWishListVideo> data = null;
         try {
             openReadableDb();
-            NewWishListDao userDao = daoSession.getNewWishListDao();
+            DBWishListVideoDao userDao = daoSession.getDBWishListVideoDao();
 
-            QueryBuilder<NewWishList> queryBuilder = userDao.queryBuilder().where(NewWishListDao.Properties.UserID.eq(userID)).orderDesc(NewWishListDao.Properties.Id);
+            QueryBuilder<DBWishListVideo> queryBuilder = userDao.queryBuilder().where(DBWishListVideoDao.Properties.UserID.eq(userID)).orderDesc(DBWishListVideoDao.Properties.Id);
             data = queryBuilder.list();
 
             daoSession.clear();
@@ -274,7 +271,7 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     public boolean deleteVideoAtWishList(Long id) {
         try {
             openWritableDb();
-            NewWishListDao userDao = daoSession.getNewWishListDao();
+            DBWishListVideoDao userDao = daoSession.getDBWishListVideoDao();
             userDao.deleteByKey(id);
             daoSession.clear();
             return true;
@@ -288,8 +285,8 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     public void deleteVideoAtWishListByVideoId(Long id) {
         try {
             openWritableDb();
-            NewWishListDao userDao = daoSession.getNewWishListDao();
-            QueryBuilder<NewWishList> queryBuilder = userDao.queryBuilder().where(NewWishListDao.Properties.VideoId.eq(id));
+            DBWishListVideoDao userDao = daoSession.getDBWishListVideoDao();
+            QueryBuilder<DBWishListVideo> queryBuilder = userDao.queryBuilder().where(DBWishListVideoDao.Properties.VideoId.eq(id));
             queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
 
             daoSession.clear();
@@ -299,10 +296,10 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     }
 
     @Override
-    public void deleteVideoAtWishList(NewWishList video) {
+    public void deleteVideoAtWishList(DBWishListVideo video) {
         try {
             openWritableDb();
-            NewWishListDao userDao = daoSession.getNewWishListDao();
+            DBWishListVideoDao userDao = daoSession.getDBWishListVideoDao();
             userDao.delete(video);
             daoSession.clear();
         } catch (Exception e) {
@@ -311,11 +308,11 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
     }
 
     @Override
-    public NewWishList insertVideoToWishList(NewWishList video) {
+    public DBWishListVideo insertVideoToWishList(DBWishListVideo video) {
         try {
             if (video != null) {
                 openWritableDb();
-                NewWishListDao userDao = daoSession.getNewWishListDao();
+                DBWishListVideoDao userDao = daoSession.getDBWishListVideoDao();
                 video.setId(userDao.insert(video));
                 Logger.d(TAG, "Inserted keyword: " + video.getName() + " to the schema.");
                 daoSession.clear();
@@ -331,17 +328,240 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
         long count = 0;
         try {
             openReadableDb();
-            NewWishListDao userDao = daoSession.getNewWishListDao();
-            QueryBuilder<NewWishList> queryBuilder = userDao.queryBuilder().where(NewWishListDao.Properties.VideoId.eq(id));
+            DBWishListVideoDao userDao = daoSession.getDBWishListVideoDao();
+            QueryBuilder<DBWishListVideo> queryBuilder = userDao.queryBuilder().where(DBWishListVideoDao.Properties.VideoId.eq(id));
             count = queryBuilder.count();
 
             daoSession.clear();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (count > 0) {
+        if (count > 0)
             return true;
-        }
+
         return false;
+    }
+
+    /**
+     * Notifications
+     *
+     * @return
+     */
+
+    @Override
+    public List<DBNotification> listNotification(int page) {
+        List<DBNotification> notifications = null;
+        int limit = 20;
+        int offset = limit * page;
+        try {
+            openReadableDb();
+            DBNotificationDao notificationDao = daoSession.getDBNotificationDao();
+            QueryBuilder<DBNotification> queryBuilder = notificationDao.queryBuilder().orderDesc(DBNotificationDao.Properties.Id).limit(limit).offset(offset);
+            notifications = queryBuilder.list();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (notifications == null)
+            notifications = new ArrayList<>();
+        return notifications;
+    }
+
+    @Override
+    public void updateNotification(DBNotification notification) {
+        try {
+            if (notification != null) {
+                openWritableDb();
+                daoSession.update(notification);
+                Logger.d(TAG, "Updated Notification: " + notification.getTitle() + " from the schema.");
+                daoSession.clear();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public DBNotification insertNotification(DBNotification notification) {
+        try {
+            if (notification != null) {
+                openWritableDb();
+                DBNotificationDao userDao = daoSession.getDBNotificationDao();
+                long id = userDao.insert(notification);
+                notification.setId(id);
+                Log.d(TAG, "Inserted notification: " + notification.getTitle() + " to the schema.");
+                daoSession.clear();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return notification;
+    }
+
+    @Override
+    public long getTotalNotificationNotView() {
+        long total = 0;
+        try {
+            openReadableDb();
+            DBNotificationDao notificationDao = daoSession.getDBNotificationDao();
+
+            // QueryBuilder<DBNotification> queryBuilder = notificationDao.queryBuilder().where(DBNotificationDao.Properties.Status.eq(0));
+            total = notificationDao.count();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return total;
+    }
+
+    @Override
+    public DBNotification getNotificationByID(long id) {
+        DBNotification item = null;
+        try {
+            openReadableDb();
+            DBNotificationDao notificationDao = daoSession.getDBNotificationDao();
+            item = notificationDao.load(id);
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return item;
+    }
+
+    /**
+     * Recent videos
+     */
+
+    @Override
+    public void deleteVideoAtRecentListByVideoId(int id) {
+        try {
+            openWritableDb();
+            DBRecentVideoDao userDao = daoSession.getDBRecentVideoDao();
+            QueryBuilder<DBRecentVideo> queryBuilder = userDao.queryBuilder().where(DBRecentVideoDao.Properties.VideoId.eq(id));
+            queryBuilder.buildDelete().executeDeleteWithoutDetachingEntities();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public DBRecentVideo insertVideoToRecentList(DBRecentVideo video) {
+        try {
+            if (video != null) {
+                openWritableDb();
+                DBRecentVideoDao dbDao = daoSession.getDBRecentVideoDao();
+                video.setId(dbDao.insert(video));
+                Logger.d(TAG, "Inserted DBRecentVideo: " + video.getName() + " to the schema.");
+                daoSession.clear();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return video;
+    }
+
+    @Override
+    public List<DBRecentVideo> listVideoAtRecent(int userID) {
+        List<DBRecentVideo> data = null;
+        try {
+            openReadableDb();
+            DBRecentVideoDao dbDao = daoSession.getDBRecentVideoDao();
+
+            QueryBuilder<DBRecentVideo> queryBuilder = dbDao.queryBuilder().where(DBRecentVideoDao.Properties.UserID.eq(userID)).orderDesc(DBRecentVideoDao.Properties.Id);
+            data = queryBuilder.list();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (data != null) {
+            return new ArrayList<>(data);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean deleteVideoAtRecentList(Long id) {
+        try {
+            openWritableDb();
+            DBRecentVideoDao userDao = daoSession.getDBRecentVideoDao();
+            userDao.deleteByKey(id);
+            daoSession.clear();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Download Videos
+     */
+
+    @Override
+    public DBVideoDownload insertVideoToDownloadList(String path, String name, int videoID) {
+        DBVideoDownload video = new DBVideoDownload();
+        video.setTitle(name);
+        video.setPath(path);
+        video.setVideoId(videoID);
+
+        try {
+            if (video != null) {
+                openWritableDb();
+                DBVideoDownloadDao dbDao = daoSession.getDBVideoDownloadDao();
+                video.setId(dbDao.insert(video));
+                Logger.d(TAG, "Inserted DBVideoDownload: " + video.getTitle() + " to the schema.");
+                daoSession.clear();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return video;
+    }
+
+    @Override
+    public List<DBVideoDownload> listVideoDownload(int page) {
+        List<DBVideoDownload> notifications = null;
+        int limit = 10;
+
+        if (page < 1)
+            page = 1;
+        int offset = (page - 1) * limit;
+
+        try {
+            openReadableDb();
+            DBVideoDownloadDao dbDao = daoSession.getDBVideoDownloadDao();
+            QueryBuilder<DBVideoDownload> queryBuilder = dbDao.queryBuilder().orderDesc(DBVideoDownloadDao.Properties.Id).limit(limit).offset(offset);
+            notifications = queryBuilder.list();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (notifications == null)
+            notifications = new ArrayList<>();
+        return notifications;
+    }
+
+    @Override
+    public DBVideoDownload getVideoDownloadByVideoID(int videoID) {
+        DBVideoDownload mVideo = null;
+        try {
+            openReadableDb();
+            DBVideoDownloadDao dbDao = daoSession.getDBVideoDownloadDao();
+            QueryBuilder<DBVideoDownload> queryBuilder = dbDao.queryBuilder().where(DBVideoDownloadDao.Properties.VideoId.eq(videoID)).limit(1);
+            mVideo = queryBuilder.unique();
+
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mVideo;
     }
 }

@@ -76,7 +76,7 @@ public class NotificationUtils {
 //            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 //            mContext.startActivity(intent);
 
-            AppNotificationManager.getInstance().addNotification(notificationJSON);
+//            AppNotificationManager.getInstance().addNotification(notificationJSON);
         }
     }
 

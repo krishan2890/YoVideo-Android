@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 
 import com.inspius.canyon.yo_video.R;
+import com.inspius.canyon.yo_video.api.AppRestClient;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.app.AppEnum;
@@ -73,13 +74,5 @@ public class HomeFragment extends BaseMainFragment {
             viewPager.setAdapter(mAdapter);
             viewPagerTab.setViewPager(viewPager);
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        RPC.cancelRequestByTag(AppConstant.RELATIVE_URL_VIDEO_MOST_VIEW);
-        RPC.cancelRequestByTag(AppConstant.RELATIVE_URL_VIDEO_LATEST);
     }
 }

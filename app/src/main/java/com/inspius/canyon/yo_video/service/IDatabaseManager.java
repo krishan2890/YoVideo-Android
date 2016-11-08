@@ -6,7 +6,10 @@ package com.inspius.canyon.yo_video.service;
 
 
 import com.inspius.canyon.yo_video.greendao.DBKeywordSearch;
-import com.inspius.canyon.yo_video.greendao.NewWishList;
+import com.inspius.canyon.yo_video.greendao.DBNotification;
+import com.inspius.canyon.yo_video.greendao.DBRecentVideo;
+import com.inspius.canyon.yo_video.greendao.DBVideoDownload;
+import com.inspius.canyon.yo_video.greendao.DBWishListVideo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,56 +32,77 @@ public interface IDatabaseManager {
     void dropDatabase();
 
     /**
-     * Insert a user into the DB
+     * Keyword
      *
-     * @param keyword to be inserted
+     * @param keyword
+     * @return
      */
     DBKeywordSearch insertKeyword(DBKeywordSearch keyword);
+
     DBKeywordSearch insertKeyword(String keyword);
 
-    /**
-     * List all the users from the DB
-     *
-     * @return list of keywords
-     */
     ArrayList<DBKeywordSearch> listKeyword();
 
-    /**
-     * Update a keyword from the DB
-     *
-     * @param keyword to be updated
-     */
     void updateKeyword(DBKeywordSearch keyword);
 
-    /**
-     * Delete all Keywords with a certain email from the DB
-     *
-     * @param keyword of users to be deleted
-     */
     List<DBKeywordSearch> getKeywordByName(String keyword);
+
     void deleteKeywordByName(String keyword);
 
-    /**
-     * Delete a Keyword with a certain id from the DB
-     *
-     * @param keywordId of users to be deleted
-     */
     boolean deleteKeywordById(Long keywordId);
 
-    /**
-     * Delete all the keyword from the DB
-     */
     void clearKeyword();
 
-    List<NewWishList> listVideoAtWishList(int userID);
+    /**
+     * WishList
+     *
+     * @param userID
+     * @return
+     */
+    List<DBWishListVideo> listVideoAtWishList(int userID);
 
     boolean deleteVideoAtWishList(Long id);
 
     void deleteVideoAtWishListByVideoId(Long id);
 
-    void deleteVideoAtWishList(NewWishList course);
+    void deleteVideoAtWishList(DBWishListVideo course);
 
-    NewWishList insertVideoToWishList(NewWishList course);
+    DBWishListVideo insertVideoToWishList(DBWishListVideo course);
 
     boolean existVideoAtWithList(Long id);
+
+    /**
+     * Notifications
+     */
+
+    List<DBNotification> listNotification(int page);
+
+    void updateNotification(DBNotification notification);
+
+    DBNotification insertNotification(DBNotification notification);
+
+    long getTotalNotificationNotView();
+
+    DBNotification getNotificationByID(long id);
+
+    /**
+     * Recent Videos
+     */
+    void deleteVideoAtRecentListByVideoId(int id);
+
+    DBRecentVideo insertVideoToRecentList(DBRecentVideo video);
+
+    List<DBRecentVideo> listVideoAtRecent(int userID);
+
+    boolean deleteVideoAtRecentList(Long id);
+
+    /**
+     * Download Videos
+     */
+
+    DBVideoDownload insertVideoToDownloadList(String path, String name, int videoID);
+
+    List<DBVideoDownload> listVideoDownload(int page);
+
+    DBVideoDownload getVideoDownloadByVideoID(int videoID);
 }

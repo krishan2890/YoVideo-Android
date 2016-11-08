@@ -9,6 +9,7 @@ import android.view.View;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.adapter.ListVideoAdapter;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.AppRestClient;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
@@ -118,23 +119,11 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
         });
         ultimateRecyclerView.setAdapter(mAdapter);
 
+        dataCategory = AppSession.getInstance().getCategoryData();
 
+        pageNumber = 1;
         startAnimLoading();
-
-        AppSession.getCategoryData(new APIResponseListener() {
-            @Override
-            public void onError(String message) {
-                stopAnimLoading();
-            }
-
-            @Override
-            public void onSuccess(Object results) {
-                dataCategory = (DataCategoryJSON) results;
-                pageNumber = 1;
-                requestGetDataProduct();
-            }
-        });
-
+        requestGetDataProduct();
     }
 
     @Override
@@ -161,7 +150,7 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
         if (pageNumber < 1)
             pageNumber = 1;
 
-        RPC.requestGetVideosByCategory(categoryModel.id,pageNumber, new APIResponseListener() {
+        RPC.requestGetVideosByCategory(categoryModel.id, pageNumber, new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -201,16 +190,9 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
         mAdapter.add(listVideo);
     }
 
-
-//    @Override
-//    public void loadMore(int itemsCount, int maxLastVisiblePosition) {
-//        requestGetDataProduct();
-//    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RPC.cancelRequestByTag(AppConstant.RELATIVE_URL_LIST_VIDEOS);
-        RPC.cancelRequestByTag(AppConstant.RELATIVE_URL_MORE_VIDEOS);
+        AppRestClient.cancelRequestsByTAG(AppConstant.RELATIVE_URL_VIDEO_CATEGORY);
     }
 }

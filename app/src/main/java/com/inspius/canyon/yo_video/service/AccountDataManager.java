@@ -59,6 +59,7 @@ public class AccountDataManager {
         switch (stateLogin) {
             case NOT_LOGIN:
                 listener.onSuccess(true);
+                RecentListManager.removeInstance();
                 break;
 
             case SYSTEM:
@@ -67,6 +68,8 @@ public class AccountDataManager {
                 SharedPrefUtils.removeFromPrefs(AppConstant.KEY_SHARED_PREF_LOGIN_USERNAME);
                 SharedPrefUtils.removeFromPrefs(AppConstant.KEY_SHARED_PREF_LOGIN_PASSWORD);
                 listener.onSuccess(true);
+
+                RecentListManager.removeInstance();
                 break;
 
             case FACEBOOK:
@@ -179,6 +182,7 @@ public class AccountDataManager {
                 stateLogin = AppEnum.LOGIN_TYPE.NOT_LOGIN;
                 SharedPrefUtils.removeFromPrefs(AppConstant.KEY_SHARED_PREF_LOGIN_FACEBOOK);
                 listener.onSuccess(true);
+                RecentListManager.removeInstance();
             }
         };
 
@@ -222,7 +226,7 @@ public class AccountDataManager {
             @Override
             public void run() {
                 try {
-                    ImageObj imageObj = ImageUtil.getByteImageAvatar(context, data.getData());
+                    ImageObj imageObj = ImageUtil.getOutputMediaFile(context, data.getData());
                     Message msgObj = handler.obtainMessage();
                     Bundle b = new Bundle();
                     b.putSerializable("imageObj", imageObj);
@@ -238,6 +242,9 @@ public class AccountDataManager {
                 @Override
                 public void handleMessage(Message msg) {
                     ImageObj imageObj = (ImageObj) msg.getData().getSerializable("imageObj");
+
+                    if (imageObj == null)
+                        return;
 
                     RPC.requestUpdateAvatar(getAccountID(), imageObj, new APIResponseListener() {
                         @Override
@@ -264,6 +271,8 @@ public class AccountDataManager {
 
         if (listener != null)
             listener.onSuccess(customerModel);
+
+        RecentListManager.newInstance(customerModel.id);
     }
 
     private void parseLoginFacebookSuccess(String accessToken, Object results, AccountDataListener listener) {
@@ -272,6 +281,8 @@ public class AccountDataManager {
 
         if (listener != null)
             listener.onSuccess(customerModel);
+
+        RecentListManager.newInstance(customerModel.id);
     }
 
     public CustomerModel getCustomerModel() {

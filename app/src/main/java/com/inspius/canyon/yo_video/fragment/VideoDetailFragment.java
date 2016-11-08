@@ -1,59 +1,47 @@
 package com.inspius.canyon.yo_video.fragment;
 
-import android.app.Activity;
-import android.app.DownloadManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
-import android.webkit.MimeTypeMap;
-import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.inspius.canyon.yo_video.R;
-import com.inspius.canyon.yo_video.activity.MainActivity;
-import com.inspius.canyon.yo_video.activity.PlayerVimeoActivity;
-import com.inspius.canyon.yo_video.activity.PlayerYoutubeActivity;
+import com.inspius.canyon.yo_video.activity.DailyMotionPlayerActivity;
+import com.inspius.canyon.yo_video.activity.JWPlayerActivity;
+import com.inspius.canyon.yo_video.activity.MusicPlayerActivity;
+import com.inspius.canyon.yo_video.activity.VitamioPlayerActivity;
+import com.inspius.canyon.yo_video.activity.WebViewPlayerActivity;
+import com.inspius.canyon.yo_video.activity.YoutubePlayerActivity;
 import com.inspius.canyon.yo_video.api.APIResponseListener;
+import com.inspius.canyon.yo_video.api.AppRestClient;
 import com.inspius.canyon.yo_video.api.RPC;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.AppConstant;
-import com.inspius.canyon.yo_video.app.AppEnum;
 import com.inspius.canyon.yo_video.base.BaseMainFragment;
-import com.inspius.canyon.yo_video.greendao.NewWishList;
+import com.inspius.canyon.yo_video.greendao.DBVideoDownload;
+import com.inspius.canyon.yo_video.greendao.DBWishListVideo;
 import com.inspius.canyon.yo_video.helper.DialogUtil;
 import com.inspius.canyon.yo_video.helper.Logger;
 import com.inspius.canyon.yo_video.model.VideoModel;
 import com.inspius.canyon.yo_video.service.DatabaseManager;
+import com.inspius.canyon.yo_video.service.DownloadRequestQueue;
 import com.inspius.canyon.yo_video.service.RecentListManager;
 import com.inspius.coreapp.helper.IntentUtils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.paypal.android.sdk.payments.PayPalAuthorization;
-import com.paypal.android.sdk.payments.PayPalFuturePaymentActivity;
-import com.paypal.android.sdk.payments.PayPalOAuthScopes;
-import com.paypal.android.sdk.payments.PayPalProfileSharingActivity;
-import com.paypal.android.sdk.payments.PayPalService;
 
-import org.json.JSONException;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -79,7 +67,6 @@ public class VideoDetailFragment extends BaseMainFragment {
     @Bind(R.id.tvnDescription)
     TextView tvnDescription;
 
-
     @Bind(R.id.tvnViewNumber)
     TextView tvnViewNumber;
 
@@ -88,6 +75,9 @@ public class VideoDetailFragment extends BaseMainFragment {
 
     @Bind(R.id.imvDownload)
     ImageView imvDownload;
+
+    @Bind(R.id.imvLike)
+    ImageView imvLike;
 
     @Bind(R.id.imvThumbnail)
     ImageView imvThumbnail;
@@ -107,7 +97,7 @@ public class VideoDetailFragment extends BaseMainFragment {
     VideoModel videoModel;
     boolean isAutoPlay;
 
-    NewWishList wishList;
+    DBWishListVideo wishList;
     Fragment videoFragment;
     private DisplayImageOptions options;
 
@@ -162,6 +152,8 @@ public class VideoDetailFragment extends BaseMainFragment {
         if (mAdView != null) {
             mAdView.destroy();
         }
+
+        AppRestClient.cancelRequestsByTAG(AppConstant.RELATIVE_URL_UPDATE_STATIC);
     }
 
     @Override
@@ -205,19 +197,21 @@ public class VideoDetailFragment extends BaseMainFragment {
         tvnSeries.setText(videoModel.getSeries());
         tvnAuthor.setText(videoModel.getAuthor());
         tvnDescription.setText(Html.fromHtml(videoModel.getDescription()));
-        tvnViewNumber.setText(videoModel.getViewNumber());
+        tvnViewNumber.setText(videoModel.getViewNumber() + "views");
 
         if (mAccountDataManager.isLogin()) {
             if (wishList != null)
                 imvAddToWishList.setSelected(true);
         }
 
-        RecentListManager recentListManager = RecentListManager.getInstance();
-        if (recentListManager.exitWishList(videoModel.getVideoId()) == null) {
-            recentListManager.addVideo(videoModel);
-        }
-        boolean isWishList = DatabaseManager.getInstance(mContext).existVideoAtWithList((long) videoModel.getVideoId());
+        boolean isWishList = DatabaseManager.getInstance().existVideoAtWithList((long) videoModel.getVideoId());
         updateStateViewWishList(isWishList);
+
+        DBVideoDownload dbVideoDownload = DatabaseManager.getInstance().getVideoDownloadByVideoID(videoModel.getVideoId());
+        if (dbVideoDownload != null)
+            updateStateDownloadButton(true);
+        else
+            updateStateDownloadButton(false);
 
         ImageLoader.getInstance().displayImage(videoModel.getImage(), imvThumbnail, options);
         tvnTime.setText(videoModel.getTimeRemain());
@@ -227,7 +221,7 @@ public class VideoDetailFragment extends BaseMainFragment {
         else
             tvnVip.setVisibility(View.GONE);
 
-        if (AppConfig.SHOW_ADS) {
+        if (AppConfig.SHOW_ADS_BANNER) {
             /**
              * Show Banner Ads
              */
@@ -270,6 +264,7 @@ public class VideoDetailFragment extends BaseMainFragment {
 
         if (isAutoPlay)
             doPlayVideo();
+
         RPC.updateVideoStatic(videoModel.getVideoId(), "view", mAccountDataManager.getAccountID(), new APIResponseListener() {
             @Override
             public void onError(String message) {
@@ -281,62 +276,32 @@ public class VideoDetailFragment extends BaseMainFragment {
                 Logger.d("success", "success");
             }
         });
-    }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == AppConstant.REQUEST_CODE_PROFILE_SHARING) {
-            if (resultCode == Activity.RESULT_OK) {
-                PayPalAuthorization auth =
-                        data.getParcelableExtra(PayPalProfileSharingActivity.EXTRA_RESULT_AUTHORIZATION);
-                if (auth != null) {
-                    try {
-                        Logger.i("ProfileSharingExample", auth.toJSONObject().toString(4));
-
-                        String authorization_code = auth.getAuthorizationCode();
-                        Logger.i("ProfileSharingExample", authorization_code);
-                        sendAuthorizationToServer(auth);
-                        Toast.makeText(
-                                mContext,
-                                "Profile Sharing code received from PayPal", Toast.LENGTH_LONG)
-                                .show();
-
-                    } catch (JSONException e) {
-                        Logger.e("ProfileSharingExample", "an extremely unlikely failure occurred: ");
-                        e.printStackTrace();
-                    }
-                }
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                Logger.i("ProfileSharingExample", "The user canceled.");
-            } else if (resultCode == PayPalFuturePaymentActivity.RESULT_EXTRAS_INVALID) {
-                Logger.i(
-                        "ProfileSharingExample",
-                        "Probably the attempt to previously start the PayPalService had an invalid PayPalConfiguration. Please see the docs.");
-            }
-        }
+        getLikeStatus();
     }
 
     @OnClick(R.id.imvShare)
     void doShare() {
-        if (videoModel == null) {
-            Intent intent = IntentUtils.shareText(getString(R.string.app_name), videoModel.getSocialLink());
-            startActivity(intent);
-        } else {
-            Intent intent = IntentUtils.shareText(getString(R.string.app_name), videoModel.getVideoUrl());
-            startActivity(intent);
-        }
+        if (videoModel == null)
+            return;
+
+        String urlShare = videoModel.getSocialLink();
+        if (TextUtils.isEmpty(urlShare))
+            urlShare = videoModel.getVideoUrl();
+
+        if (TextUtils.isEmpty(urlShare))
+            return;
+
+        Intent intent = IntentUtils.shareText(getString(R.string.app_name), urlShare);
+        startActivity(intent);
 
         RPC.updateVideoStatic(mAccountDataManager.getAccountID(), "share", videoModel.getVideoId(), new APIResponseListener() {
             @Override
             public void onError(String message) {
-                Logger.d("fail", "fail");
             }
 
             @Override
             public void onSuccess(Object results) {
-                Logger.d("success", "success");
             }
         });
     }
@@ -351,11 +316,11 @@ public class VideoDetailFragment extends BaseMainFragment {
 
         boolean isWishList = imvAddToWishList.isSelected();
         if (isWishList) {
-            DatabaseManager.getInstance(mContext).deleteVideoAtWishListByVideoId((long) videoModel.getVideoId());
+            DatabaseManager.getInstance().deleteVideoAtWishListByVideoId((long) videoModel.getVideoId());
         } else {
-            NewWishList dbWishList = new NewWishList();
+            DBWishListVideo dbWishList = new DBWishListVideo();
             dbWishList.setVideoId(videoModel.getVideoId());
-            dbWishList.setCategoryname(videoModel.getCategoryName());
+            dbWishList.setCategory(videoModel.getCategoryName());
             dbWishList.setName(videoModel.getTitle());
             dbWishList.setImage(videoModel.getImage());
             dbWishList.setLink(videoModel.getVideoUrl());
@@ -363,7 +328,7 @@ public class VideoDetailFragment extends BaseMainFragment {
             dbWishList.setView(videoModel.getViewNumber());
             dbWishList.setUserID(mAccountDataManager.getAccountID());
 
-            DatabaseManager.getInstance(mContext).insertVideoToWishList(dbWishList);
+            DatabaseManager.getInstance().insertVideoToWishList(dbWishList);
         }
 
         updateStateViewWishList(!isWishList);
@@ -376,6 +341,14 @@ public class VideoDetailFragment extends BaseMainFragment {
             imvAddToWishList.setSelected(isWishList);
     }
 
+    void updateStateDownloadButton(boolean isDownload) {
+        imvDownload.setSelected(isDownload);
+    }
+
+    void updateStateLikeButton(boolean isLiked) {
+        imvLike.setSelected(isLiked);
+    }
+
     @OnClick(R.id.relativePlay)
     void doPlayVideo() {
         if (videoModel == null)
@@ -384,27 +357,40 @@ public class VideoDetailFragment extends BaseMainFragment {
         if (!isCustomerPlayOrDownloadVideo())
             return;
 
-        Intent intent = null;
-        if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.UPLOAD) {
-            //intent = new Intent(getActivity(), PlayerUploadActivity.class);
-            startActivity(IntentUtils.openVideo(Uri.parse(videoModel.getVideoUrl())));
-            return;
-        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.YOUTUBE)
-            intent = new Intent(getActivity(), PlayerYoutubeActivity.class);
-        else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.VIMEO) {
-//            String urlVimeo = String.format("http://player.vimeo.com/video/%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
-//            String urlVimeo = String.format("%s?player_id=player&autoplay=1&title=0&byline=0&portrait=0&api=1&maxheight=480&maxwidth=800", videoModel.getVideoUrl());
-//            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlVimeo)));
-//            return;
-            intent = new Intent(getActivity(), PlayerVimeoActivity.class);
+        Intent intent;
+        switch (videoModel.getVideoType()) {
+            case YOUTUBE:
+                intent = new Intent(getActivity(), YoutubePlayerActivity.class);
+                break;
 
-        } else if (videoModel.getVideoType() == AppEnum.VIDEO_TYPE.MP3) {
-            startActivity(IntentUtils.openAudio(Uri.parse(videoModel.getVideoUrl())));
-            return;
+            case VIMEO:
+                intent = new Intent(getActivity(), WebViewPlayerActivity.class);
+                break;
+
+            case FACEBOOK:
+                intent = new Intent(getActivity(), WebViewPlayerActivity.class);
+                break;
+
+            case DAILY_MOTION:
+                intent = new Intent(getActivity(), DailyMotionPlayerActivity.class);
+                break;
+
+            case MP3:
+                intent = new Intent(getActivity(), MusicPlayerActivity.class);
+                break;
+
+            case JW_PLAYER:
+                intent = new Intent(getActivity(), JWPlayerActivity.class);
+                break;
+
+            default:
+                intent = new Intent(getActivity(), VitamioPlayerActivity.class);
+                break;
         }
 
-        if (intent == null)
-            return;
+        RecentListManager recentListManager = RecentListManager.getInstance();
+        if (recentListManager != null)
+            recentListManager.addVideo(videoModel);
 
         intent.putExtra(AppConstant.KEY_BUNDLE_VIDEO, videoModel);
         startActivity(intent);
@@ -423,7 +409,7 @@ public class VideoDetailFragment extends BaseMainFragment {
                 DialogUtil.showMessageVip(mContext, getString(R.string.msg_need_vip), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        onPaypalProfileSharing();
+                        // implement payment
                     }
                 });
             }
@@ -434,92 +420,115 @@ public class VideoDetailFragment extends BaseMainFragment {
     }
 
     @OnClick(R.id.tvnSeries)
-    void doClickSeries(){
-        String series=tvnSeries.getText().toString();
-        mHostActivityInterface.addFragment(SeriesFragment.getInstance(videoModel),false);
+    void doClickSeries() {
+        String series = tvnSeries.getText().toString();
+        if (series.equalsIgnoreCase("No Series"))
+            return;
+
+        mHostActivityInterface.addFragment(SeriesFragment.getInstance(videoModel), false);
     }
 
     @OnClick(R.id.imvDownload)
     void doDownload() {
+        if (!mAccountDataManager.isLogin()) {
+            DialogUtil.showMessageBox(mContext, getString(R.string.msg_request_login));
+
+            return;
+        }
+
         if (!isCustomerPlayOrDownloadVideo())
             return;
 
         if (imvDownload.isSelected())
             return;
 
-        imvDownload.setSelected(true);
+        updateStateDownloadButton(true);
         switch (videoModel.getVideoType()) {
             case UPLOAD:
                 /**
                  * Download default Os
                  */
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(videoModel.getVideoUrl()));
-                request.setTitle(videoModel.getTitle());
-                request.setDescription("File is being downloaded...");
-                request.allowScanningByMediaScanner();
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-                String nameOfFile = URLUtil.guessFileName(videoModel.getVideoUrl(), null, MimeTypeMap.getFileExtensionFromUrl(videoModel.getVideoUrl()));
-
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, nameOfFile);
-
-                DownloadManager manager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-                manager.enqueue(request);
+                DownloadRequestQueue.getInstance().downloadVideo(videoModel);
 
                 /**
                  * Custom Download Manager
                  */
 
-//                PendingIntent pendingResult = getActivity().createPendingResult(
-//                        AppConstant.REQUEST_CODE_DOWNLOAD, new Intent(), 0);
-//                Intent intent = new Intent(getActivity(), DownloadIntentService.class);
-//                intent.putExtra(DownloadIntentService.URL_EXTRA, videoModel.getVideoUrl());
-//                intent.putExtra(DownloadIntentService.PENDING_RESULT_EXTRA, pendingResult);
-//                getActivity().startService(intent);
+//                mActivityInterface.downloadVideo(videoModel);
+
                 break;
 
-            case YOUTUBE:
+            case MP3:
+                DownloadRequestQueue.getInstance().downloadVideo(videoModel);
+                break;
 
+            default:
+                mActivityInterface.showCroutonAlert("Download Unsupported File Formats");
                 break;
         }
     }
 
-
-    void onPaypalProfileSharing() {
-        Intent intent = new Intent(mContext, PayPalProfileSharingActivity.class);
-
-        // send the same configuration for restart resiliency
-        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, MainActivity.paypalConfig);
-
-        intent.putExtra(PayPalProfileSharingActivity.EXTRA_REQUESTED_SCOPES, getOauthScopes());
-
-        startActivityForResult(intent, AppConstant.REQUEST_CODE_PROFILE_SHARING);
+    @OnClick(R.id.imvComment)
+    void doComment() {
+        mHostActivityInterface.addFragment(CommentFragment.newInstance(videoModel), true);
     }
 
-    private PayPalOAuthScopes getOauthScopes() {
-        /* create the set of required scopes
-         * Note: see https://developer.paypal.com/docs/integration/direct/identity/attributes/ for mapping between the
-         * attributes you select for this app in the PayPal developer portal and the scopes required here.
-         */
-        Set<String> scopes = new HashSet<>(
-                Arrays.asList(PayPalOAuthScopes.PAYPAL_SCOPE_EMAIL, PayPalOAuthScopes.PAYPAL_SCOPE_ADDRESS));
-        return new PayPalOAuthScopes(scopes);
+    @OnClick(R.id.imvLike)
+    void doLike() {
+        if (!mAccountDataManager.isLogin()) {
+            DialogUtil.showMessageBox(mContext, getString(R.string.msg_request_login));
+            return;
+        }
+
+        RPC.requestLikeVideo(videoModel.getVideoId(), new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                String response = (String) results;
+                try {
+                    JSONObject content = new JSONObject(response);
+                    if (content.getString("action").equalsIgnoreCase("Liked"))
+                        updateStateLikeButton(true);
+                    else
+                        updateStateLikeButton(false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
-    private void sendAuthorizationToServer(PayPalAuthorization authorization) {
 
-        /**
-         * TODO: Send the authorization response to your server, where it can
-         * exchange the authorization code for OAuth access and refresh tokens.
-         *
-         * Your server must then store these tokens, so that your server code
-         * can execute payments for this user in the future.
-         *
-         * A more complete example that includes the required app-server to
-         * PayPal-server integration is available from
-         * https://github.com/paypal/rest-api-sdk-python/tree/master/samples/mobile_backend
-         */
+    void getLikeStatus() {
+        if (!mAccountDataManager.isLogin()) {
+            updateStateLikeButton(false);
+            return;
+        }
 
-        mAccountDataManager.setIsVipAccount(true);
+        RPC.requestGetLikeStatusVideo(videoModel.getVideoId(), new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                String response = (String) results;
+                try {
+                    JSONObject content = new JSONObject(response);
+                    if (content.getString("action").equalsIgnoreCase("Liked"))
+                        updateStateLikeButton(true);
+                    else
+                        updateStateLikeButton(false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

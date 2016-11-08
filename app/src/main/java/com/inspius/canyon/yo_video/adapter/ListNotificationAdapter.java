@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.inspius.canyon.yo_video.R;
+import com.inspius.canyon.yo_video.greendao.DBNotification;
 import com.inspius.canyon.yo_video.listener.AdapterActionListener;
 import com.inspius.canyon.yo_video.model.NotificationJSON;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
@@ -20,7 +21,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ListNotificationAdapter extends UltimateViewAdapter<ListNotificationAdapter.HolderListCell> {
-    private List<NotificationJSON> mItems;
+    private List<DBNotification> mItems;
     AdapterActionListener listener;
 
     public ListNotificationAdapter() {
@@ -41,15 +42,10 @@ public class ListNotificationAdapter extends UltimateViewAdapter<ListNotificatio
 
     @Override
     public void onBindViewHolder(final HolderListCell holder, final int position) {
-        final NotificationJSON model = getItem(position);
+        final DBNotification model = getItem(position);
         if (model != null) {
-            holder.tvnTitle.setText(model.title);
-            holder.tvnDescription.setText(model.message);
-
-            if (model.status == 1)
-                holder.tvnTitle.setTypeface(null, Typeface.NORMAL);
-            else
-                holder.tvnTitle.setTypeface(null, Typeface.BOLD);
+            holder.tvnTitle.setText(model.getTitle());
+            holder.tvnDescription.setText(model.getMessage());
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -62,7 +58,7 @@ public class ListNotificationAdapter extends UltimateViewAdapter<ListNotificatio
     }
 
 
-    public void add(List<NotificationJSON> listData) {
+    public void add(List<DBNotification> listData) {
         mItems.addAll(listData);
         notifyDataSetChanged();
     }
@@ -119,7 +115,7 @@ public class ListNotificationAdapter extends UltimateViewAdapter<ListNotificatio
         }
     }
 
-    public NotificationJSON getItem(int position) {
+    public DBNotification getItem(int position) {
         if (customHeaderView != null)
             position--;
         if (position < mItems.size())

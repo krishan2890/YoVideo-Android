@@ -4,10 +4,13 @@ package com.inspius.canyon.yo_video.api;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.GlobalApplication;
 import com.inspius.canyon.yo_video.helper.Logger;
+import com.inspius.canyon.yo_video.service.AccountDataManager;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.ResponseHandlerInterface;
+import com.loopj.android.http.SyncHttpClient;
 
 import java.io.IOException;
 
@@ -20,13 +23,14 @@ public class AppRestClient {
     public static final String TAG = AppRestClient.class.getSimpleName();
 
     private static AsyncHttpClient client = new AsyncHttpClient();
+    private static AsyncHttpClient synClient = new SyncHttpClient();
+
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String HEADER_APP_ID = "AppId";
     private static final String HEADER_BASIC = "basic";
 
     public static void initAsyncHttpClient() {
-//        client.setBasicAuth("username","password/token");
-
+        client.setBasicAuth("username", "password/token");
     }
 
     public static void cancelAllRequests() {
@@ -38,12 +42,20 @@ public class AppRestClient {
         client.cancelRequestsByTAG(TAG, true);
     }
 
+    public static void cancelAllRequestsSyncHttpClient() {
+        synClient.cancelAllRequests(true);
+    }
+
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        client.get(GlobalApplication.getAppContext(), getAbsoluteUrl(url), params, responseHandler).setTag(url);
+        client.get(getAbsoluteUrl(url), params, responseHandler).setTag(url);
+    }
+
+    public static void download(String url, FileAsyncHttpResponseHandler responseHandler) {
+        synClient.get(GlobalApplication.getAppContext(), url, responseHandler).setTag(url);
     }
 
     public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        client.post(GlobalApplication.getAppContext(), getAbsoluteUrl(url), params,responseHandler).setTag(url);
+        client.post(getAbsoluteUrl(url), params, responseHandler).setTag(url);
     }
 
     public static void put(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
@@ -74,4 +86,11 @@ public class AppRestClient {
         return url;
     }
 
+    public static void addHeader(String header, String value) {
+        client.addHeader(header, value);
+    }
+
+    public static void removeHeader(String header) {
+        client.removeHeader(header);
+    }
 }
