@@ -7,6 +7,7 @@ public class AppConstant {
     public static int RESPONSE_CODE_SUCCESS = 1;
     public static int REQUEST_ALBUM_PIC = 1;
     public static int LIMIT_PAGE_HOMES = 10;
+    public static int LIMIT_GET_COMMENTS = 10;
 
     /**
      * Static Page
@@ -36,6 +37,10 @@ public class AppConstant {
     public static final String RELATIVE_URL_VIDEO_MOST_VIEW= "api/getListVideoMostView/%s/%s";
     public static final String RELATIVE_URL_VIDEO_LATEST= "api/getListVideoLasted/%s/%s";
     public static final String RELATIVE_URL_SERIES = "api/getVideosBySeries";
+    public static final String RELATIVE_URL_GET_COMMENTS = "api/getListCommentVideo/%s/%s/%s";
+    public static final String RELATIVE_URL_INSERT_COMMENT = "api/insertCommentVideo";
+    public static final String RELATIVE_URL_LIKE_VIDEO = "api/likevideo";
+    public static final String RELATIVE_URL_GET_LIKE_STATUS = "api/getLikeVideoStatus/%s";
 
     /**
      * Key Bundle
@@ -70,6 +75,7 @@ public class AppConstant {
      */
     public static final String KEY_ITEM = "element"; // parent node
     public static final String KEY_ID = "id";
+    public static final String HEADER_CUSTOMER_ID = "customer_id";
     public static final String KEY_NAME = "name";
     public static final String KEY_TYPE = "type";
     public static final String KEY_ICON = "icon";
@@ -90,9 +96,16 @@ public class AppConstant {
     public static final String KEY_OLD_PASS= "old_password";
     public static final String KEY_NEW_PASS= "new_password";
     public static final String KEY_VIDEO_ID= "video_id";
+    public static final String KEY_COMMENT_TEXT= "comment_text";
     public static final String KEY_FIELD= "field";
     public static final String KEY_KEYWORD= "keyword";
     public static final String KEY_LIMIT= "limit";
     public static final String KEY_PAGENUMBER= "page";
     public static final String KEY_BUNDLE_SERIES= "series";
+
+    /**
+     * Date, Time format
+     */
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd hh:mm:ss";
 }

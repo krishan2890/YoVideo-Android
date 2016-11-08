@@ -111,6 +111,7 @@
     <string name="msg_forgot_pass_loading">Forgetting Password...</string>
     <string name="msg_change_pass_loading">Changing Password...</string>
     <string name="msg_updating_loading">Updating...</string>
+    <string name="msg_loading">Loading... Please wait</string>
     <string name="msg_change_pass_success">Password Changed Successful</string>
     <string name="msg_update_acc_success">Customer Info Updated Successful</string>
     <string name="msg_cannot_sign_in">Cannot sign in</string>

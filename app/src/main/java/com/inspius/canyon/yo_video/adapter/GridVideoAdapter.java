@@ -69,7 +69,7 @@ public class GridVideoAdapter extends UltimateGridLayoutAdapter<VideoModel, Grid
         final VideoModel model = getItem(position);
         if (model != null) {
             holder.tvnName.setText(model.getTitle());
-            holder.tvnView.setText(model.getViewNumber());
+            holder.tvnView.setText(model.getViewNumber()+ " views");
             holder.tvnCategory.setText(model.getCategoryName());
             holder.tvnSeries.setText(model.getSeries());
 

@@ -168,9 +168,6 @@ dependencies {
     // Http service
     compile 'com.loopj.android:android-async-http:1.4.9'
 
-    // Paypal
-    compile 'com.paypal.sdk:paypal-android-sdk:2.12.4'
-
     compile 'com.squareup.okio:okio:1.1.0'
     compile 'com.squareup.okhttp:okhttp:2.2.0'
 
@@ -189,4 +186,6 @@ dependencies {
 
     // JWPlayer
     compile 'com.longtailvideo.jwplayer:jwplayer-android-sdk:+'
+
+    compile 'joda-time:joda-time:2.9.2'
 }

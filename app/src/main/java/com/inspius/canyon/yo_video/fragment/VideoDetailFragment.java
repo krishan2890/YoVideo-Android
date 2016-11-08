@@ -1,6 +1,5 @@
 package com.inspius.canyon.yo_video.fragment;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -12,7 +11,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -20,7 +18,6 @@ import com.google.android.gms.ads.AdView;
 import com.inspius.canyon.yo_video.R;
 import com.inspius.canyon.yo_video.activity.DailyMotionPlayerActivity;
 import com.inspius.canyon.yo_video.activity.JWPlayerActivity;
-import com.inspius.canyon.yo_video.activity.MainActivity;
 import com.inspius.canyon.yo_video.activity.MusicPlayerActivity;
 import com.inspius.canyon.yo_video.activity.VitamioPlayerActivity;
 import com.inspius.canyon.yo_video.activity.WebViewPlayerActivity;
@@ -43,17 +40,8 @@ import com.inspius.coreapp.helper.IntentUtils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.paypal.android.sdk.payments.PayPalAuthorization;
-import com.paypal.android.sdk.payments.PayPalFuturePaymentActivity;
-import com.paypal.android.sdk.payments.PayPalOAuthScopes;
-import com.paypal.android.sdk.payments.PayPalProfileSharingActivity;
-import com.paypal.android.sdk.payments.PayPalService;
 
-import org.json.JSONException;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -87,6 +75,9 @@ public class VideoDetailFragment extends BaseMainFragment {
 
     @Bind(R.id.imvDownload)
     ImageView imvDownload;
+
+    @Bind(R.id.imvLike)
+    ImageView imvLike;
 
     @Bind(R.id.imvThumbnail)
     ImageView imvThumbnail;
@@ -285,41 +276,8 @@ public class VideoDetailFragment extends BaseMainFragment {
                 Logger.d("success", "success");
             }
         });
-    }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == AppConstant.REQUEST_CODE_PROFILE_SHARING) {
-            if (resultCode == Activity.RESULT_OK) {
-                PayPalAuthorization auth =
-                        data.getParcelableExtra(PayPalProfileSharingActivity.EXTRA_RESULT_AUTHORIZATION);
-                if (auth != null) {
-                    try {
-                        Logger.i("ProfileSharingExample", auth.toJSONObject().toString(4));
-
-                        String authorization_code = auth.getAuthorizationCode();
-                        Logger.i("ProfileSharingExample", authorization_code);
-                        sendAuthorizationToServer(auth);
-                        Toast.makeText(
-                                mContext,
-                                "Profile Sharing code received from PayPal", Toast.LENGTH_LONG)
-                                .show();
-
-                    } catch (JSONException e) {
-                        Logger.e("ProfileSharingExample", "an extremely unlikely failure occurred: ");
-                        e.printStackTrace();
-                    }
-                }
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                Logger.i("ProfileSharingExample", "The user canceled.");
-            } else if (resultCode == PayPalFuturePaymentActivity.RESULT_EXTRAS_INVALID) {
-                Logger.i(
-                        "ProfileSharingExample",
-                        "Probably the attempt to previously start the PayPalService had an invalid PayPalConfiguration. Please see the docs.");
-            }
-        }
+        getLikeStatus();
     }
 
     @OnClick(R.id.imvShare)
@@ -387,6 +345,10 @@ public class VideoDetailFragment extends BaseMainFragment {
         imvDownload.setSelected(isDownload);
     }
 
+    void updateStateLikeButton(boolean isLiked) {
+        imvLike.setSelected(isLiked);
+    }
+
     @OnClick(R.id.relativePlay)
     void doPlayVideo() {
         if (videoModel == null)
@@ -447,7 +409,7 @@ public class VideoDetailFragment extends BaseMainFragment {
                 DialogUtil.showMessageVip(mContext, getString(R.string.msg_need_vip), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        onPaypalProfileSharing();
+                        // implement payment
                     }
                 });
             }
@@ -507,41 +469,66 @@ public class VideoDetailFragment extends BaseMainFragment {
         }
     }
 
-    void onPaypalProfileSharing() {
-        Intent intent = new Intent(mContext, PayPalProfileSharingActivity.class);
-
-        // send the same configuration for restart resiliency
-        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, MainActivity.paypalConfig);
-
-        intent.putExtra(PayPalProfileSharingActivity.EXTRA_REQUESTED_SCOPES, getOauthScopes());
-
-        startActivityForResult(intent, AppConstant.REQUEST_CODE_PROFILE_SHARING);
+    @OnClick(R.id.imvComment)
+    void doComment() {
+        mHostActivityInterface.addFragment(CommentFragment.newInstance(videoModel), true);
     }
 
-    private PayPalOAuthScopes getOauthScopes() {
-        /* create the set of required scopes
-         * Note: see https://developer.paypal.com/docs/integration/direct/identity/attributes/ for mapping between the
-         * attributes you select for this app in the PayPal developer portal and the scopes required here.
-         */
-        Set<String> scopes = new HashSet<>(
-                Arrays.asList(PayPalOAuthScopes.PAYPAL_SCOPE_EMAIL, PayPalOAuthScopes.PAYPAL_SCOPE_ADDRESS));
-        return new PayPalOAuthScopes(scopes);
+    @OnClick(R.id.imvLike)
+    void doLike() {
+        if (!mAccountDataManager.isLogin()) {
+            DialogUtil.showMessageBox(mContext, getString(R.string.msg_request_login));
+            return;
+        }
+
+        RPC.requestLikeVideo(videoModel.getVideoId(), new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                String response = (String) results;
+                try {
+                    JSONObject content = new JSONObject(response);
+                    if (content.getString("action").equalsIgnoreCase("Liked"))
+                        updateStateLikeButton(true);
+                    else
+                        updateStateLikeButton(false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
-    private void sendAuthorizationToServer(PayPalAuthorization authorization) {
 
-        /**
-         * TODO: Send the authorization response to your server, where it can
-         * exchange the authorization code for OAuth access and refresh tokens.
-         *
-         * Your server must then store these tokens, so that your server code
-         * can execute payments for this user in the future.
-         *
-         * A more complete example that includes the required app-server to
-         * PayPal-server integration is available from
-         * https://github.com/paypal/rest-api-sdk-python/tree/master/samples/mobile_backend
-         */
+    void getLikeStatus() {
+        if (!mAccountDataManager.isLogin()) {
+            updateStateLikeButton(false);
+            return;
+        }
 
-        mAccountDataManager.setIsVipAccount(true);
+        RPC.requestGetLikeStatusVideo(videoModel.getVideoId(), new APIResponseListener() {
+            @Override
+            public void onError(String message) {
+
+            }
+
+            @Override
+            public void onSuccess(Object results) {
+                String response = (String) results;
+                try {
+                    JSONObject content = new JSONObject(response);
+                    if (content.getString("action").equalsIgnoreCase("Liked"))
+                        updateStateLikeButton(true);
+                    else
+                        updateStateLikeButton(false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

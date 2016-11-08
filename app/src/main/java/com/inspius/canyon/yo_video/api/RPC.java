@@ -8,10 +8,12 @@ import com.inspius.canyon.yo_video.app.AppConstant;
 import com.inspius.canyon.yo_video.app.AppEnum;
 import com.inspius.canyon.yo_video.app.GlobalApplication;
 import com.inspius.canyon.yo_video.helper.Logger;
+import com.inspius.canyon.yo_video.model.CommentJSON;
 import com.inspius.canyon.yo_video.model.CustomerModel;
 import com.inspius.canyon.yo_video.model.DataCategoryJSON;
 import com.inspius.canyon.yo_video.model.ImageObj;
 import com.inspius.canyon.yo_video.model.VideoJSON;
+import com.inspius.canyon.yo_video.service.AccountDataManager;
 import com.inspius.canyon.yo_video.service.AppSession;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -614,6 +616,155 @@ public class RPC {
         });
     }
 
+    public static void requestGetListComment(int videoID, int pageNumber, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_GET_COMMENTS;
+        final String url = String.format(tag, videoID, pageNumber, AppConstant.LIMIT_PAGE_HOMES);
+
+        AppRestClient.get(url, null, new BaseJsonHttpResponseHandler<JSONObject>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, JSONObject response) {
+
+                try {
+                    boolean checkData = parseResponseData(response, listener);
+                    if (checkData) {
+                        Type type = new TypeToken<List<CommentJSON>>() {
+                        }.getType();
+                        List<CommentJSON> listData = new Gson().fromJson(response.getString("content"), type);
+
+                        listener.onSuccess(listData);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    listener.onError("Error Parse Data");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, JSONObject errorResponse) {
+                parseError(statusCode, headers, throwable, rawJsonData, null, listener);
+            }
+
+            @Override
+            protected JSONObject parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                JSONObject jsonObject = new JSONObject(rawJsonData);
+                return jsonObject;
+            }
+        });
+    }
+
+    public static void requestPostCommentVideo(final int videoID, String comment, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_INSERT_COMMENT;
+
+        RequestParams params = new RequestParams();
+        params.put(AppConstant.KEY_VIDEO_ID, videoID);
+        params.put(AppConstant.KEY_COMMENT_TEXT, comment);
+
+        setHeaderCustomer();
+
+        AppRestClient.post(tag, params, new BaseJsonHttpResponseHandler<JSONObject>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, JSONObject response) {
+
+                try {
+                    boolean checkData = parseResponseData(response, listener);
+                    if (checkData) {
+
+                        CommentJSON comment = new Gson().fromJson(response.getString("content"), CommentJSON.class);
+
+                        listener.onSuccess(comment);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    listener.onError("Error Parse Data");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, JSONObject errorResponse) {
+                parseError(statusCode, headers, throwable, rawJsonData, null, listener);
+            }
+
+            @Override
+            protected JSONObject parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                JSONObject jsonObject = new JSONObject(rawJsonData);
+                return jsonObject;
+            }
+        });
+    }
+
+    public static void requestLikeVideo(final int videoID, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_LIKE_VIDEO;
+
+        RequestParams params = new RequestParams();
+        params.put(AppConstant.KEY_VIDEO_ID, videoID);
+
+        setHeaderCustomer();
+
+        AppRestClient.post(tag, params, new BaseJsonHttpResponseHandler<JSONObject>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, JSONObject response) {
+
+                try {
+                    boolean checkData = parseResponseData(response, listener);
+                    if (checkData) {
+                        if (listener != null)
+                            listener.onSuccess(response.getString("content"));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    listener.onError("Error Parse Data");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, JSONObject errorResponse) {
+                parseError(statusCode, headers, throwable, rawJsonData, null, listener);
+            }
+
+            @Override
+            protected JSONObject parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                JSONObject jsonObject = new JSONObject(rawJsonData);
+                return jsonObject;
+            }
+        });
+    }
+
+    public static void requestGetLikeStatusVideo(final int videoID, final APIResponseListener listener) {
+        final String tag = AppConstant.RELATIVE_URL_GET_LIKE_STATUS;
+        String url = String.format(tag, videoID);
+
+        setHeaderCustomer();
+
+        AppRestClient.get(url, null, new BaseJsonHttpResponseHandler<JSONObject>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, JSONObject response) {
+
+                try {
+                    boolean checkData = parseResponseData(response, listener);
+                    if (checkData) {
+                        if (listener != null)
+                            listener.onSuccess(response.getString("content"));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    listener.onError("Error Parse Data");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, JSONObject errorResponse) {
+                parseError(statusCode, headers, throwable, rawJsonData, null, listener);
+            }
+
+            @Override
+            protected JSONObject parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                JSONObject jsonObject = new JSONObject(rawJsonData);
+                return jsonObject;
+            }
+        });
+    }
+
     /* ======================================= VIDEOS END=======================================*/
 
     /* ======================================= OTHER =======================================*/
@@ -719,6 +870,13 @@ public class RPC {
         return true;
     }
 
+    private static void setHeaderCustomer() {
+        int customerID = AccountDataManager.getInstance().getAccountID();
+        if (AccountDataManager.getInstance().isLogin() && customerID > 0)
+            AppRestClient.addHeader(AppConstant.HEADER_CUSTOMER_ID, String.valueOf(customerID));
+        else
+            AppRestClient.removeHeader(AppConstant.HEADER_CUSTOMER_ID);
+    }
 
     /* ======================================= COMMON END=======================================*/
 }

@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName;
 public class CustomerModel {
     public int id;
     public String email;
+    public String username;
     public String avatar;
 
     @SerializedName("firstname")
@@ -25,6 +26,4 @@ public class CustomerModel {
     public String country;
     public String zip;
     public int vip;
-
-    public boolean isLoginAsFacebook;
 }

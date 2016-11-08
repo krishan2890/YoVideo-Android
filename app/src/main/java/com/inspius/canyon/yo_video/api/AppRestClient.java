@@ -4,6 +4,7 @@ package com.inspius.canyon.yo_video.api;
 import com.inspius.canyon.yo_video.app.AppConfig;
 import com.inspius.canyon.yo_video.app.GlobalApplication;
 import com.inspius.canyon.yo_video.helper.Logger;
+import com.inspius.canyon.yo_video.service.AccountDataManager;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
@@ -29,7 +30,7 @@ public class AppRestClient {
     private static final String HEADER_BASIC = "basic";
 
     public static void initAsyncHttpClient() {
-//        client.setBasicAuth("username","password/token");
+        client.setBasicAuth("username", "password/token");
     }
 
     public static void cancelAllRequests() {
@@ -85,4 +86,11 @@ public class AppRestClient {
         return url;
     }
 
+    public static void addHeader(String header, String value) {
+        client.addHeader(header, value);
+    }
+
+    public static void removeHeader(String header) {
+        client.removeHeader(header);
+    }
 }

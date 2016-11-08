@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -35,9 +34,6 @@ import com.inspius.canyon.yo_video.service.DatabaseManager;
 import com.inspius.canyon.yo_video.service.DownloadRequestQueue;
 import com.inspius.canyon.yo_video.service.DownloadVideoService;
 import com.inspius.coreapp.CoreAppActivity;
-import com.inspius.coreapp.config.CoreAppConfig;
-import com.paypal.android.sdk.payments.PayPalConfiguration;
-import com.paypal.android.sdk.payments.PayPalService;
 import com.sromku.simple.fb.SimpleFacebook;
 
 import java.util.Locale;
@@ -49,13 +45,6 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class MainActivity extends CoreAppActivity implements BaseMainActivityInterface {
-    public static PayPalConfiguration paypalConfig = new PayPalConfiguration()
-            .environment(AppConfig.CONFIG_ENVIRONMENT)
-            .clientId(AppConfig.CONFIG_CLIENT_ID)
-            .merchantName(AppConfig.PAYPAL_CONFIG_MERCHANT_NAME)
-            .merchantPrivacyPolicyUri(Uri.parse(AppConfig.PAYPAL_CONFIG_PRIVACY_POLICY))
-            .merchantUserAgreementUri(Uri.parse(AppConfig.PAYPAL_CONFIG_USER_AGREEMENT));
-
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
 
@@ -127,7 +116,6 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
 
     @Override
     protected void onDestroy() {
-        stopService(new Intent(this, PayPalService.class));
         DownloadRequestQueue.getInstance().cancelAllDownload();
 
         super.onDestroy();
