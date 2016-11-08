@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "68152209146",
-    "firebase_url": "https://yovideo-da3d2.firebaseio.com",
-    "project_id": "yovideo-da3d2",
-    "storage_bucket": "yovideo-da3d2.appspot.com"
+    "project_number": "693897667368",
+    "firebase_url": "https://yovideo-86563.firebaseio.com",
+    "project_id": "yovideo-86563",
+    "storage_bucket": "yovideo-86563.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:68152209146:android:25512f129526ead6",
+        "mobilesdk_app_id": "1:693897667368:android:53b940ac7898c6f5",
         "android_client_info": {
-          "package_name": "com.inspius.canyon.yo_video"
+          "package_name": "com.inspius.yo_video"
         }
       },
       "oauth_client": [
         {
-          "client_id": "68152209146-9fjt21tj61at2ge2jipasb1f98v5jcm0.apps.googleusercontent.com",
+          "client_id": "693897667368-0nhrgeko8hf0cjb776j2812ojhsu2ba2.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDFxZ1SYaasKECC7FJJgGW4FvChM-eG_2E"
+          "current_key": "AIzaSyDVorlVyk5-EG5G20inZGSoIZOqhJtGl5Q"
         }
       ],
       "services": {
