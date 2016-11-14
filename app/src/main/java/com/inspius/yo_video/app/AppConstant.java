@@ -34,8 +34,8 @@ public class AppConstant {
     public static final String RELATIVE_URL_CATEGORIES = "api/categories";
     public static final String RELATIVE_URL_VIDEO_CATEGORY = "api/getListVideoByCategory/%s/%s/%s";
     public static final String RELATIVE_URL_VIDEO_BY_ID = "api/getVideoById/%s";
-    public static final String RELATIVE_URL_VIDEO_MOST_VIEW= "api/getListVideoMostView/%s/%s";
-    public static final String RELATIVE_URL_VIDEO_LATEST= "api/getListVideoLasted/%s/%s";
+    public static final String RELATIVE_URL_VIDEO_MOST_VIEW = "api/getListVideoMostView/%s/%s";
+    public static final String RELATIVE_URL_VIDEO_LATEST = "api/getListVideoLasted/%s/%s";
     public static final String RELATIVE_URL_SERIES = "api/getVideosBySeries";
     public static final String RELATIVE_URL_GET_COMMENTS = "api/getListCommentVideo/%s/%s/%s";
     public static final String RELATIVE_URL_INSERT_COMMENT = "api/insertCommentVideo";
@@ -53,8 +53,11 @@ public class AppConstant {
     public static final String KEY_BUNDLE_TITLE = "title";
     public static final String KEY_BUNDLE_OPEN_REGISTER = "open_register";
     public static final String KEY_BUNDLE_VIDEO_YOUTUBE_ID = "KEY_VIDEO_ID";
-    public static final String KEY_BUNDLE_NOTIFICATION_CONTENT = "content";
     public static final String KEY_BUNDLE_TYPE = "type";
+
+    public static final String KEY_NOTIFICATION_TITLE = "notification_title";
+    public static final String KEY_NOTIFICATION_MESSAGE = "notification_message";
+    public static final String KEY_NOTIFICATION_CONTENT = "notification_content";
     /**
      * SharedPreferences
      */
@@ -80,28 +83,28 @@ public class AppConstant {
     public static final String KEY_TYPE = "type";
     public static final String KEY_ICON = "icon";
     public static final String KEY_STATUS = "status";
-    public static final String KEY_USERNAME= "username";
-    public static final String KEY_ACCESST_TOKEN= "access-token";
-    public static final String KEY_PASSWORD= "password";
-    public static final String KEY_EMAIL= "email";
-    public static final String KEY_USER_ID= "user_id";
-    public static final String KEY_FIRSTNAME= "firstname";
-    public static final String KEY_LASTNAME= "lastname";
-    public static final String KEY_PHONE_NUMBER= "phonenumber";
-    public static final String KEY_ADDRESS= "address";
-    public static final String KEY_CITY= "city";
-    public static final String KEY_COUNTRY= "country";
-    public static final String KEY_ZIP= "zip";
-    public static final String KEY_AVATAR= "avatar";
-    public static final String KEY_OLD_PASS= "old_password";
-    public static final String KEY_NEW_PASS= "new_password";
-    public static final String KEY_VIDEO_ID= "video_id";
-    public static final String KEY_COMMENT_TEXT= "comment_text";
-    public static final String KEY_FIELD= "field";
-    public static final String KEY_KEYWORD= "keyword";
-    public static final String KEY_LIMIT= "limit";
-    public static final String KEY_PAGENUMBER= "page";
-    public static final String KEY_BUNDLE_SERIES= "series";
+    public static final String KEY_USERNAME = "username";
+    public static final String KEY_ACCESST_TOKEN = "access-token";
+    public static final String KEY_PASSWORD = "password";
+    public static final String KEY_EMAIL = "email";
+    public static final String KEY_USER_ID = "user_id";
+    public static final String KEY_FIRSTNAME = "firstname";
+    public static final String KEY_LASTNAME = "lastname";
+    public static final String KEY_PHONE_NUMBER = "phonenumber";
+    public static final String KEY_ADDRESS = "address";
+    public static final String KEY_CITY = "city";
+    public static final String KEY_COUNTRY = "country";
+    public static final String KEY_ZIP = "zip";
+    public static final String KEY_AVATAR = "avatar";
+    public static final String KEY_OLD_PASS = "old_password";
+    public static final String KEY_NEW_PASS = "new_password";
+    public static final String KEY_VIDEO_ID = "video_id";
+    public static final String KEY_COMMENT_TEXT = "comment_text";
+    public static final String KEY_FIELD = "field";
+    public static final String KEY_KEYWORD = "keyword";
+    public static final String KEY_LIMIT = "limit";
+    public static final String KEY_PAGENUMBER = "page";
+    public static final String KEY_BUNDLE_SERIES = "series";
 
     /**
      * Date, Time format
