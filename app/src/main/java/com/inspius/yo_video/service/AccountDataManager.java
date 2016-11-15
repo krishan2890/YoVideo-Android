@@ -149,6 +149,8 @@ public class AccountDataManager {
         RPC.requestAuthentic(username, password, new APIResponseListener() {
             @Override
             public void onError(String message) {
+                stateLogin = AppEnum.LOGIN_TYPE.NOT_LOGIN;
+
                 if (listener != null)
                     listener.onError(message);
             }
@@ -164,7 +166,10 @@ public class AccountDataManager {
         RPC.requestLoginFacebook(accessToken, new APIResponseListener() {
             @Override
             public void onError(String message) {
+                stateLogin = AppEnum.LOGIN_TYPE.NOT_LOGIN;
 
+                if (listener != null)
+                    listener.onError(message);
             }
 
             @Override
