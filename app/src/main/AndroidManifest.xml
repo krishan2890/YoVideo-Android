@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
 
-    package="com.inspius.canyon.yo_video">
+    package="com.inspius.yo_video">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -45,6 +45,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppTheme"
             android:windowSoftInputMode="adjustPan" />
+
+        <activity android:name=".activity.IntroActivity"
+            android:label="@string/app_name" />
 
         <activity
             android:name=".activity.LoginActivity"
@@ -126,6 +129,10 @@
             android:value="VhdGGWw+4IX/o0y9QxdrKIS6R/CddyhGD1i2UA==" />
 
         <!-- Defining Firebase Services -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher" />
+
         <service android:name=".service.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

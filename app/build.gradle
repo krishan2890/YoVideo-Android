@@ -8,7 +8,7 @@ android {
     buildToolsVersion BUILD_TOOLS_VERSION
 
     defaultConfig {
-        applicationId "com.inspius.canyon.yo_video"
+        applicationId "com.inspius.yo_video"
         minSdkVersion MIN_SDK_VERSION as int
         targetSdkVersion TARGET_SDK_VERSION as int
         versionCode VERSION_CODE as int
@@ -187,5 +187,9 @@ dependencies {
     // JWPlayer
     compile 'com.longtailvideo.jwplayer:jwplayer-android-sdk:+'
 
+    // time util
     compile 'joda-time:joda-time:2.9.2'
+
+    // app intro
+    compile 'com.github.paolorotolo:appintro:4.1.0'
 }

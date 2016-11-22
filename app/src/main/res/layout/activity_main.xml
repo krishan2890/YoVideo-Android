@@ -69,7 +69,7 @@
 
     <fragment
         android:id="@+id/fragmentSlideMenu"
-        android:name="com.inspius.canyon.yo_video.fragment.SlideMenuFragment"
+        android:name="com.inspius.yo_video.fragment.SlideMenuFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
