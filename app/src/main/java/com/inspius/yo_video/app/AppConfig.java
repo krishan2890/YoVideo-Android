@@ -44,5 +44,11 @@ public class AppConfig {
     public static final String FACEBOOK_APP_ID = "694268657341835";
     public static final String FACEBOOK_APP_NAMESPACE = "video_template";
 
+    /**
+     * App Intro
+     */
+    public static final boolean IS_SHOW_INTRO_APP          = true; // show intro app
+    public static final boolean IS_FIRST_OPEN_INTRO_APP    = false; // show first time open app
+
 
 }

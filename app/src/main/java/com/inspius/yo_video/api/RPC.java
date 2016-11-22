@@ -236,7 +236,6 @@ public class RPC {
         } catch (FileNotFoundException e) {
         }
 
-
         AppRestClient.post(AppConstant.RELATIVE_URL_CHANGE_AVATAR, params, new BaseJsonHttpResponseHandler<String>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, String strResponse) {

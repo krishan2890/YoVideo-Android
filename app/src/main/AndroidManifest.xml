@@ -46,6 +46,9 @@
             android:theme="@style/Theme.AppTheme"
             android:windowSoftInputMode="adjustPan" />
 
+        <activity android:name=".activity.IntroActivity"
+            android:label="@string/app_name" />
+
         <activity
             android:name=".activity.LoginActivity"
             android:clearTaskOnLaunch="true"

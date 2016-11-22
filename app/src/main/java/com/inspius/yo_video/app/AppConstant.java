@@ -105,6 +105,7 @@ public class AppConstant {
     public static final String KEY_LIMIT = "limit";
     public static final String KEY_PAGENUMBER = "page";
     public static final String KEY_BUNDLE_SERIES = "series";
+    public static final String KEY_FIRST_OPEN_APP = "first-open-app";
 
     /**
      * Date, Time format

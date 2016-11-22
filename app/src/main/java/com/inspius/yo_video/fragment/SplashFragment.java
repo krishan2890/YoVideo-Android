@@ -13,13 +13,16 @@ import android.widget.TextView;
 
 import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
 import com.inspius.yo_video.R;
+import com.inspius.yo_video.activity.IntroActivity;
 import com.inspius.yo_video.activity.MainActivity;
 import com.inspius.yo_video.api.APIResponseListener;
 import com.inspius.yo_video.api.AppRestClient;
 import com.inspius.yo_video.api.RPC;
+import com.inspius.yo_video.app.AppConfig;
 import com.inspius.yo_video.app.AppConstant;
 import com.inspius.yo_video.app.AppEnum;
 import com.inspius.yo_video.base.BaseFragment;
+import com.inspius.yo_video.helper.SharedPrefUtils;
 import com.inspius.yo_video.listener.AccountDataListener;
 import com.inspius.yo_video.model.CustomerModel;
 import com.inspius.yo_video.model.DataCategoryJSON;
@@ -291,9 +294,7 @@ public class SplashFragment extends BaseFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                            startActivity(intent);
-                            getActivity().finish();
+                            nextScreen();
                         }
                     });
                 } catch (InterruptedException e) {
@@ -302,6 +303,27 @@ public class SplashFragment extends BaseFragment {
             }
         };
         new Thread(runnable).start();
+    }
+
+    void nextScreen() {
+        Intent intent;
+        if (AppConfig.IS_SHOW_INTRO_APP) {
+            if (AppConfig.IS_FIRST_OPEN_INTRO_APP) {
+                boolean isFirstOpenApp = SharedPrefUtils.getBooleanFromPrefs(AppConstant.KEY_FIRST_OPEN_APP, true);
+                if (isFirstOpenApp) {
+                    intent = new Intent(mContext, IntroActivity.class);
+                    SharedPrefUtils.saveToPrefs(AppConstant.KEY_FIRST_OPEN_APP, false);
+                } else {
+                    intent = new Intent(getActivity(), MainActivity.class);
+                }
+            } else
+                intent = new Intent(mContext, IntroActivity.class);
+        } else {
+            intent = new Intent(getActivity(), MainActivity.class);
+        }
+
+        startActivity(intent);
+        getActivity().finish();
     }
 
     @Override
