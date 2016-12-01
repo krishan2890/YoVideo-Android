@@ -659,7 +659,9 @@ public class RPC {
         params.put(AppConstant.KEY_VIDEO_ID, videoID);
         params.put(AppConstant.KEY_COMMENT_TEXT, comment);
 
-        setHeaderCustomer();
+        int customerID = AccountDataManager.getInstance().getAccountID();
+        if (AccountDataManager.getInstance().isLogin() && customerID > 0)
+            params.put(AppConstant.CUSTOMER_ID, customerID);
 
         AppRestClient.post(tag, params, new BaseJsonHttpResponseHandler<JSONObject>() {
             @Override
@@ -698,7 +700,9 @@ public class RPC {
         RequestParams params = new RequestParams();
         params.put(AppConstant.KEY_VIDEO_ID, videoID);
 
-        setHeaderCustomer();
+        int customerID = AccountDataManager.getInstance().getAccountID();
+        if (AccountDataManager.getInstance().isLogin() && customerID > 0)
+            params.put(AppConstant.CUSTOMER_ID, customerID);
 
         AppRestClient.post(tag, params, new BaseJsonHttpResponseHandler<JSONObject>() {
             @Override
@@ -731,9 +735,8 @@ public class RPC {
 
     public static void requestGetLikeStatusVideo(final int videoID, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_GET_LIKE_STATUS;
-        String url = String.format(tag, videoID);
-
-        setHeaderCustomer();
+        int customerID = AccountDataManager.getInstance().getAccountID();
+        String url = String.format(tag, videoID,customerID);
 
         AppRestClient.get(url, null, new BaseJsonHttpResponseHandler<JSONObject>() {
             @Override
@@ -867,14 +870,6 @@ public class RPC {
         }
 
         return true;
-    }
-
-    private static void setHeaderCustomer() {
-        int customerID = AccountDataManager.getInstance().getAccountID();
-        if (AccountDataManager.getInstance().isLogin() && customerID > 0)
-            AppRestClient.addHeader(AppConstant.HEADER_CUSTOMER_ID, String.valueOf(customerID));
-        else
-            AppRestClient.removeHeader(AppConstant.HEADER_CUSTOMER_ID);
     }
 
     /* ======================================= COMMON END=======================================*/

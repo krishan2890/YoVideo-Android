@@ -40,7 +40,7 @@ public class AppConstant {
     public static final String RELATIVE_URL_GET_COMMENTS = "api/getListCommentVideo/%s/%s/%s";
     public static final String RELATIVE_URL_INSERT_COMMENT = "api/insertCommentVideo";
     public static final String RELATIVE_URL_LIKE_VIDEO = "api/likevideo";
-    public static final String RELATIVE_URL_GET_LIKE_STATUS = "api/getLikeVideoStatus/%s";
+    public static final String RELATIVE_URL_GET_LIKE_STATUS = "api/getLikeVideoStatus/%s/%s";
 
     /**
      * Key Bundle
@@ -79,6 +79,7 @@ public class AppConstant {
     public static final String KEY_ITEM = "element"; // parent node
     public static final String KEY_ID = "id";
     public static final String HEADER_CUSTOMER_ID = "customer_id";
+    public static final String CUSTOMER_ID = "customer_id";
     public static final String KEY_NAME = "name";
     public static final String KEY_TYPE = "type";
     public static final String KEY_ICON = "icon";
