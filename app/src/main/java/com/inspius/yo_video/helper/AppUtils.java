@@ -2,23 +2,24 @@ package com.inspius.yo_video.helper;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.net.Uri;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.webkit.URLUtil;
 
 import com.inspius.yo_video.R;
+import com.inspius.yo_video.activity.VideoDetailActivity;
+import com.inspius.yo_video.app.AppConfig;
+import com.inspius.yo_video.app.AppConstant;
 import com.inspius.yo_video.app.GlobalApplication;
 import com.inspius.yo_video.model.CategoryJSON;
 import com.inspius.yo_video.model.DataCategoryJSON;
 import com.inspius.yo_video.model.VideoModel;
+import com.inspius.yo_video.modules.module_video_detail_jw.MVideoDetailJWUtil;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -125,4 +126,26 @@ public class AppUtils {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+
+    public static Intent getIntentVideoDetail(Context mContext, VideoModel videoModel, boolean isAutoPlay) {
+        Intent intent;
+        switch (AppConfig.VIDEO_DETAIL_SCREEN) {
+            case PLUGIN_DETAIL_JW:
+                intent = MVideoDetailJWUtil.getIntentVideoDetail(mContext, videoModel, isAutoPlay);
+                break;
+
+            default:
+                intent = getIntentVideoDetailDefault(mContext, videoModel);
+                break;
+        }
+        return intent;
+    }
+
+    private static Intent getIntentVideoDetailDefault(Context mContext, VideoModel videoModel) {
+        Intent intent = new Intent(mContext, VideoDetailActivity.class);
+        intent.putExtra(AppConstant.KEY_BUNDLE_AUTO_PLAY, false);
+        intent.putExtra(AppConstant.KEY_BUNDLE_VIDEO, videoModel);
+
+        return intent;
+    }
 }

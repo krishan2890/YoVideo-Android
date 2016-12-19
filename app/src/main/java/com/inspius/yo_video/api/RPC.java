@@ -412,7 +412,10 @@ public class RPC {
 
             @Override
             protected JSONObject parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                Log.d("parseResponse", rawJsonData);
+
                 JSONObject jsonObject = new JSONObject(rawJsonData);
+
                 return jsonObject;
             }
         });
@@ -809,10 +812,10 @@ public class RPC {
 
     private static void parseError(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, String errorResponse, final APIResponseListener listener) {
         listener.onError(throwable.getMessage());
-
-        debugThrowable(LOG_TAG, throwable);
-        if (errorResponse != null)
-            debugResponse(LOG_TAG, rawJsonData);
+//
+//        debugThrowable(LOG_TAG, throwable);
+//        if (errorResponse != null)
+//            debugResponse(LOG_TAG, rawJsonData);
 
     }
 

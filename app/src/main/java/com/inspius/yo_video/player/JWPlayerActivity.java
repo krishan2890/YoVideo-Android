@@ -1,20 +1,16 @@
-package com.inspius.yo_video.activity;
+package com.inspius.yo_video.player;
 
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.app.AppConstant;
 import com.inspius.yo_video.model.VideoModel;
-import com.inspius.coreapp.CoreAppActivity;
 import com.longtailvideo.jwplayer.JWPlayerFragment;
 import com.longtailvideo.jwplayer.JWPlayerView;
 import com.longtailvideo.jwplayer.media.playlists.PlaylistItem;
@@ -22,9 +18,6 @@ import com.longtailvideo.jwplayer.media.playlists.PlaylistItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.vov.vitamio.MediaPlayer;
-import io.vov.vitamio.widget.MediaController;
-import io.vov.vitamio.widget.VideoView;
 
 public class JWPlayerActivity extends AppCompatActivity {
     public static final String TAG = JWPlayerActivity.class.getSimpleName();

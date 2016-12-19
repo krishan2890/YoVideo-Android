@@ -1,9 +1,8 @@
-package com.inspius.yo_video.activity;
+package com.inspius.yo_video.player;
 
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -13,14 +12,8 @@ import android.widget.Toast;
 
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.app.AppConstant;
-import com.inspius.yo_video.fragment.VideoDetailFragment;
-import com.inspius.yo_video.helper.Logger;
 import com.inspius.yo_video.model.VideoModel;
 import com.inspius.coreapp.CoreAppActivity;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

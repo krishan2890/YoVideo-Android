@@ -12,6 +12,9 @@
     <!-- Change AdMob Interstitial Id -->
     <string name="interstitial_ad_unit_id">ca-app-pub-4515379129023944/2737027117</string>
 
+    <!-- Change JW_LICENSE_KEY -->
+    <string name="jw_license_key">VhdGGWw+4IX/o0y9QxdrKIS6R/CddyhGD1i2UA==</string>
+
     <string name="cm_cancel">Cancel</string>
     <string name="cm_close">Close</string>
     <string name="cm_continue">Continue</string>

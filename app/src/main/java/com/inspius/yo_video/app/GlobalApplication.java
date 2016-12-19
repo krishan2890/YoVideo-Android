@@ -10,6 +10,7 @@ import android.support.multidex.MultiDex;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.login.DefaultAudience;
 import com.inspius.coreapp.config.CoreAppEnums;
+import com.inspius.yo_video.api.AppRestClient;
 import com.norbsoft.typefacehelper.TypefaceCollection;
 import com.norbsoft.typefacehelper.TypefaceHelper;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -83,6 +84,8 @@ public class GlobalApplication extends Application {
 
         // init Vitamio
         Vitamio.isInitialized(this);
+
+        AppRestClient.initAsyncHttpClient();
     }
 
     @Override

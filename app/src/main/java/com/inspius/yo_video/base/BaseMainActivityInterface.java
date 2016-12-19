@@ -26,7 +26,5 @@ public interface BaseMainActivityInterface extends ToolbarDefaultInterface {
 
     void logout(APIResponseListener listener);
 
-    void showInterstitialAds();
-
     void downloadVideo(VideoModel videoModel);
 }

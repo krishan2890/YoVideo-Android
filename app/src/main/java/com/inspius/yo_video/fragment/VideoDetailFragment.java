@@ -15,19 +15,22 @@ import android.widget.TextView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.inspius.coreapp.helper.IntentUtils;
 import com.inspius.yo_video.R;
-import com.inspius.yo_video.activity.DailyMotionPlayerActivity;
-import com.inspius.yo_video.activity.JWPlayerActivity;
-import com.inspius.yo_video.activity.MusicPlayerActivity;
-import com.inspius.yo_video.activity.VitamioPlayerActivity;
-import com.inspius.yo_video.activity.WebViewPlayerActivity;
-import com.inspius.yo_video.activity.YoutubePlayerActivity;
+import com.inspius.yo_video.activity.CommentActivity;
+import com.inspius.yo_video.player.DailyMotionPlayerActivity;
+import com.inspius.yo_video.player.JWPlayerActivity;
+import com.inspius.yo_video.player.MusicPlayerActivity;
+import com.inspius.yo_video.activity.VideoDetailActivity;
+import com.inspius.yo_video.player.VitamioPlayerActivity;
+import com.inspius.yo_video.player.WebViewPlayerActivity;
+import com.inspius.yo_video.player.YoutubePlayerActivity;
 import com.inspius.yo_video.api.APIResponseListener;
 import com.inspius.yo_video.api.AppRestClient;
 import com.inspius.yo_video.api.RPC;
 import com.inspius.yo_video.app.AppConfig;
 import com.inspius.yo_video.app.AppConstant;
-import com.inspius.yo_video.base.BaseMainFragment;
+import com.inspius.yo_video.base.BaseFragment;
 import com.inspius.yo_video.greendao.DBVideoDownload;
 import com.inspius.yo_video.greendao.DBWishListVideo;
 import com.inspius.yo_video.helper.DialogUtil;
@@ -36,7 +39,6 @@ import com.inspius.yo_video.model.VideoModel;
 import com.inspius.yo_video.service.DatabaseManager;
 import com.inspius.yo_video.service.DownloadRequestQueue;
 import com.inspius.yo_video.service.RecentListManager;
-import com.inspius.coreapp.helper.IntentUtils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
@@ -46,15 +48,14 @@ import org.json.JSONObject;
 import butterknife.Bind;
 import butterknife.OnClick;
 
-public class VideoDetailFragment extends BaseMainFragment {
+public class VideoDetailFragment extends BaseFragment {
     public static final String TAG = VideoDetailFragment.class.getSimpleName();
+    private VideoDetailActivity mVideoDetailActivity;
 
     public static VideoDetailFragment newInstance(VideoModel videoModel, boolean isAutoPlay) {
         VideoDetailFragment fragment = new VideoDetailFragment();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(AppConstant.KEY_BUNDLE_VIDEO, videoModel);
-        bundle.putBoolean(AppConstant.KEY_BUNDLE_AUTO_PLAY, isAutoPlay);
-        fragment.setArguments(bundle);
+        fragment.videoModel = videoModel;
+        fragment.isAutoPlay = isAutoPlay;
         return fragment;
     }
 
@@ -97,7 +98,6 @@ public class VideoDetailFragment extends BaseMainFragment {
     VideoModel videoModel;
     boolean isAutoPlay;
 
-    DBWishListVideo wishList;
     Fragment videoFragment;
     private DisplayImageOptions options;
 
@@ -105,8 +105,8 @@ public class VideoDetailFragment extends BaseMainFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        videoModel = (VideoModel) getArguments().getSerializable(AppConstant.KEY_BUNDLE_VIDEO);
-        isAutoPlay = getArguments().getBoolean(AppConstant.KEY_BUNDLE_AUTO_PLAY);
+        mVideoDetailActivity = (VideoDetailActivity) getActivity();
+
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.img_video_default)
                 .showImageForEmptyUri(R.drawable.img_video_default)
@@ -121,13 +121,6 @@ public class VideoDetailFragment extends BaseMainFragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        String headerName = videoModel.getCategoryName();
-        if (TextUtils.isEmpty(headerName))
-            headerName = "";
-
-        mActivityInterface.updateHeaderTitle(headerName);
-        mActivityInterface.setVisibleHeaderMenu(false);
 
         if (mAdView != null) {
             mAdView.resume();
@@ -177,10 +170,10 @@ public class VideoDetailFragment extends BaseMainFragment {
             }
         }
 
-        if (isCanBack)
-            mHostActivityInterface.popBackStack();
+        if (!isCanBack)
+            return true;
 
-        return true;
+        return mHostActivityInterface.popBackStack();
     }
 
     @Override
@@ -198,11 +191,6 @@ public class VideoDetailFragment extends BaseMainFragment {
         tvnAuthor.setText(videoModel.getAuthor());
         tvnDescription.setText(Html.fromHtml(videoModel.getDescription()));
         tvnViewNumber.setText(videoModel.getViewNumber() + "views");
-
-        if (mAccountDataManager.isLogin()) {
-            if (wishList != null)
-                imvAddToWishList.setSelected(true);
-        }
 
         boolean isWishList = DatabaseManager.getInstance().existVideoAtWithList((long) videoModel.getVideoId());
         updateStateViewWishList(isWishList);
@@ -257,7 +245,7 @@ public class VideoDetailFragment extends BaseMainFragment {
             /**
              * Show Interstitial Ads
              */
-            mActivityInterface.showInterstitialAds();
+            mVideoDetailActivity.showInterstitialAds();
         } else {
             mAdView.setVisibility(View.GONE);
         }
@@ -357,42 +345,43 @@ public class VideoDetailFragment extends BaseMainFragment {
         if (!isCustomerPlayOrDownloadVideo())
             return;
 
-        Intent intent;
-        switch (videoModel.getVideoType()) {
-            case YOUTUBE:
-                intent = new Intent(getActivity(), YoutubePlayerActivity.class);
-                break;
-
-            case VIMEO:
-                intent = new Intent(getActivity(), WebViewPlayerActivity.class);
-                break;
-
-            case FACEBOOK:
-                intent = new Intent(getActivity(), WebViewPlayerActivity.class);
-                break;
-
-            case DAILY_MOTION:
-                intent = new Intent(getActivity(), DailyMotionPlayerActivity.class);
-                break;
-
-            case MP3:
-                intent = new Intent(getActivity(), MusicPlayerActivity.class);
-                break;
-
-            case JW_PLAYER:
-                intent = new Intent(getActivity(), JWPlayerActivity.class);
-                break;
-
-            default:
-                intent = new Intent(getActivity(), VitamioPlayerActivity.class);
-                break;
-        }
-
         RecentListManager recentListManager = RecentListManager.getInstance();
         if (recentListManager != null)
             recentListManager.addVideo(videoModel);
 
+        Intent intent;
+        switch (videoModel.getVideoType()) {
+            case YOUTUBE:
+                intent = new Intent(mContext, YoutubePlayerActivity.class);
+                break;
+
+            case VIMEO:
+                intent = new Intent(mContext, WebViewPlayerActivity.class);
+                break;
+
+            case FACEBOOK:
+                intent = new Intent(mContext, WebViewPlayerActivity.class);
+                break;
+
+            case DAILY_MOTION:
+                intent = new Intent(mContext, DailyMotionPlayerActivity.class);
+                break;
+
+            case MP3:
+                intent = new Intent(mContext, MusicPlayerActivity.class);
+                break;
+
+            case JW_PLAYER:
+                intent = new Intent(mContext, JWPlayerActivity.class);
+                break;
+
+            default:
+                intent = new Intent(mContext, VitamioPlayerActivity.class);
+                break;
+        }
+
         intent.putExtra(AppConstant.KEY_BUNDLE_VIDEO, videoModel);
+
         startActivity(intent);
     }
 
@@ -402,7 +391,7 @@ public class VideoDetailFragment extends BaseMainFragment {
                 DialogUtil.showMessageLogin(mContext, getString(R.string.msg_request_login_vip), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mActivityInterface.openLogin(null);
+                        //mActivityInterface.openLogin(null);
                     }
                 });
             } else if (!mAccountDataManager.isVip()) {
@@ -464,14 +453,17 @@ public class VideoDetailFragment extends BaseMainFragment {
                 break;
 
             default:
-                mActivityInterface.showCroutonAlert("Download Unsupported File Formats");
+                DialogUtil.showMessageBox(mContext, "Download Unsupported File Formats");
                 break;
         }
     }
 
     @OnClick(R.id.imvComment)
     void doComment() {
-        mHostActivityInterface.addFragment(CommentFragment.newInstance(videoModel), true);
+//        mHostActivityInterface.addFragment(CommentFragment.newInstance(videoModel), true);
+        Intent intent = new Intent(mContext, CommentActivity.class);
+        intent.putExtra(AppConstant.KEY_BUNDLE_VIDEO, videoModel);
+        startActivity(intent);
     }
 
     @OnClick(R.id.imvLike)

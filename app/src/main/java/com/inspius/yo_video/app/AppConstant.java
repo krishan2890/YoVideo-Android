@@ -8,6 +8,7 @@ public class AppConstant {
     public static int REQUEST_ALBUM_PIC = 1;
     public static int LIMIT_PAGE_HOMES = 10;
     public static int LIMIT_GET_COMMENTS = 10;
+    public static int API_TIMEOUT = 20000;
 
     /**
      * Static Page
@@ -71,7 +72,6 @@ public class AppConstant {
     public static final int REQUEST_CODE_LOGIN = 111;
     public static final int REQUEST_CODE_DOWNLOAD = 112;
     public static final int REQUEST_CODE_PROFILE_SHARING = 113;
-
 
     /**
      * Key XML

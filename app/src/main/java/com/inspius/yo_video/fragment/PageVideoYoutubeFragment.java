@@ -70,7 +70,7 @@ public class PageVideoYoutubeFragment extends YouTubePlayerSupportFragment imple
         //Here we can set some flags on the player
         //This flag tells the player to switch to landscape when in fullscreen, it will also return to portrait
         //when leaving fullscreen
-        youTubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
+        youTubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
         //This flag controls the system UI such as the status and navigation bar, hiding and showing them
         //alongside the player UI
         youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI);

@@ -9,12 +9,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.inspius.yo_video.R;
+import com.inspius.yo_video.activity.CommentActivity;
 import com.inspius.yo_video.adapter.ListCommentAdapter;
 import com.inspius.yo_video.api.APIResponseListener;
 import com.inspius.yo_video.api.AppRestClient;
 import com.inspius.yo_video.api.RPC;
 import com.inspius.yo_video.app.AppConstant;
-import com.inspius.yo_video.base.BaseMainFragment;
+import com.inspius.yo_video.base.BaseFragment;
 import com.inspius.yo_video.helper.DialogUtil;
 import com.inspius.yo_video.listener.AdapterActionListener;
 import com.inspius.yo_video.model.CommentJSON;
@@ -31,7 +32,7 @@ import butterknife.OnClick;
 /**
  * Created by Billy on 12/1/15.
  */
-public class CommentFragment extends BaseMainFragment implements AdapterActionListener {
+public class CommentFragment extends BaseFragment implements AdapterActionListener {
     public static final String TAG = CommentFragment.class.getSimpleName();
 
     public static CommentFragment newInstance(VideoModel videoModel) {
@@ -59,9 +60,13 @@ public class CommentFragment extends BaseMainFragment implements AdapterActionLi
 
     int pageNumber;
 
+    private CommentActivity mCommentActivity;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mCommentActivity = (CommentActivity) getActivity();
     }
 
     @Override
@@ -77,14 +82,6 @@ public class CommentFragment extends BaseMainFragment implements AdapterActionLi
     @Override
     public int getLayout() {
         return R.layout.fragment_comment;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mActivityInterface.setVisibleHeaderMenu(false);
-        mActivityInterface.setVisibleHeaderSearch(false);
-        mActivityInterface.updateHeaderTitle("Comments");
     }
 
     @Override
@@ -175,7 +172,7 @@ public class CommentFragment extends BaseMainFragment implements AdapterActionLi
 
     @OnClick(R.id.imvPostComment)
     void insertComment() {
-        mActivityInterface.hideKeyBoard();
+        mCommentActivity.hideKeyBoard();
         linearLayoutNoComment.setVisibility(View.GONE);
         if (!mAccountDataManager.isLogin()) {
             DialogUtil.showMessageBox(mContext, getString(R.string.msg_request_login));
@@ -186,19 +183,19 @@ public class CommentFragment extends BaseMainFragment implements AdapterActionLi
         if (TextUtils.isEmpty(comment)) {
 
         } else {
-            mActivityInterface.showLoading(getString(R.string.msg_loading));
+            mCommentActivity.showLoading(getString(R.string.msg_loading));
 
             RPC.requestPostCommentVideo(videoModel.getVideoId(), comment, new APIResponseListener() {
                 @Override
                 public void onError(String message) {
-                    mActivityInterface.hideLoading();
+                    mCommentActivity.hideLoading();
 
                     DialogUtil.showMessageBox(mContext, message);
                 }
 
                 @Override
                 public void onSuccess(Object results) {
-                    mActivityInterface.hideLoading();
+                    mCommentActivity.hideLoading();
 
                     CommentJSON commentJSON = (CommentJSON) results;
                     if (commentJSON != null)
