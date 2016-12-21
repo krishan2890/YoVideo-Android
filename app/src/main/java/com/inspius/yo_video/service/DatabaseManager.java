@@ -564,4 +564,16 @@ public class DatabaseManager implements IDatabaseManager, AsyncOperationListener
         }
         return mVideo;
     }
+
+    @Override
+    public void deleteVideoDownloadByID(long id) {
+        try {
+            openWritableDb();
+            DBVideoDownloadDao userDao = daoSession.getDBVideoDownloadDao();
+            userDao.deleteByKey(id);
+            daoSession.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

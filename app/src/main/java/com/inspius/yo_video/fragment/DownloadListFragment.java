@@ -1,24 +1,26 @@
 package com.inspius.yo_video.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.TextView;
 
+import com.inspius.coreapp.helper.IntentUtils;
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.adapter.DownloadListAdapter;
 import com.inspius.yo_video.api.AppRestClient;
 import com.inspius.yo_video.base.BaseMainFragment;
 import com.inspius.yo_video.greendao.DBVideoDownload;
-import com.inspius.yo_video.listener.AdapterActionListener;
-import com.inspius.yo_video.listener.WishListAdapterVideoActionListener;
+import com.inspius.yo_video.helper.DialogUtil;
+import com.inspius.yo_video.listener.AdapterDownloadActionListener;
 import com.inspius.yo_video.service.DatabaseManager;
 import com.inspius.yo_video.widget.GridDividerDecoration;
-import com.inspius.coreapp.helper.IntentUtils;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
 import com.wang.avi.AVLoadingIndicatorView;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.Bind;
@@ -26,7 +28,7 @@ import butterknife.Bind;
 /**
  * Created by Billy on 12/1/15.
  */
-public class DownloadListFragment extends BaseMainFragment implements AdapterActionListener {
+public class DownloadListFragment extends BaseMainFragment implements AdapterDownloadActionListener {
     public static final String TAG = DownloadListFragment.class.getSimpleName();
 
     @Bind(R.id.ultimate_recycler_view)
@@ -115,6 +117,23 @@ public class DownloadListFragment extends BaseMainFragment implements AdapterAct
         DBVideoDownload mVideo = (DBVideoDownload) model;
         Intent intent = IntentUtils.openVideo(mVideo.getPath());
         startActivity(intent);
+    }
+
+    @Override
+    public void onItemLongClickListener(int position, final DBVideoDownload model) {
+        DialogUtil.showMessageYesNo(mContext, getString(R.string.msg_delete_video), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                DatabaseManager.getInstance().deleteVideoDownloadByID(model.getId());
+
+                File file = new File(model.getPath());
+                if (file != null) {
+                    boolean deleted = file.delete();
+                }
+
+                mAdapter.delete(model);
+            }
+        });
     }
 
     void startAnimLoading() {

@@ -19,6 +19,8 @@
     <string name="cm_close">Close</string>
     <string name="cm_continue">Continue</string>
     <string name="cm_submit">Submit</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <string name="text_fm_version">Version %s</string>
     <string name="text_fm_icon_assets">"assets://%s" </string>
@@ -134,4 +136,5 @@
     <string name="msg_need_vip">Some contents are only for premium members. Please update your account</string>
     <string name="msg_no_result">No result found</string>
     <string name="msg_loading_common">Please wait while the content loads</string>
+    <string name="msg_delete_video">Are you sure you want to delete this video?</string>
 </resources>

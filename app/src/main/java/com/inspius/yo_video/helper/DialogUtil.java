@@ -43,6 +43,19 @@ public class DialogUtil {
         ((TextView) d.findViewById(android.R.id.message)).setGravity(Gravity.CENTER);
     }
 
+    public static void showMessageYesNo(Context context, String message, DialogInterface.OnClickListener listener) {
+        if (message == null)
+            message = "";
+
+        AlertDialog.Builder b = new AlertDialog.Builder(context);
+        b.setMessage(message);
+        b.setPositiveButton(context.getString(R.string.yes).toUpperCase(), listener);
+        b.setNegativeButton(context.getString(R.string.no).toUpperCase(), null);
+        AlertDialog d = b.show();
+
+        ((TextView) d.findViewById(android.R.id.message)).setGravity(Gravity.CENTER);
+    }
+
     public static void showErrorMessage(Context context, String title, String message) {
         new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
                 .setTitleText(title)

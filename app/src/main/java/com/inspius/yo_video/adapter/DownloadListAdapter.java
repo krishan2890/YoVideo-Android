@@ -1,7 +1,5 @@
 package com.inspius.yo_video.adapter;
 
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,18 +8,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.app.GlobalApplication;
 import com.inspius.yo_video.greendao.DBVideoDownload;
-import com.inspius.yo_video.helper.ImageUtil;
-import com.inspius.yo_video.listener.AdapterActionListener;
+import com.inspius.yo_video.listener.AdapterDownloadActionListener;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,25 +23,13 @@ import butterknife.ButterKnife;
 
 public class DownloadListAdapter extends UltimateViewAdapter<DownloadListAdapter.HolderGirdCell> {
     private List<DBVideoDownload> mItems;
-    AdapterActionListener listener;
-
-    private DisplayImageOptions options;
+    AdapterDownloadActionListener listener;
 
     public DownloadListAdapter() {
         this.mItems = new ArrayList<>();
-
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.img_video_default)
-                .showImageForEmptyUri(R.drawable.img_video_default)
-                .showImageOnFail(R.drawable.img_video_default)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .imageScaleType(ImageScaleType.EXACTLY)
-                .build();
     }
 
-    public void setAdapterActionListener(AdapterActionListener listener) {
+    public void setAdapterActionListener(AdapterDownloadActionListener listener) {
         this.listener = listener;
     }
 
@@ -75,7 +55,14 @@ public class DownloadListAdapter extends UltimateViewAdapter<DownloadListAdapter
                 }
             });
 
-            //ImageLoader.getInstance().displayImage(model.getImage(), holder.imvThumbnail, options, animateFirstListener);
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (listener != null)
+                        listener.onItemLongClickListener(position, model);
+                    return false;
+                }
+            });
 
             Glide.with(GlobalApplication.getAppContext()).load(model.getPath()).placeholder(R.drawable.img_product_default).into(holder.imvThumbnail);
         }
@@ -83,6 +70,11 @@ public class DownloadListAdapter extends UltimateViewAdapter<DownloadListAdapter
 
     public void add(List<DBVideoDownload> listData) {
         mItems.addAll(listData);
+        notifyDataSetChanged();
+    }
+
+    public void delete(DBVideoDownload video) {
+        mItems.remove(video);
         notifyDataSetChanged();
     }
 

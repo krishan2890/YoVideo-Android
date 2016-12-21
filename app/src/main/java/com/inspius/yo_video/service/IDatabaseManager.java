@@ -105,4 +105,6 @@ public interface IDatabaseManager {
     List<DBVideoDownload> listVideoDownload(int page);
 
     DBVideoDownload getVideoDownloadByVideoID(int videoID);
+
+    void deleteVideoDownloadByID(long id);
 }
