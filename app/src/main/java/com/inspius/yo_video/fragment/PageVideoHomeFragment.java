@@ -112,11 +112,6 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
         startAnimLoading();
 
         dataCategory = AppSession.getInstance().getCategoryData();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
 
         pageNumber = 1;
         requestGetData();

@@ -19,7 +19,10 @@ import com.inspius.yo_video.app.GlobalApplication;
 import com.inspius.yo_video.model.CategoryJSON;
 import com.inspius.yo_video.model.DataCategoryJSON;
 import com.inspius.yo_video.model.VideoModel;
-import com.inspius.yo_video.modules.module_video_detail_jw.MVideoDetailJWUtil;
+import com.inspius.yo_video.modules.module_video_detail_jw.MJWVideoDetailActivity;
+import com.inspius.yo_video.modules.module_video_detail_jw.MMp3DetailActivity;
+import com.inspius.yo_video.modules.module_video_detail_jw.MWebVideoDetailActivity;
+import com.inspius.yo_video.modules.module_video_detail_jw.MYoutubeVideoDetailActivity;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -128,10 +131,10 @@ public class AppUtils {
     };
 
     public static Intent getIntentVideoDetail(Context mContext, VideoModel videoModel, boolean isAutoPlay) {
-        Intent intent;
+        Intent intent = null;
         switch (AppConfig.VIDEO_DETAIL_SCREEN) {
             case PLUGIN_DETAIL_JW:
-                intent = MVideoDetailJWUtil.getIntentVideoDetail(mContext, videoModel, isAutoPlay);
+                intent = getIntentVideoDetailJW(mContext, videoModel, isAutoPlay);
                 break;
 
             default:
@@ -144,6 +147,32 @@ public class AppUtils {
     private static Intent getIntentVideoDetailDefault(Context mContext, VideoModel videoModel) {
         Intent intent = new Intent(mContext, VideoDetailActivity.class);
         intent.putExtra(AppConstant.KEY_BUNDLE_AUTO_PLAY, false);
+        intent.putExtra(AppConstant.KEY_BUNDLE_VIDEO, videoModel);
+
+        return intent;
+    }
+
+    public static Intent getIntentVideoDetailJW(Context mContext, VideoModel videoModel, boolean isAutoPlay) {
+        Intent intent = null;
+        switch (videoModel.getVideoType()) {
+            case YOUTUBE:
+                intent = new Intent(mContext, MYoutubeVideoDetailActivity.class);
+                break;
+
+            case UPLOAD:
+                intent = new Intent(mContext, MJWVideoDetailActivity.class);
+                break;
+
+            case MP3:
+                intent = new Intent(mContext, MMp3DetailActivity.class);
+                break;
+
+            default:
+                intent = new Intent(mContext, MWebVideoDetailActivity.class);
+                break;
+        }
+
+        intent.putExtra(AppConstant.KEY_BUNDLE_AUTO_PLAY, isAutoPlay);
         intent.putExtra(AppConstant.KEY_BUNDLE_VIDEO, videoModel);
 
         return intent;
