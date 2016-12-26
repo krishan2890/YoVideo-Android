@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -19,6 +20,7 @@ import com.inspius.coreapp.helper.IntentUtils;
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.activity.CommentActivity;
 import com.inspius.yo_video.player.DailyMotionPlayerActivity;
+import com.inspius.yo_video.player.ExoPlayerActivity;
 import com.inspius.yo_video.player.JWPlayerActivity;
 import com.inspius.yo_video.player.MusicPlayerActivity;
 import com.inspius.yo_video.activity.VideoDetailActivity;
@@ -376,7 +378,11 @@ public class VideoDetailFragment extends BaseFragment {
                 break;
 
             default:
-                intent = new Intent(mContext, VitamioPlayerActivity.class);
+//                intent = new Intent(mContext, VitamioPlayerActivity.class);
+                intent = new Intent(mContext, ExoPlayerActivity.class);
+                intent.setData(Uri.parse(videoModel.getVideoUrl()))
+                        // .putExtra(ExoPlayerActivity.EXTENSION_EXTRA, "mp4")
+                        .setAction(ExoPlayerActivity.ACTION_VIEW);
                 break;
         }
 

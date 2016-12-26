@@ -193,4 +193,6 @@ dependencies {
 
     // app intro
     compile 'com.github.paolorotolo:appintro:4.1.0'
+
+    compile 'com.google.android.exoplayer:exoplayer:r2.1.1'
 }

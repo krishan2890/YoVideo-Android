@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import com.github.paolorotolo.appintro.AppIntro;
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.fragment.IntroSlideFragment;
+import com.inspius.yo_video.helper.AppUtils;
 
 /**
  * Created by Billy on 11/15/16.
@@ -35,6 +36,8 @@ public class IntroActivity extends AppIntro {
         setNextArrowColor(Color.parseColor("#222222"));
         selectedIndicatorColor = Color.parseColor("#77B5EF");
         unselectedIndicatorColor = Color.parseColor("#EEEEEE");
+
+        AppUtils.verifyStoragePermissions(this);
     }
 
     @Override
