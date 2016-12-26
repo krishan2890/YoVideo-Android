@@ -2,7 +2,6 @@ package com.inspius.yo_video.modules.module_video_detail_jw;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,9 +32,9 @@ import com.inspius.yo_video.model.VideoModel;
  * Created by Billy on 12/1/16.
  */
 
-public class ExoPlayerFragment extends Fragment {
-    public static ExoPlayerFragment newInstance(VideoModel model, boolean isAutoPlay) {
-        ExoPlayerFragment fragment = new ExoPlayerFragment();
+public class MExoPlayerFragment extends Fragment {
+    public static MExoPlayerFragment newInstance(VideoModel model, boolean isAutoPlay) {
+        MExoPlayerFragment fragment = new MExoPlayerFragment();
         fragment.videoModel = model;
         fragment.shouldAutoPlay = isAutoPlay;
         return fragment;
@@ -97,7 +96,7 @@ public class ExoPlayerFragment extends Fragment {
         // Produces Extractor instances for parsing the media data.
         ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
         // This is the MediaSource representing the media to be played.
-        Uri videoUri = Uri.parse("http://test.inspius.com/yovideo/assets/uploads/videos/20160606141522_the-voice-2015-jordansmith-chandelier.mp4");
+        Uri videoUri = Uri.parse(videoModel.getVideoUrl());
         MediaSource videoSource = new ExtractorMediaSource(videoUri,
                 dataSourceFactory, extractorsFactory, null, null);
         // Prepare the player with the source.
