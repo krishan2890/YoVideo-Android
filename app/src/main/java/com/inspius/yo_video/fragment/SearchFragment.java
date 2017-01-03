@@ -1,6 +1,7 @@
 package com.inspius.yo_video.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -339,7 +340,11 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
 
     @Override
     public void onItemClickListener(int position, Object model) {
-        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
+        Intent intent = AppUtils.getIntentVideoDetail(mContext, (VideoModel) model, false);
+        if (intent == null)
+            return;
+
+        startActivity(intent);
     }
 
     @Override
