@@ -102,4 +102,15 @@ public class MExoPlayerFragment extends Fragment {
         // Prepare the player with the source.
         player.prepare(videoSource);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (player != null) {
+            shouldAutoPlay = player.getPlayWhenReady();
+            player.release();
+            player = null;
+        }
+    }
 }

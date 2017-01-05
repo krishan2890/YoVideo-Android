@@ -8,7 +8,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdListener;
@@ -70,6 +72,12 @@ public abstract class MBaseVideoDetailActivity extends AppCompatActivity {
 
     @Bind(R.id.tvnSeries)
     TextView tvnSeries;
+
+    @Bind(R.id.linearContent)
+    LinearLayout linearContent;
+
+    @Bind(R.id.container)
+    FrameLayout frameContainer;
 
     protected VideoModel videoModel;
     protected boolean isAutoPlay;
