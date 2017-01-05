@@ -7,13 +7,13 @@
         <type>home_page</type>
         <status>1</status>
     </element>
-    <!--<element>-->
-        <!--<icon>icon_menu_news.png</icon>-->
-        <!--<id>9</id>-->
-        <!--<name>News</name>-->
-        <!--<type>news</type>-->
-        <!--<status>1</status>-->
-    <!--</element>-->
+    <element>
+        <icon>icon_menu_news.png</icon>
+        <id>9</id>
+        <name>News</name>
+        <type>news</type>
+        <status>1</status>
+    </element>
     <element>
         <icon>icon_menu_categories.png</icon>
         <id>2</id>

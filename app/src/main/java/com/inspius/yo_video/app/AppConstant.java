@@ -17,6 +17,7 @@ public class AppConstant {
     public static final String URL_PAGE_SHARE = "http://inspius.com/";
     public static final String URL_PAGE_ABOUT_US = "http://inspius.com/about-us/";
     public static final String URL_PAGE_TERM_CONDITION = "http://inspius.com/services/mobile-app-development/";
+    public static final String URL_PAGE_BUY_NEWS_MODULE = "http://store.inspius.com/downloads/yovideo-android-news-module/";
 
     /**
      * ID SERVICE

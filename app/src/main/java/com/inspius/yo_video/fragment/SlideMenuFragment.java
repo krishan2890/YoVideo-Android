@@ -246,6 +246,7 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
             fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_TERM_CONDITION, slideMenuModelSelected.title);
         } else if (type.equalsIgnoreCase("news")) {
 //            fragment = MNewsSlideFragment.newInstance();
+            fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_BUY_NEWS_MODULE, "Buy News Module");
         }
 
         if (fragment != null) {
