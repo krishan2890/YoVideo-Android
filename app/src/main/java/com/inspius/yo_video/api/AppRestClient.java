@@ -45,6 +45,10 @@ public class AppRestClient {
         synClient.cancelAllRequests(true);
     }
 
+    public static void get(String url, AsyncHttpResponseHandler responseHandler) {
+        get(url, null, responseHandler);
+    }
+
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         getClient().get(getAbsoluteUrl(url), params, responseHandler).setTag(url);
     }
@@ -79,7 +83,7 @@ public class AppRestClient {
         return entity;
     }
 
-    private static String getAbsoluteUrl(String relativeUrl) {
+    public static String getAbsoluteUrl(String relativeUrl) {
         String url = AppConfig.BASE_URL + relativeUrl;
         Logger.d(TAG, url);
         return url;

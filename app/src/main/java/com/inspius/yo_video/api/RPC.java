@@ -2,6 +2,8 @@ package com.inspius.yo_video.api;
 
 import android.util.Log;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.inspius.yo_video.app.AppConstant;
@@ -12,6 +14,9 @@ import com.inspius.yo_video.model.CommentJSON;
 import com.inspius.yo_video.model.CustomerModel;
 import com.inspius.yo_video.model.DataCategoryJSON;
 import com.inspius.yo_video.model.ImageObj;
+import com.inspius.yo_video.model.NewsCategoryJSON;
+import com.inspius.yo_video.model.NewsJSON;
+import com.inspius.yo_video.model.ResponseJSON;
 import com.inspius.yo_video.model.VideoJSON;
 import com.inspius.yo_video.service.AccountDataManager;
 import com.inspius.yo_video.service.AppSession;
@@ -22,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Type;
@@ -739,7 +745,7 @@ public class RPC {
     public static void requestGetLikeStatusVideo(final int videoID, final APIResponseListener listener) {
         final String tag = AppConstant.RELATIVE_URL_GET_LIKE_STATUS;
         int customerID = AccountDataManager.getInstance().getAccountID();
-        String url = String.format(tag, videoID,customerID);
+        String url = String.format(tag, videoID, customerID);
 
         AppRestClient.get(url, null, new BaseJsonHttpResponseHandler<JSONObject>() {
             @Override
@@ -771,6 +777,153 @@ public class RPC {
     }
 
     /* ======================================= VIDEOS END=======================================*/
+
+    /* ======================================= START MODULE =======================================*/
+
+    public static void getNews(final int pageNumber, final APIResponseListener listener) {
+        String fmUrl = AppConstant.RELATIVE_URL_GET_NEWS;
+        String url = String.format(fmUrl, pageNumber, AppConstant.LIMIT_NEWS);
+
+        AppRestClient.get(url, new BaseJsonHttpResponseHandler<ResponseJSON>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseJSON response) {
+                try {
+                    if (response.isResponseSuccessfully(listener)) {
+                        List<NewsJSON> listData = new ObjectMapper().readValue(response.getContentString(), new TypeReference<List<NewsJSON>>() {
+                        });
+                        listener.onSuccess(listData);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseJSON errorResponse) {
+                onError(throwable, listener);
+            }
+
+            @Override
+            protected ResponseJSON parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return onResponse(rawJsonData);
+            }
+        });
+    }
+
+    public static void getNewsByCategoryID(final int catID, final int pageNumber, final APIResponseListener listener) {
+        String fmUrl = AppConstant.RELATIVE_URL_GET_NEWS_BY_CAT_ID;
+        String url = String.format(fmUrl, catID, pageNumber, AppConstant.LIMIT_NEWS);
+
+        AppRestClient.get(url, new BaseJsonHttpResponseHandler<ResponseJSON>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseJSON response) {
+                try {
+                    if (response.isResponseSuccessfully(listener)) {
+                        List<NewsJSON> listData = new ObjectMapper().readValue(response.getContentString(), new TypeReference<List<NewsJSON>>() {
+                        });
+                        listener.onSuccess(listData);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseJSON errorResponse) {
+                onError(throwable, listener);
+            }
+
+            @Override
+            protected ResponseJSON parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return onResponse(rawJsonData);
+            }
+        });
+    }
+
+    public static void getNewsByID(int id, final APIResponseListener listener) {
+        String fmUrl = AppConstant.RELATIVE_URL_GET_NEWS_BY_ID;
+        String url = String.format(fmUrl, id);
+
+        AppRestClient.get(url, new BaseJsonHttpResponseHandler<ResponseJSON>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseJSON response) {
+                try {
+                    if (response.isResponseSuccessfully(listener)) {
+                        NewsJSON data = new ObjectMapper().readValue(response.getContentString(), NewsJSON.class);
+                        listener.onSuccess(data);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseJSON errorResponse) {
+                onError(throwable, listener);
+            }
+
+            @Override
+            protected ResponseJSON parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return onResponse(rawJsonData);
+            }
+        });
+    }
+
+    public static void getNewsCategories(final APIResponseListener listener) {
+        AppRestClient.get(AppConstant.RELATIVE_URL_GET_NEWS_CATEGORIES, new BaseJsonHttpResponseHandler<ResponseJSON>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseJSON response) {
+                try {
+                    if (response.isResponseSuccessfully(listener)) {
+                        List<NewsCategoryJSON> listData = new ObjectMapper().readValue(response.getContentString(), new TypeReference<List<NewsCategoryJSON>>() {
+                        });
+                        listener.onSuccess(listData);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseJSON errorResponse) {
+                onError(throwable, listener);
+            }
+
+            @Override
+            protected ResponseJSON parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return onResponse(rawJsonData);
+            }
+        });
+    }
+
+    public static void updateNewsViewCounter(int newsID, final APIResponseListener listener) {
+        String fmUrl = AppConstant.RELATIVE_URL_GET_NEWS_UPDATE_VIEW;
+        String url = String.format(fmUrl, newsID);
+        AppRestClient.get(url, new BaseJsonHttpResponseHandler<ResponseJSON>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseJSON response) {
+                try {
+                    if (response.isResponseSuccessfully(listener)) {
+                        if (listener != null)
+                            listener.onSuccess(response.getContentString());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseJSON errorResponse) {
+                onError(throwable, listener);
+            }
+
+            @Override
+            protected ResponseJSON parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return onResponse(rawJsonData);
+            }
+        });
+    }
+    /* ======================================= END MODULE =======================================*/
 
     /* ======================================= OTHER =======================================*/
 
@@ -875,5 +1028,19 @@ public class RPC {
         return true;
     }
 
+    private static ResponseJSON onResponse(String rawJsonData) throws IOException {
+        ResponseJSON responseJSON = new ObjectMapper().readValue(rawJsonData, ResponseJSON.class);
+
+        return responseJSON;
+    }
+
+    private static void onError(Throwable throwable, final APIResponseListener listener) {
+        callbackError(throwable.getMessage(), listener);
+    }
+
+    private static void callbackError(String message, final APIResponseListener listener) {
+        if (listener != null)
+            listener.onError(message);
+    }
     /* ======================================= COMMON END=======================================*/
 }

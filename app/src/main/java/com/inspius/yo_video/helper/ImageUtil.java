@@ -12,7 +12,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.inspius.yo_video.R;
 import com.inspius.yo_video.model.ImageObj;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +24,26 @@ import java.io.IOException;
  * Created by Admin on 15/4/2016.
  */
 public class ImageUtil {
+    public static DisplayImageOptions optionsImageAvatar = new DisplayImageOptions.Builder()
+            .showImageOnLoading(R.drawable.img_avatar)
+            .showImageForEmptyUri(R.drawable.img_avatar)
+            .showImageOnFail(R.drawable.img_avatar)
+            .cacheOnDisk(true)
+            .considerExifParams(true)
+            .bitmapConfig(Bitmap.Config.RGB_565)
+            .imageScaleType(ImageScaleType.EXACTLY)
+            .build();
+
+    public static DisplayImageOptions optionsImageDefault = new DisplayImageOptions.Builder()
+            .showImageOnLoading(R.drawable.no_image_default)
+            .showImageForEmptyUri(R.drawable.no_image_default)
+            .showImageOnFail(R.drawable.no_image_default)
+            .cacheOnDisk(true)
+            .considerExifParams(true)
+            .bitmapConfig(Bitmap.Config.RGB_565)
+            .imageScaleType(ImageScaleType.EXACTLY)
+            .build();
+
     public static ImageObj getOutputMediaFile(Context context, Uri selectedImage) {
 
         String mimeType;
