@@ -335,7 +335,11 @@ public class SearchFragment extends BaseMainFragment implements AdapterVideoActi
 
     @Override
     public void onPlayVideoListener(int position, VideoModel model) {
-        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance(model, true), true);
+        Intent intent = AppUtils.getIntentVideoDetail(mContext, (VideoModel) model, false);
+        if (intent == null)
+            return;
+
+        startActivity(intent);
     }
 
     @Override
