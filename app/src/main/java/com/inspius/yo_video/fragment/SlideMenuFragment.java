@@ -28,7 +28,6 @@ import com.inspius.yo_video.listener.AdapterActionListener;
 import com.inspius.yo_video.listener.AnimateFirstDisplayListener;
 import com.inspius.yo_video.listener.NotificationListener;
 import com.inspius.yo_video.model.SlideMenuModel;
-import com.inspius.yo_video.modules.news.MNewsSlideFragment;
 import com.inspius.yo_video.service.AppNotificationManager;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.ui.divideritemdecoration.HorizontalDividerItemDecoration;
@@ -246,8 +245,8 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
         } else if (type.equalsIgnoreCase("term_condition")) {
             fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_TERM_CONDITION, slideMenuModelSelected.title);
         } else if (type.equalsIgnoreCase("news")) {
-            fragment = MNewsSlideFragment.newInstance();
-//            fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_BUY_NEWS_MODULE, "Buy News Module");
+//            fragment = MNewsSlideFragment.newInstance();
+            fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_BUY_NEWS_MODULE, "Buy News Module");
         }
 
         if (fragment != null) {
