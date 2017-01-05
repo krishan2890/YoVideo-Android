@@ -1,4 +1,4 @@
-package com.inspius.yo_video.adapter;
+package com.inspius.yo_video.modules.news;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

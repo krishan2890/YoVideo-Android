@@ -6,11 +6,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.inspius.yo_video.R;
-import com.inspius.yo_video.adapter.ListNewsAdapter;
 import com.inspius.yo_video.api.APIResponseListener;
 import com.inspius.yo_video.api.RPC;
 import com.inspius.yo_video.base.BaseMainFragment;
-import com.inspius.yo_video.fragment.PageVideoHomeFragment;
 import com.inspius.yo_video.listener.AdapterActionListener;
 import com.inspius.yo_video.model.NewsJSON;
 import com.inspius.yo_video.model.NewsModel;

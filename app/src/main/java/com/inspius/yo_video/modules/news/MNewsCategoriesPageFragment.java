@@ -3,7 +3,6 @@ package com.inspius.yo_video.modules.news;
 import android.view.View;
 
 import com.inspius.yo_video.R;
-import com.inspius.yo_video.adapter.ListNewsCategoriesAdapter;
 import com.inspius.yo_video.api.APIResponseListener;
 import com.inspius.yo_video.api.RPC;
 import com.inspius.yo_video.base.BaseMainFragment;

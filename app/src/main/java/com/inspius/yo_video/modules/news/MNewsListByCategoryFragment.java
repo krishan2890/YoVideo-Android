@@ -6,7 +6,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.inspius.yo_video.R;
-import com.inspius.yo_video.adapter.ListNewsAdapter;
 import com.inspius.yo_video.api.APIResponseListener;
 import com.inspius.yo_video.api.RPC;
 import com.inspius.yo_video.base.BaseMainFragment;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 
 /**
  * A placeholder fragment containing a simple view.
