@@ -160,7 +160,7 @@ public class AppUtils {
 //                break;
 //
 //            case UPLOAD:
-//                intent = new Intent(mContext, MJWVideoDetailActivity.class);
+//                intent = new Intent(mContext, MExoDetailActivity.class);
 //                break;
 //
 //            case MP3:
