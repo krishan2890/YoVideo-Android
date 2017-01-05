@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 
 import com.inspius.coreapp.widget.HackyViewPager;
 import com.inspius.yo_video.R;
-import com.inspius.yo_video.app.TabSetting;
 import com.inspius.yo_video.base.BaseMainFragment;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItem;
@@ -46,8 +45,8 @@ public class MNewsSlideFragment extends BaseMainFragment {
     @Override
     public void onInitView() {
         final FragmentPagerItems pages = new FragmentPagerItems(mContext);
-        for (int titleResId : TabSetting.CUSTOM_NEWS_TAB.tabs()) {
-            FragmentPagerItem fragmentPagerItem = TabSetting.CUSTOM_NEWS_TAB.getFragmentPagerItem(mContext, titleResId);
+        for (int titleResId : MTabNewsSetting.CUSTOM_NEWS_TAB.tabs()) {
+            FragmentPagerItem fragmentPagerItem = MTabNewsSetting.CUSTOM_NEWS_TAB.getFragmentPagerItem(mContext, titleResId);
             pages.add(fragmentPagerItem);
         }
 

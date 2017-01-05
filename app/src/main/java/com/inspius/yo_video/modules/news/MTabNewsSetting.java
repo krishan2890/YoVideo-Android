@@ -1,4 +1,4 @@
-package com.inspius.yo_video.app;
+package com.inspius.yo_video.modules.news;
 
 import android.content.Context;
 
@@ -12,7 +12,7 @@ import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItem;
  * Created by Billy on 11/3/16.
  */
 
-public enum TabSetting {
+public enum MTabNewsSetting {
     CUSTOM_NEWS_TAB() {
         @Override
         public int[] tabs() {
