@@ -4,10 +4,8 @@ import android.view.View;
 
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.api.APIResponseListener;
-import com.inspius.yo_video.api.RPC;
 import com.inspius.yo_video.base.BaseMainFragment;
 import com.inspius.yo_video.listener.AdapterActionListener;
-import com.inspius.yo_video.model.NewsCategoryJSON;
 import com.inspius.yo_video.widget.GridDividerDecoration;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.grid.BasicGridLayoutManager;
@@ -81,13 +79,13 @@ public class MNewsCategoriesPageFragment extends BaseMainFragment implements Ada
 
     @Override
     public void onItemClickListener(int position, Object model) {
-        NewsCategoryJSON categoryJSON = (NewsCategoryJSON) model;
+        MNewsCategoryJSON categoryJSON = (MNewsCategoryJSON) model;
         mHostActivityInterface.addFragment(MNewsListByCategoryFragment.newInstance(categoryJSON), true);
     }
 
     void requestGetData() {
         startAnimLoading();
-        RPC.getNewsCategories(new APIResponseListener() {
+        MNewsRPC.getNewsCategories(new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -97,7 +95,7 @@ public class MNewsCategoriesPageFragment extends BaseMainFragment implements Ada
             public void onSuccess(Object results) {
                 stopAnimLoading();
 
-                List<NewsCategoryJSON> data = (List<NewsCategoryJSON>) results;
+                List<MNewsCategoryJSON> data = (List<MNewsCategoryJSON>) results;
                 if (data == null || data.isEmpty())
                     return;
 
@@ -117,5 +115,10 @@ public class MNewsCategoriesPageFragment extends BaseMainFragment implements Ada
 
         if (ultimateRecyclerView != null)
             ultimateRecyclerView.setRefreshing(false);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }

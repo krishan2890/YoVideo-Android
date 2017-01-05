@@ -7,11 +7,8 @@ import android.view.View;
 
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.api.APIResponseListener;
-import com.inspius.yo_video.api.RPC;
 import com.inspius.yo_video.base.BaseMainFragment;
 import com.inspius.yo_video.listener.AdapterActionListener;
-import com.inspius.yo_video.model.NewsJSON;
-import com.inspius.yo_video.model.NewsModel;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.ui.divideritemdecoration.HorizontalDividerItemDecoration;
 import com.wang.avi.AVLoadingIndicatorView;
@@ -107,7 +104,7 @@ public class MNewsLatestPageFragment extends BaseMainFragment implements Adapter
 
     @Override
     public void onItemClickListener(int position, Object model) {
-        NewsModel newsModel = (NewsModel) model;
+        MNewsModel newsModel = (MNewsModel) model;
         mHostActivityInterface.addFragment(MNewsDetailFragment.newInstance(newsModel), true);
     }
 
@@ -118,7 +115,7 @@ public class MNewsLatestPageFragment extends BaseMainFragment implements Adapter
             mAdapter.clear();
         }
 
-        RPC.getNews(pageNumber, new APIResponseListener() {
+        MNewsRPC.getNews(pageNumber, new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -128,13 +125,13 @@ public class MNewsLatestPageFragment extends BaseMainFragment implements Adapter
             public void onSuccess(Object results) {
                 stopAnimLoading();
 
-                List<NewsJSON> data = (List<NewsJSON>) results;
+                List<MNewsJSON> data = (List<MNewsJSON>) results;
                 if (data == null || data.isEmpty())
                     return;
 
-                List<NewsModel> listNews = new ArrayList<>();
-                for (NewsJSON news : data)
-                    listNews.add(new NewsModel(news));
+                List<MNewsModel> listNews = new ArrayList<>();
+                for (MNewsJSON news : data)
+                    listNews.add(new MNewsModel(news));
 
                 pageNumber++;
                 mAdapter.add(listNews);

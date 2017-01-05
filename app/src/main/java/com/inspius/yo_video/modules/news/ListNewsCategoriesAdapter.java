@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.listener.AdapterActionListener;
-import com.inspius.yo_video.model.NewsCategoryJSON;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -25,7 +24,7 @@ import butterknife.ButterKnife;
 
 public class ListNewsCategoriesAdapter extends UltimateViewAdapter<ListNewsCategoriesAdapter.HolderGirdCell> {
 
-    private List<NewsCategoryJSON> mItems;
+    private List<MNewsCategoryJSON> mItems;
     AdapterActionListener listener;
     private DisplayImageOptions options;
 
@@ -67,7 +66,7 @@ public class ListNewsCategoriesAdapter extends UltimateViewAdapter<ListNewsCateg
 
     @Override
     public void onBindViewHolder(final HolderGirdCell holder, final int position) {
-        final NewsCategoryJSON model = getItem(position);
+        final MNewsCategoryJSON model = getItem(position);
         if (model != null) {
             holder.tvnTitle.setText(model.title);
 
@@ -82,7 +81,7 @@ public class ListNewsCategoriesAdapter extends UltimateViewAdapter<ListNewsCateg
         }
     }
 
-    public void add(List<NewsCategoryJSON> listData) {
+    public void add(List<MNewsCategoryJSON> listData) {
         mItems.addAll(listData);
         notifyDataSetChanged();
     }
@@ -128,7 +127,7 @@ public class ListNewsCategoriesAdapter extends UltimateViewAdapter<ListNewsCateg
         }
     }
 
-    public NewsCategoryJSON getItem(int position) {
+    public MNewsCategoryJSON getItem(int position) {
         if (customHeaderView != null)
             position--;
         if (position < mItems.size())

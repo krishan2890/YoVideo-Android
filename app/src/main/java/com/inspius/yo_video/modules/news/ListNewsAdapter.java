@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.helper.ImageUtil;
 import com.inspius.yo_video.listener.AdapterActionListener;
-import com.inspius.yo_video.model.NewsModel;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -22,7 +21,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ListNewsAdapter extends UltimateViewAdapter<ListNewsAdapter.HolderListCell> {
-    private List<NewsModel> mItems;
+    private List<MNewsModel> mItems;
     private AdapterActionListener listener;
 
     public ListNewsAdapter() {
@@ -43,7 +42,7 @@ public class ListNewsAdapter extends UltimateViewAdapter<ListNewsAdapter.HolderL
 
     @Override
     public void onBindViewHolder(final HolderListCell holder, final int position) {
-        final NewsModel model = getItem(position);
+        final MNewsModel model = getItem(position);
         if (model != null) {
             holder.tvnTitle.setText(model.getTitle());
             holder.tvnDateTime.setText(model.getUpdateAt());
@@ -61,7 +60,7 @@ public class ListNewsAdapter extends UltimateViewAdapter<ListNewsAdapter.HolderL
         }
     }
 
-    public void add(List<NewsModel> listData) {
+    public void add(List<MNewsModel> listData) {
         mItems.addAll(listData);
         notifyDataSetChanged();
     }
@@ -122,7 +121,7 @@ public class ListNewsAdapter extends UltimateViewAdapter<ListNewsAdapter.HolderL
         }
     }
 
-    public NewsModel getItem(int position) {
+    public MNewsModel getItem(int position) {
         if (customHeaderView != null)
             position--;
         if (position < mItems.size())

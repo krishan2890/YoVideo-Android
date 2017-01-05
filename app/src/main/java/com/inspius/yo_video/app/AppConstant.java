@@ -9,7 +9,6 @@ public class AppConstant {
     public static int LIMIT_PAGE_HOMES = 10;
     public static int LIMIT_GET_COMMENTS = 10;
     public static int API_TIMEOUT = 20000;
-    public static int LIMIT_NEWS = 15;
 
     /**
      * Static Page
@@ -44,12 +43,7 @@ public class AppConstant {
     public static final String RELATIVE_URL_INSERT_COMMENT = "api/insertCommentVideo";
     public static final String RELATIVE_URL_LIKE_VIDEO = "api/likevideo";
     public static final String RELATIVE_URL_GET_LIKE_STATUS = "api/getLikeVideoStatus/%s/%s";
-    public static final String RELATIVE_URL_GET_NEWS = "/api/getListNews/%s/%s";
-    public static final String RELATIVE_URL_GET_NEWS_BY_CAT_ID = "/api/getNewsByCategoryID/%s/%s/%s";
-    public static final String RELATIVE_URL_GET_NEWS_BY_ID = "/api/getNewsByID/%s";
-    public static final String RELATIVE_URL_GET_NEWS_CATEGORIES = "/api/getNewsCategories";
-    public static final String RELATIVE_URL_GET_NEWS_UPDATE_VIEW = "/api/updateViewNewsCounter/%s";
-    public static final String RELATIVE_URL_GET_NEWS_DESCRIPTION_PAGE = "/news/getNewsPage/%s";
+
     /**
      * Key Bundle
      */

@@ -7,12 +7,8 @@ import android.view.View;
 
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.api.APIResponseListener;
-import com.inspius.yo_video.api.RPC;
 import com.inspius.yo_video.base.BaseMainFragment;
 import com.inspius.yo_video.listener.AdapterActionListener;
-import com.inspius.yo_video.model.NewsCategoryJSON;
-import com.inspius.yo_video.model.NewsJSON;
-import com.inspius.yo_video.model.NewsModel;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.ui.divideritemdecoration.HorizontalDividerItemDecoration;
 import com.wang.avi.AVLoadingIndicatorView;
@@ -28,7 +24,7 @@ import butterknife.Bind;
 public class MNewsListByCategoryFragment extends BaseMainFragment implements AdapterActionListener {
     public static final String TAG = MNewsListByCategoryFragment.class.getSimpleName();
 
-    public static MNewsListByCategoryFragment newInstance(NewsCategoryJSON categoryModel) {
+    public static MNewsListByCategoryFragment newInstance(MNewsCategoryJSON categoryModel) {
         MNewsListByCategoryFragment fragment = new MNewsListByCategoryFragment();
         fragment.categoryModel = categoryModel;
         return fragment;
@@ -54,7 +50,7 @@ public class MNewsListByCategoryFragment extends BaseMainFragment implements Ada
     private LinearLayoutManager linearLayoutManager;
     private ListNewsAdapter mAdapter = null;
     int pageNumber;
-    private NewsCategoryJSON categoryModel;
+    private MNewsCategoryJSON categoryModel;
 
     @Override
     public void onInitView() {
@@ -119,7 +115,7 @@ public class MNewsListByCategoryFragment extends BaseMainFragment implements Ada
 
     @Override
     public void onItemClickListener(int position, Object model) {
-        NewsModel newsModel = (NewsModel) model;
+        MNewsModel newsModel = (MNewsModel) model;
         mHostActivityInterface.addFragment(MNewsDetailFragment.newInstance(newsModel), true);
     }
 
@@ -130,7 +126,7 @@ public class MNewsListByCategoryFragment extends BaseMainFragment implements Ada
             mAdapter.clear();
         }
 
-        RPC.getNewsByCategoryID(categoryModel.id, pageNumber, new APIResponseListener() {
+        MNewsRPC.getNewsByCategoryID(categoryModel.id, pageNumber, new APIResponseListener() {
             @Override
             public void onError(String message) {
                 stopAnimLoading();
@@ -140,13 +136,13 @@ public class MNewsListByCategoryFragment extends BaseMainFragment implements Ada
             public void onSuccess(Object results) {
                 stopAnimLoading();
 
-                List<NewsJSON> data = (List<NewsJSON>) results;
+                List<MNewsJSON> data = (List<MNewsJSON>) results;
                 if (data == null || data.isEmpty())
                     return;
 
-                List<NewsModel> listNews = new ArrayList<>();
-                for (NewsJSON news : data)
-                    listNews.add(new NewsModel(news));
+                List<MNewsModel> listNews = new ArrayList<>();
+                for (MNewsJSON news : data)
+                    listNews.add(new MNewsModel(news));
 
                 pageNumber++;
                 mAdapter.add(listNews);

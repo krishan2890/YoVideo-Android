@@ -10,11 +10,9 @@ import android.widget.TextView;
 
 import com.inspius.coreapp.helper.IntentUtils;
 import com.inspius.yo_video.R;
-import com.inspius.yo_video.api.RPC;
 import com.inspius.yo_video.base.BaseMainFragment;
 import com.inspius.yo_video.helper.ConnectionDetector;
 import com.inspius.yo_video.helper.Logger;
-import com.inspius.yo_video.model.NewsModel;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import butterknife.Bind;
@@ -26,7 +24,7 @@ import butterknife.OnClick;
 public class MNewsDetailFragment extends BaseMainFragment {
     public static final String TAG = MNewsDetailFragment.class.getSimpleName();
 
-    public static MNewsDetailFragment newInstance(NewsModel newsModel) {
+    public static MNewsDetailFragment newInstance(MNewsModel newsModel) {
         MNewsDetailFragment fragment = new MNewsDetailFragment();
         fragment.newsModel = newsModel;
         return fragment;
@@ -44,7 +42,7 @@ public class MNewsDetailFragment extends BaseMainFragment {
     protected String headerName;
     protected String urlContent;
     protected String urlShare;
-    private NewsModel newsModel;
+    private MNewsModel newsModel;
 
     @Override
     public int getLayout() {
@@ -63,7 +61,7 @@ public class MNewsDetailFragment extends BaseMainFragment {
         urlShare = newsModel.getDetailPath();
 
         startWebView(urlContent);
-        RPC.updateNewsViewCounter(newsModel.getID(), null);
+        MNewsRPC.updateNewsViewCounter(newsModel.getID(), null);
     }
 
     @Override
