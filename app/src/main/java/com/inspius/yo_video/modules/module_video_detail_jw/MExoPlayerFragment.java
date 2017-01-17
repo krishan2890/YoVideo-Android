@@ -89,7 +89,7 @@ public class MExoPlayerFragment extends Fragment implements ExoPlayer.EventListe
         player.setPlayWhenReady(shouldAutoPlay);
 //            debugViewHelper = new DebugTextViewHelper(player, debugTextView);
 //            debugViewHelper.start();
-
+        player.addListener(this);
         preparingPlayer();
     }
 
