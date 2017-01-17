@@ -7,10 +7,10 @@
     <!--<string name="facebook_app_id">1705400019740975</string>-->
 
     <!-- Change AdMob Banner Id -->
-    <string name="banner_ad_unit_id">ca-app-pub-4515379129023944/1260293910</string>
+    <string name="banner_ad_unit_id">ca-app-pub-8000676937410247/3638740815</string>
 
     <!-- Change AdMob Interstitial Id -->
-    <string name="interstitial_ad_unit_id">ca-app-pub-4515379129023944/2737027117</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-8000676937410247/9545673611</string>
 
     <!-- Change JW_LICENSE_KEY -->
     <string name="jw_license_key">VhdGGWw+4IX/o0y9QxdrKIS6R/CddyhGD1i2UA==</string>
