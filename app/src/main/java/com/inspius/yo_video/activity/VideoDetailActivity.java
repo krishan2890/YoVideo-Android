@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.inspius.coreapp.CoreAppActivity;
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.app.AppConfig;
@@ -59,6 +60,8 @@ public class VideoDetailActivity extends CoreAppActivity {
     }
 
     void initAds() {
+        MobileAds.initialize(getApplicationContext(), getString(R.string.admod_app_id));
+        
         if (AppConfig.SHOW_ADS_INTERSTITIAL) {
             // Create the InterstitialAd and set the adUnitId.
             mInterstitialAd = new InterstitialAd(this);

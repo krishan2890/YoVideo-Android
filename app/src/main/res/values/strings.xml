@@ -6,10 +6,9 @@
     <string name="facebook_app_id">694268657341835</string>
     <!--<string name="facebook_app_id">1705400019740975</string>-->
 
-    <!-- Change AdMob Banner Id -->
+    <!-- Change AdMob Id -->
+    <string name="admod_app_id">ca-app-pub-8000676937410247~6731808018</string>
     <string name="banner_ad_unit_id">ca-app-pub-8000676937410247/3638740815</string>
-
-    <!-- Change AdMob Interstitial Id -->
     <string name="interstitial_ad_unit_id">ca-app-pub-8000676937410247/9545673611</string>
 
     <!-- Change JW_LICENSE_KEY -->
