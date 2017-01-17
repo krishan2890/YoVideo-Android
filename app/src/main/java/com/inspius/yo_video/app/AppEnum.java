@@ -53,6 +53,20 @@ public class AppEnum {
         }
     }
 
+    public enum VIDEO_DETAIL_SCREEN {
+        DEFAULT("default"), PLUGIN_DETAIL_JW("plugin-detail-jw");
+
+        private final String text;
+
+        private VIDEO_DETAIL_SCREEN(final String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
+    }
     /**
      * ENUM---END-------------
      */

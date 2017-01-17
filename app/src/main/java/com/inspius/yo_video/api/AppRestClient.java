@@ -1,10 +1,12 @@
 package com.inspius.yo_video.api;
 
 
+import android.os.Looper;
+
 import com.inspius.yo_video.app.AppConfig;
+import com.inspius.yo_video.app.AppConstant;
 import com.inspius.yo_video.app.GlobalApplication;
 import com.inspius.yo_video.helper.Logger;
-import com.inspius.yo_video.service.AccountDataManager;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
@@ -22,44 +24,45 @@ import cz.msebera.android.httpclient.HttpEntity;
 public class AppRestClient {
     public static final String TAG = AppRestClient.class.getSimpleName();
 
-    private static AsyncHttpClient client = new AsyncHttpClient();
+    private static AsyncHttpClient asyncClient = new AsyncHttpClient();
     private static AsyncHttpClient synClient = new SyncHttpClient();
 
-    private static final String HEADER_AUTHORIZATION = "Authorization";
-    private static final String HEADER_APP_ID = "AppId";
-    private static final String HEADER_BASIC = "basic";
-
     public static void initAsyncHttpClient() {
-        client.setBasicAuth("username", "password/token");
+//        asyncClient.setBasicAuth("username", "password/token");
+        getClient().setTimeout(AppConstant.API_TIMEOUT);
     }
 
     public static void cancelAllRequests() {
-        client.cancelAllRequests(true);
+        asyncClient.cancelAllRequests(true);
+        synClient.cancelAllRequests(true);
     }
 
     public static void cancelRequestsByTAG(String TAG) {
-        Logger.d("cancelRequestsByTAG", TAG);
-        client.cancelRequestsByTAG(TAG, true);
+        asyncClient.cancelRequestsByTAG(TAG, true);
     }
 
     public static void cancelAllRequestsSyncHttpClient() {
         synClient.cancelAllRequests(true);
     }
 
+    public static void get(String url, AsyncHttpResponseHandler responseHandler) {
+        get(url, null, responseHandler);
+    }
+
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        client.get(getAbsoluteUrl(url), params, responseHandler).setTag(url);
+        getClient().get(getAbsoluteUrl(url), params, responseHandler).setTag(url);
     }
 
     public static void download(String url, FileAsyncHttpResponseHandler responseHandler) {
-        synClient.get(GlobalApplication.getAppContext(), url, responseHandler).setTag(url);
+        getClient().get(GlobalApplication.getAppContext(), url, responseHandler).setTag(url);
     }
 
     public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        client.post(getAbsoluteUrl(url), params, responseHandler).setTag(url);
+        getClient().post(getAbsoluteUrl(url), params, responseHandler).setTag(url);
     }
 
     public static void put(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        client.put(GlobalApplication.getAppContext(), getAbsoluteUrl(url), paramsToEntity(params, responseHandler), null, responseHandler).setTag(url);
+        getClient().put(GlobalApplication.getAppContext(), getAbsoluteUrl(url), paramsToEntity(params, responseHandler), null, responseHandler).setTag(url);
     }
 
     private static HttpEntity paramsToEntity(RequestParams params, ResponseHandlerInterface responseHandler) {
@@ -80,17 +83,27 @@ public class AppRestClient {
         return entity;
     }
 
-    private static String getAbsoluteUrl(String relativeUrl) {
+    public static String getAbsoluteUrl(String relativeUrl) {
         String url = AppConfig.BASE_URL + relativeUrl;
         Logger.d(TAG, url);
         return url;
     }
 
     public static void addHeader(String header, String value) {
-        client.addHeader(header, value);
+        asyncClient.addHeader(header, value);
     }
 
     public static void removeHeader(String header) {
-        client.removeHeader(header);
+        asyncClient.removeHeader(header);
+    }
+
+    /**
+     * @return an async client when calling from the main thread, otherwise a sync client.
+     */
+    private static AsyncHttpClient getClient() {
+        // Return the synchronous HTTP client when the thread is not prepared
+        if (Looper.myLooper() == null)
+            return synClient;
+        return asyncClient;
     }
 }

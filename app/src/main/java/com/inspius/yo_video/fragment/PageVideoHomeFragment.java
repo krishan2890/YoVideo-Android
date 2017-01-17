@@ -1,5 +1,6 @@
 package com.inspius.yo_video.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
@@ -111,11 +112,6 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
         startAnimLoading();
 
         dataCategory = AppSession.getInstance().getCategoryData();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
 
         pageNumber = 1;
         requestGetData();
@@ -130,7 +126,6 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
             @Override
             public void onError(String message) {
                 stopAnimLoading();
-                DialogUtil.showMessageBox(mContext, message);
             }
 
             @Override
@@ -174,7 +169,13 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
 
     @Override
     public void onPlayVideoListener(int position, VideoModel model) {
-        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance(model, true), true);
+        VideoModel videoModel = (VideoModel) model;
+
+        Intent intent = AppUtils.getIntentVideoDetail(mContext, videoModel, true);
+        if (intent == null)
+            return;
+
+        startActivity(intent);
     }
 
     void startAnimLoading() {
@@ -189,7 +190,13 @@ public class PageVideoHomeFragment extends BaseMainFragment implements AdapterVi
 
     @Override
     public void onItemClickListener(int position, Object model) {
-        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
+        VideoModel videoModel = (VideoModel) model;
+
+        Intent intent = AppUtils.getIntentVideoDetail(mContext, videoModel, false);
+        if (intent == null)
+            return;
+
+        startActivity(intent);
     }
 
     @Override

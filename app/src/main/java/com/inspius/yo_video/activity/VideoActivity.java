@@ -52,7 +52,6 @@ public class VideoActivity extends CoreAppActivity {
                     if (TextUtils.isEmpty(title) || TextUtils.isEmpty(content))
                         return false;
 
-
                     if (TextUtils.isEmpty(message))
                         message = content;
 

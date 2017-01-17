@@ -8,6 +8,7 @@ public class AppConstant {
     public static int REQUEST_ALBUM_PIC = 1;
     public static int LIMIT_PAGE_HOMES = 10;
     public static int LIMIT_GET_COMMENTS = 10;
+    public static int API_TIMEOUT = 20000;
 
     /**
      * Static Page
@@ -15,6 +16,7 @@ public class AppConstant {
     public static final String URL_PAGE_SHARE = "http://inspius.com/";
     public static final String URL_PAGE_ABOUT_US = "http://inspius.com/about-us/";
     public static final String URL_PAGE_TERM_CONDITION = "http://inspius.com/services/mobile-app-development/";
+    public static final String URL_PAGE_BUY_NEWS_MODULE = "http://store.inspius.com/downloads/yovideo-android-news-module/";
 
     /**
      * ID SERVICE
@@ -40,7 +42,7 @@ public class AppConstant {
     public static final String RELATIVE_URL_GET_COMMENTS = "api/getListCommentVideo/%s/%s/%s";
     public static final String RELATIVE_URL_INSERT_COMMENT = "api/insertCommentVideo";
     public static final String RELATIVE_URL_LIKE_VIDEO = "api/likevideo";
-    public static final String RELATIVE_URL_GET_LIKE_STATUS = "api/getLikeVideoStatus/%s";
+    public static final String RELATIVE_URL_GET_LIKE_STATUS = "api/getLikeVideoStatus/%s/%s";
 
     /**
      * Key Bundle
@@ -72,13 +74,13 @@ public class AppConstant {
     public static final int REQUEST_CODE_DOWNLOAD = 112;
     public static final int REQUEST_CODE_PROFILE_SHARING = 113;
 
-
     /**
      * Key XML
      */
     public static final String KEY_ITEM = "element"; // parent node
     public static final String KEY_ID = "id";
     public static final String HEADER_CUSTOMER_ID = "customer_id";
+    public static final String CUSTOMER_ID = "customer_id";
     public static final String KEY_NAME = "name";
     public static final String KEY_TYPE = "type";
     public static final String KEY_ICON = "icon";

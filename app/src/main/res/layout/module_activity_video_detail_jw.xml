@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        style="@style/ToolBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:paddingTop="@dimen/tool_bar_top_padding"
+        app:contentInsetStart="0dp">
+
+        <com.inspius.coreapp.widget.TintableImageView
+            android:id="@+id/imvHeaderBack"
+            android:layout_width="@dimen/tab_height"
+            android:layout_height="@dimen/tab_height"
+            android:layout_gravity="start"
+            android:background="?attr/selectableItemBackground"
+            android:minHeight="@dimen/abc_action_bar_default_height_material"
+            android:minWidth="@dimen/abc_action_bar_default_height_material"
+            android:padding="10dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_back"
+            app:tint="@color/custom_icon_video_detail_selector" />
+
+        <com.inspius.coreapp.widget.TintableImageView
+            android:id="@+id/imvDownload"
+            android:layout_width="@dimen/tab_height"
+            android:layout_height="@dimen/tab_height"
+            android:layout_gravity="right"
+            android:background="?attr/selectableItemBackground"
+            android:scaleType="center"
+            android:src="@drawable/icon_download_video"
+            app:tint="@color/custom_icon_video_detail_selector" />
+
+        <com.inspius.coreapp.widget.TintableImageView
+            android:id="@+id/imvAddToWishList"
+            android:layout_width="@dimen/tab_height"
+            android:layout_height="@dimen/tab_height"
+            android:layout_gravity="right"
+            android:background="?attr/selectableItemBackground"
+            android:scaleType="center"
+            android:src="@drawable/ic_video_wish_list"
+            app:tint="@color/custom_icon_video_detail_selector" />
+
+        <TextView
+            android:id="@+id/tvnHeaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:singleLine="true"
+            android:text="@string/app_name"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+    <LinearLayout
+        android:id="@+id/linearContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/ad_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/banner_ad_unit_id" />
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvnTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    android:padding="10dp"
+                    android:text="Fear Nothing | Selad Sue"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/series"
+                            android:textColor="#292929"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvnSeries"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:singleLine="true"
+                            android:text="New Text"
+                            android:textColor="#cc3333"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/author"
+                            android:textColor="#292929"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvnAuthor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:singleLine="true"
+                            android:text="Billy"
+                            android:textColor="#cc3333"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvnDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text="New Text"
+                    android:textColor="#292929" />
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:background="@android:color/black"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvnViewNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/ic_icon_view_video"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="124435"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <com.inspius.coreapp.widget.TintableImageView
+                    android:id="@+id/imvLike"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:src="@drawable/icon_wishlist_video"
+                    app:tint="@color/custom_icon_video_detail_selector" />
+
+                <com.inspius.coreapp.widget.TintableImageView
+                    android:id="@+id/imvShare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:src="@drawable/icon_share_video"
+                    app:tint="@color/custom_icon_video_detail_selector" />
+
+                <com.inspius.coreapp.widget.TintableImageView
+                    android:id="@+id/imvComment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_video_comment"
+                    app:tint="@color/custom_icon_video_detail_selector" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

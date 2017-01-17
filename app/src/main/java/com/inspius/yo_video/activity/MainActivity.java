@@ -14,15 +14,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
+import com.inspius.coreapp.CoreAppActivity;
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.api.APIResponseListener;
 import com.inspius.yo_video.api.AppRestClient;
-import com.inspius.yo_video.app.AppConfig;
 import com.inspius.yo_video.app.AppConstant;
-import com.inspius.yo_video.app.GlobalApplication;
 import com.inspius.yo_video.base.BaseMainActivityInterface;
 import com.inspius.yo_video.fragment.SearchFragment;
 import com.inspius.yo_video.fragment.SlideMenuFragment;
@@ -33,7 +29,6 @@ import com.inspius.yo_video.service.AccountDataManager;
 import com.inspius.yo_video.service.DatabaseManager;
 import com.inspius.yo_video.service.DownloadRequestQueue;
 import com.inspius.yo_video.service.DownloadVideoService;
-import com.inspius.coreapp.CoreAppActivity;
 import com.sromku.simple.fb.SimpleFacebook;
 
 import java.util.Locale;
@@ -64,7 +59,6 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
     private AccountDataListener listenerLoginRequest;
     private SlideMenuFragment fragmentSlideMenu;
     private AccountDataManager accountDataManager;
-    private InterstitialAd mInterstitialAd;
 
     @Override
     protected int getLayoutResourceId() {
@@ -80,22 +74,6 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
         accountDataManager = AccountDataManager.getInstance();
         fragmentSlideMenu = (SlideMenuFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentSlideMenu);
         setupActionBar();
-
-        if (AppConfig.SHOW_ADS_INTERSTITIAL) {
-            // Create the InterstitialAd and set the adUnitId.
-            mInterstitialAd = new InterstitialAd(this);
-            // Defined in res/values/strings.xml
-            mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
-
-            // Loading ads
-            mInterstitialAd.setAdListener(new AdListener() {
-                @Override
-                public void onAdClosed() {
-                    requestNewInterstitial();
-                }
-            });
-            requestNewInterstitial();
-        }
     }
 
     @Override
@@ -392,32 +370,5 @@ public class MainActivity extends CoreAppActivity implements BaseMainActivityInt
         });
     }
 
-    @Override
-    public void showInterstitialAds() {
-        if (!AppConfig.SHOW_ADS_INTERSTITIAL)
-            return;
 
-        // Show the ad if it's ready. Otherwise toast and restart the game.
-        if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
-        } else {
-            requestNewInterstitial();
-        }
-    }
-
-    private void requestNewInterstitial() {
-        if (!AppConfig.SHOW_ADS_INTERSTITIAL)
-            return;
-
-        AdRequest adRequest;
-        if (GlobalApplication.getInstance().isProductionEnvironment()) {
-            adRequest = new AdRequest.Builder().build();
-        } else {
-            adRequest = new AdRequest.Builder()
-                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                    .build();
-        }
-
-        mInterstitialAd.loadAd(adRequest);
-    }
 }

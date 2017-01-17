@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.google-services'
 
-
 android {
     compileSdkVersion COMPILE_SDK_VERSION as int
     buildToolsVersion BUILD_TOOLS_VERSION
@@ -184,6 +183,8 @@ dependencies {
     // Google Firebase
     compile 'com.google.firebase:firebase-messaging:9.2.1'
 
+    compile 'com.google.firebase:firebase-crash:9.2.1'
+
     // JWPlayer
     compile 'com.longtailvideo.jwplayer:jwplayer-android-sdk:+'
 
@@ -192,4 +193,6 @@ dependencies {
 
     // app intro
     compile 'com.github.paolorotolo:appintro:4.1.0'
+
+    compile 'com.google.android.exoplayer:exoplayer:r2.1.1'
 }

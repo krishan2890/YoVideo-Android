@@ -1,5 +1,6 @@
 package com.inspius.yo_video.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -127,13 +128,23 @@ public class ListVideoFragment extends BaseMainFragment implements AdapterVideoA
     }
 
     @Override
-    public void onPlayVideoListener(int position, VideoModel model) {
-        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance(model, true), true);
+    public void onPlayVideoListener(int position, VideoModel videoModel) {
+        Intent intent = AppUtils.getIntentVideoDetail(mContext, videoModel, true);
+        if (intent == null)
+            return;
+
+        startActivity(intent);
     }
 
     @Override
     public void onItemClickListener(int position, Object model) {
-        mHostActivityInterface.addFragment(VideoDetailFragment.newInstance((VideoModel) model, false), true);
+        VideoModel videoModel = (VideoModel) model;
+
+        Intent intent = AppUtils.getIntentVideoDetail(mContext, videoModel, false);
+        if (intent == null)
+            return;
+
+        startActivity(intent);
     }
 
     void startAnimLoading() {

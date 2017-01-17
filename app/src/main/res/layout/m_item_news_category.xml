@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:background="@drawable/bgr_item_news_category"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <com.inspius.coreapp.widget.TintableImageView
+        android:id="@+id/imvIcon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:padding="10dp"
+        android:src="@drawable/ic_news_default"
+        app:tint="@color/custom_icon_news_item_category_selector" />
+
+    <TextView
+        android:id="@+id/tvnTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:singleLine="true"
+        android:text="adasdas"
+        android:textColor="@color/text_news_item_category_selector" />
+
+</LinearLayout>

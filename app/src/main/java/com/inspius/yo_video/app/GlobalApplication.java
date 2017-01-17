@@ -9,7 +9,10 @@ import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.login.DefaultAudience;
+
+import com.google.android.exoplayer2.BuildConfig;
 import com.inspius.coreapp.config.CoreAppEnums;
+import com.inspius.yo_video.api.AppRestClient;
 import com.norbsoft.typefacehelper.TypefaceCollection;
 import com.norbsoft.typefacehelper.TypefaceHelper;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -23,6 +26,13 @@ import com.sromku.simple.fb.SimpleFacebookConfiguration;
 import io.fabric.sdk.android.Fabric;
 import io.vov.vitamio.Vitamio;
 
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
+import com.google.android.exoplayer2.util.Util;
+
 /**
  * Created by Billy on 9/3/15.
  */
@@ -33,7 +43,7 @@ public class GlobalApplication extends Application {
     public static final String TAG = GlobalApplication.class.getSimpleName();
     private static GlobalApplication mInstance;
     private static Context mAppContext;
-
+    protected String userAgent;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -83,6 +93,11 @@ public class GlobalApplication extends Application {
 
         // init Vitamio
         Vitamio.isInitialized(this);
+
+        AppRestClient.initAsyncHttpClient();
+
+        // init exo
+        userAgent = Util.getUserAgent(this, "YoVideo");
     }
 
     @Override
@@ -121,5 +136,18 @@ public class GlobalApplication extends Application {
 
     public boolean isProductionEnvironment() {
         return (AppConfig.ENVIRONMENT == CoreAppEnums.Environment.PRODUCTION) ? true : false;
+    }
+
+    public DataSource.Factory buildDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
+        return new DefaultDataSourceFactory(this, bandwidthMeter,
+                buildHttpDataSourceFactory(bandwidthMeter));
+    }
+
+    public HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
+        return new DefaultHttpDataSourceFactory(userAgent, bandwidthMeter);
+    }
+
+    public boolean useExtensionRenderers() {
+        return BuildConfig.FLAVOR.equals("withExtensions");
     }
 }

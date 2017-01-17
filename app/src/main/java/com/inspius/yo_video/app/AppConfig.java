@@ -13,11 +13,6 @@ public class AppConfig {
     public static final CoreAppEnums.Environment ENVIRONMENT = CoreAppEnums.Environment.DEV;
 
     /**
-     * KEY/ID
-     */
-    public static final String GENERATE_KEY = "aebf9853eee1e9cde59c6f34cdbc90c5";
-    public static final int NOTIFICATION_ID = 100;
-    /**
      * Change SHOW_ADS_INTERSTITIAL
      * true : show ads
      * false : hide ads
@@ -47,8 +42,13 @@ public class AppConfig {
     /**
      * App Intro
      */
-    public static final boolean IS_SHOW_INTRO_APP          = true; // show intro app
-    public static final boolean IS_FIRST_OPEN_INTRO_APP    = false; // show first time open app
+    public static final boolean IS_SHOW_INTRO_APP = true; // show intro app
+    public static final boolean IS_FIRST_OPEN_INTRO_APP = true; // show first time open app
 
 
+    /**
+     * PLUGIN CONFIG
+     */
+
+    public static final AppEnum.VIDEO_DETAIL_SCREEN VIDEO_DETAIL_SCREEN= AppEnum.VIDEO_DETAIL_SCREEN.DEFAULT;
 }

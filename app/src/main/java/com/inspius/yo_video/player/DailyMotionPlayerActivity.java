@@ -1,31 +1,37 @@
-package com.inspius.yo_video.activity;
+package com.inspius.yo_video.player;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.app.AppConstant;
-import com.inspius.yo_video.fragment.PageVideoYoutubeFragment;
+import com.inspius.yo_video.widget.DMWebVideoView;
 import com.inspius.yo_video.model.VideoModel;
+import com.inspius.coreapp.CoreAppActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class YoutubePlayerActivity extends AppCompatActivity {
+public class DailyMotionPlayerActivity extends CoreAppActivity {
+    private VideoModel videoModel;
     @Bind(R.id.tvnHeaderTitle)
     TextView tvnHeaderTitle;
 
-    private VideoModel videoModel;
+    @Bind(R.id.dmWebVideoView)
+    DMWebVideoView videoView;
+
+    @Override
+    protected int getLayoutResourceId() {
+        return R.id.container;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player_youtube);
+        setContentView(R.layout.activity_dailymotion);
         ButterKnife.bind(this);
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
@@ -41,16 +47,15 @@ public class YoutubePlayerActivity extends AppCompatActivity {
         if (!getIntent().getExtras().containsKey(AppConstant.KEY_BUNDLE_VIDEO))
             return;
 
-        videoModel = (VideoModel) getIntent().getExtras().getSerializable(AppConstant.KEY_BUNDLE_VIDEO);
 
+        videoModel = (VideoModel) getIntent().getExtras().getSerializable(AppConstant.KEY_BUNDLE_VIDEO);
         if (videoModel == null)
             finish();
 
         tvnHeaderTitle.setText(videoModel.getTitle());
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        PageVideoYoutubeFragment videoFragment = PageVideoYoutubeFragment.newInstance(videoModel, true);
-        ft.replace(R.id.container, videoFragment).commit();
+        //  videoView.setVideoId("x26hv6c");
+        videoView.loadUrl(videoModel.getVideoUrl());
+        videoView.setAutoPlay(true);
     }
 
     @Override
@@ -62,8 +67,14 @@ public class YoutubePlayerActivity extends AppCompatActivity {
             getSupportActionBar().show();
     }
 
+
     @OnClick(R.id.imvHeaderBack)
     void doBack() {
-        onBackPressed();
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }

@@ -91,6 +91,7 @@ public class WebViewFragment extends BaseMainFragment {
         super.onResume();
         mActivityInterface.updateHeaderTitle(headerName);
         mActivityInterface.setVisibleHeaderMenu(true);
+        mActivityInterface.setVisibleHeaderSearch(false);
 
         if (webView != null)
             webView.onResume();

@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.inspius.coreapp.CoreAppFragment;
+import com.inspius.coreapp.helper.IntentUtils;
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.adapter.ListSlideMenuAdapter;
 import com.inspius.yo_video.api.APIResponseListener;
@@ -27,8 +29,6 @@ import com.inspius.yo_video.listener.AnimateFirstDisplayListener;
 import com.inspius.yo_video.listener.NotificationListener;
 import com.inspius.yo_video.model.SlideMenuModel;
 import com.inspius.yo_video.service.AppNotificationManager;
-import com.inspius.coreapp.CoreAppFragment;
-import com.inspius.coreapp.helper.IntentUtils;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.marshalchen.ultimaterecyclerview.ui.divideritemdecoration.HorizontalDividerItemDecoration;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -235,15 +235,18 @@ public class SlideMenuFragment extends BaseMainFragment implements AdapterAction
             fragment = CategoriesFragment.newInstance();
         } else if (type.equalsIgnoreCase("wishlist")) {
             fragment = WishListFragment.newInstance();
-        }  else if (type.equalsIgnoreCase("download")) {
+        } else if (type.equalsIgnoreCase("download")) {
             fragment = DownloadListFragment.newInstance();
-        }else if (type.equalsIgnoreCase("recent_videos")) {
+        } else if (type.equalsIgnoreCase("recent_videos")) {
             fragment = RecentVideosFragment.newInstance();
         } else if (type.equalsIgnoreCase("download")) {
         } else if (type.equalsIgnoreCase("about_us")) {
             fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_ABOUT_US, slideMenuModelSelected.title);
         } else if (type.equalsIgnoreCase("term_condition")) {
             fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_TERM_CONDITION, slideMenuModelSelected.title);
+        } else if (type.equalsIgnoreCase("news")) {
+//            fragment = MNewsSlideFragment.newInstance();
+            fragment = WebViewFragment.newInstance(AppConstant.URL_PAGE_BUY_NEWS_MODULE, "Buy News Module");
         }
 
         if (fragment != null) {

@@ -1,4 +1,4 @@
-package com.inspius.yo_video.activity;
+package com.inspius.yo_video.player;
 
 import android.app.Activity;
 import android.media.MediaPlayer;

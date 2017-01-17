@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Change App Name -->
     <string name="app_name">YoVideo</string>
 
@@ -7,15 +7,20 @@
     <!--<string name="facebook_app_id">1705400019740975</string>-->
 
     <!-- Change AdMob Banner Id -->
-    <string name="banner_ad_unit_id">ca-app-pub-4515379129023944/1260293910</string>
+    <string name="banner_ad_unit_id">ca-app-pub-8000676937410247/3638740815</string>
 
     <!-- Change AdMob Interstitial Id -->
-    <string name="interstitial_ad_unit_id">ca-app-pub-4515379129023944/2737027117</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-8000676937410247/9545673611</string>
+
+    <!-- Change JW_LICENSE_KEY -->
+    <string name="jw_license_key">VhdGGWw+4IX/o0y9QxdrKIS6R/CddyhGD1i2UA==</string>
 
     <string name="cm_cancel">Cancel</string>
     <string name="cm_close">Close</string>
     <string name="cm_continue">Continue</string>
     <string name="cm_submit">Submit</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <string name="text_fm_version">Version %s</string>
     <string name="text_fm_icon_assets">"assets://%s" </string>
@@ -44,6 +49,11 @@
     <string name="featured">Featured</string>
 
     <string name="all_category">All Categories</string>
+
+    <!-- News -->
+    <string name="news_latest">Latest</string>
+    <string name="news_categories">Categories</string>
+
     <!-- MENU -->
     <string name="menu_home">Home page</string>
     <string name="menu_categories">Categories</string>
@@ -60,6 +70,7 @@
     <string name="menu_currency">Account Balance</string>
     <string name="menu_transfer">Transfer</string>
     <string name="menu_deposit">Deposit</string>
+    <string name="menu_news">News</string>
 
     <!-- fragment Login -->
     <string name="login_signin">Sign in</string>
@@ -131,4 +142,34 @@
     <string name="msg_need_vip">Some contents are only for premium members. Please update your account</string>
     <string name="msg_no_result">No result found</string>
     <string name="msg_loading_common">Please wait while the content loads</string>
+    <string name="msg_delete_video">Are you sure you want to delete this video?</string>
+
+    <string name="error_drm_not_supported">Protected content not supported on API levels below 18</string>
+
+    <string name="error_drm_unsupported_scheme">This device does not support the required DRM scheme</string>
+
+    <string name="error_drm_unknown">An unknown DRM error occurred</string>
+
+    <string name="error_no_decoder">This device does not provide a decoder for <xliff:g id="mime_type">%1$s</xliff:g></string>
+
+    <string name="error_no_secure_decoder">This device does not provide a secure decoder for <xliff:g id="mime_type">%1$s</xliff:g></string>
+
+    <string name="error_querying_decoders">Unable to query device decoders</string>
+
+    <string name="error_instantiating_decoder">Unable to instantiate decoder <xliff:g id="decoder_name">%1$s</xliff:g></string>
+
+    <string name="error_unsupported_video">Media includes video tracks, but none are playable by this device</string>
+
+    <string name="error_unsupported_audio">Media includes audio tracks, but none are playable by this device</string>
+    <string name="enable_random_adaptation">Enable random adaptation</string>
+    <string name="selection_disabled">Disabled</string>
+    <string name="selection_default_none">Default (none)</string>
+    <string name="selection_default">Default</string>
+    <string name="storage_permission_denied">Permission to access storage was denied</string>
+    <string name="unexpected_intent_action">Unexpected intent action: <xliff:g id="action">%1$s</xliff:g></string>
+    <string name="video">Video</string>
+
+    <string name="audio">Audio</string>
+
+    <string name="text">Text</string>
 </resources>

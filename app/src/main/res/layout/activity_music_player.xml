@@ -5,6 +5,17 @@
     android:background="#25272d"
     android:paddingTop="@dimen/tool_bar_top_padding">
 
+    <ImageView
+        android:id="@+id/imvThumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_video_default" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#D925272d" />
 
     <TextView
         android:id="@+id/textViewSong"

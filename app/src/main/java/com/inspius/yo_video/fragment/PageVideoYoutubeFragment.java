@@ -1,5 +1,7 @@
 package com.inspius.yo_video.fragment;
 
+import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -19,6 +21,9 @@ import com.inspius.yo_video.model.VideoModel;
 public class PageVideoYoutubeFragment extends YouTubePlayerSupportFragment implements YouTubePlayer.OnInitializedListener, YouTubePlayer.OnFullscreenListener {
     public static final String TAG = PageVideoYoutubeFragment.class.getSimpleName();
     private static final int RECOVERY_DIALOG_REQUEST = 1;
+    private static final int PORTRAIT_ORIENTATION = Build.VERSION.SDK_INT < 9
+            ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            : ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
 
     public static PageVideoYoutubeFragment newInstance(VideoModel model, boolean isAutoPlay) {
         PageVideoYoutubeFragment youTubeFragment = new PageVideoYoutubeFragment();
@@ -66,14 +71,13 @@ public class PageVideoYoutubeFragment extends YouTubePlayerSupportFragment imple
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean restored) {
         this.youTubePlayer = youTubePlayer;
-        youTubePlayer.setFullscreen(false);
-        //Here we can set some flags on the player
-        //This flag tells the player to switch to landscape when in fullscreen, it will also return to portrait
-        //when leaving fullscreen
-        youTubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
-        //This flag controls the system UI such as the status and navigation bar, hiding and showing them
-        //alongside the player UI
-        youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI);
+        youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
+
+        int controlFlags = youTubePlayer.getFullscreenControlFlags();
+        getActivity().setRequestedOrientation(PORTRAIT_ORIENTATION);
+        controlFlags |= YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE;
+        youTubePlayer.setFullscreenControlFlags(controlFlags);
+
         if (mVideoId != null) {
             if (restored) {
                 youTubePlayer.play();

@@ -1,6 +1,7 @@
 package com.inspius.yo_video.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import com.inspius.yo_video.api.RPC;
 import com.inspius.yo_video.app.AppConstant;
 import com.inspius.yo_video.base.BaseMainFragment;
 import com.inspius.yo_video.greendao.DBWishListVideo;
+import com.inspius.yo_video.helper.AppUtils;
 import com.inspius.yo_video.helper.DialogUtil;
 import com.inspius.yo_video.listener.WishListAdapterVideoActionListener;
 import com.inspius.yo_video.model.VideoJSON;
@@ -168,7 +170,12 @@ public class WishListFragment extends BaseMainFragment implements WishListAdapte
 
                 VideoModel videoModel = new VideoModel((VideoJSON) results);
                 videoModel.setCategoryName(wishList.getCategory());
-                mHostActivityInterface.addFragment(VideoDetailFragment.newInstance(videoModel, isAutoPlay), true);
+
+                Intent intent = AppUtils.getIntentVideoDetail(mContext, videoModel, isAutoPlay);
+                if (intent == null)
+                    return;
+
+                startActivity(intent);
             }
         });
     }

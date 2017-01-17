@@ -1,0 +1,31 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#25272d">
+
+    <ImageView
+        android:id="@+id/imvThumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_video_default" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#D925272d" />
+
+    <co.mobiwise.library.MusicPlayerView
+        android:id="@+id/mpv"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        app:buttonColor="#ff0028"
+        app:progressLoadedColor="#00815e"
+        app:textColor="#80FFFFFF"
+        app:textSize="14sp" />
+</RelativeLayout>
+
+
