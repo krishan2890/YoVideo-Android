@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.inspius.coreapp.helper.IntentUtils;
 import com.inspius.yo_video.R;
 import com.inspius.yo_video.activity.CommentActivity;
@@ -84,6 +85,7 @@ public abstract class MBaseVideoDetailActivity extends AppCompatActivity {
     protected int containerViewId = R.id.container;
 
     private AccountDataManager mAccountDataManager;
+    private InterstitialAd mInterstitialAd;
 
     abstract void initPlayer();
 
@@ -175,6 +177,44 @@ public abstract class MBaseVideoDetailActivity extends AppCompatActivity {
         } else {
             mAdView.setVisibility(View.GONE);
         }
+
+        if (AppConfig.SHOW_ADS_INTERSTITIAL) {
+            // Create the InterstitialAd and set the adUnitId.
+            mInterstitialAd = new InterstitialAd(this);
+            // Defined in res/values/strings.xml
+            mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+
+            // Loading ads
+            mInterstitialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdClosed() {
+                    //requestNewInterstitial();
+                }
+
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+                    mInterstitialAd.show();
+                }
+            });
+            requestNewInterstitial();
+        }
+    }
+
+    private void requestNewInterstitial() {
+        if (!AppConfig.SHOW_ADS_INTERSTITIAL)
+            return;
+
+        AdRequest adRequest;
+        if (GlobalApplication.getInstance().isProductionEnvironment()) {
+            adRequest = new AdRequest.Builder().build();
+        } else {
+            adRequest = new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .build();
+        }
+
+        mInterstitialAd.loadAd(adRequest);
     }
 
     @Override
@@ -188,7 +228,6 @@ public abstract class MBaseVideoDetailActivity extends AppCompatActivity {
     void doBack() {
         onBackPressed();
     }
-
 
     boolean isCustomerPlayOrDownloadVideo() {
         if (videoModel.isVipPlayer() && !mAccountDataManager.isVip()) {

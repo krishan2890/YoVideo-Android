@@ -15,7 +15,6 @@ import com.inspius.yo_video.R;
 import com.inspius.yo_video.app.AppConfig;
 import com.inspius.yo_video.app.AppConstant;
 import com.inspius.yo_video.app.GlobalApplication;
-import com.inspius.yo_video.fragment.CommentFragment;
 import com.inspius.yo_video.fragment.VideoDetailFragment;
 import com.inspius.yo_video.model.VideoModel;
 
@@ -70,10 +69,16 @@ public class VideoDetailActivity extends CoreAppActivity {
             mInterstitialAd.setAdListener(new AdListener() {
                 @Override
                 public void onAdClosed() {
-                    requestNewInterstitial();
+                    //requestNewInterstitial();
+                }
+
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+                    mInterstitialAd.show();
                 }
             });
-            requestNewInterstitial();
+            //requestNewInterstitial();
         }
     }
 

@@ -247,10 +247,12 @@ public class VideoDetailFragment extends BaseFragment {
             /**
              * Show Interstitial Ads
              */
-            mVideoDetailActivity.showInterstitialAds();
         } else {
             mAdView.setVisibility(View.GONE);
         }
+
+        if (AppConfig.SHOW_ADS_INTERSTITIAL)
+            mVideoDetailActivity.showInterstitialAds();
 
         if (isAutoPlay)
             doPlayVideo();
